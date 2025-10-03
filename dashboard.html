@@ -5,20 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BloomBuddy Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
+  <link rel="icon" type="image/png" href="Images/favicon.png" />
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAF4xJYedIsOuKXD7JOLuR4gP74f4Tue90",
+      authDomain: "bloombuddy-id.firebaseapp.com",
+      projectId: "bloombuddy-id",
+      storageBucket: "bloombuddy-id.firebasestorage.app",
+      messagingSenderId: "837626738147",
+      appId: "1:837626738147:web:63ad0819361b0281dc9cd6",
+      measurementId: "G-SNEL7GGE3H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    window.auth = auth;
+    window.signOut = signOut;
+    window.onAuthStateChanged = onAuthStateChanged;
+  </script>
+  
+  <script src="dashboard.js" defer></script>
 </head>
 <body>
-    <div class="overlay">
-      <div class="chatbot-box">
-        <img src="images/chatbot-icon.png" alt="Chatbot Icon" class="chatbot-icon" />
-        <h2>Hi there! What would you like support with today?</h2>
+  <header>
+    <div class="logo">
+      <div class="logo-text">BB</div>
+      <span class="brand-name">BloomBuddy</span>
+    </div>
 
-        <div class="button-group">
-          <a href="chat-mood.html" class="dashboard-btn">Mood Check</a>
-          <a href="chat-verse.html" class="dashboard-btn">Verse + Encouragement</a>
-          <a href="chat-practice.html" class="dashboard-btn">✨ Daily Practice</a>
-          <a href="chat-growth.html" class="dashboard-btn">🌿 Spiritual Growth</a>
+    <nav class="desktop-nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="resources.html">Resources</a>
+      <a href="podcasts.html">Podcasts</a>
+      <a href="#" id="aboutLink">About</a>
+    </nav>
+
+    <div class="user-menu">
+      <span id="userEmail" class="user-email"></span>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-container">
+      <div class="overlay">
+        <div class="chatbot-box">
+          <div class="ai-icon">🤖</div>
+          <h2>Hi there! What would you like support with today?</h2>
+
+          <div class="button-group">
+            <button class="dashboard-btn" data-topic="mood">Mood Check</button>
+            <button class="dashboard-btn" data-topic="verse">Verse + Encouragement</button>
+            <button class="dashboard-btn" data-topic="practice">✨ Daily Practice</button>
+            <button class="dashboard-btn" data-topic="growth">🌱 Spiritual Growth</button>
+          </div>
         </div>
       </div>
     </div>
+  </main>
+
+  <!-- AI Chat Modal -->
+  <div class="chat-modal" id="chatModal" aria-hidden="true">
+    <div class="chat-modal-content">
+      <div class="chat-header">
+        <h3 id="chatTitle">AI Assistant</h3>
+        <button class="chat-close" data-close>&times;</button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <div class="message ai-message">
+          <div class="message-content">
+            <p id="initialMessage">Hello! I'm here to help you with your spiritual and emotional well-being. How can I assist you today?</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chat-input-container">
+        <input type="text" id="chatInput" placeholder="Type your message..." />
+        <button id="sendBtn" class="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div class="about-modal" id="aboutModal" aria-hidden="true">
+    <div class="about-modal-content">
+      <div class="about-header">
+        <h3>About BloomBuddy</h3>
+        <button class="about-close" data-close>&times;</button>
+      </div>
+      
+      <div class="about-body">
+        <div class="about-logo">
+          <div class="about-logo-text">BB</div>
+          <span class="about-brand-name">BloomBuddy</span>
+        </div>
+        
+        <div class="about-description">
+          <p>Welcome to <strong>BloomBuddy</strong>, your personal sanctuary for spiritual growth and emotional well-being. We believe that everyone deserves a safe space to explore their inner world, find peace, and grow in their faith journey.</p>
+          
+          <p>Our platform combines the wisdom of spiritual practices with the power of artificial intelligence to provide you with personalized support whenever you need it. Whether you're seeking encouragement, guidance for daily spiritual practices, or simply someone to talk to about your mood and emotions, BloomBuddy is here for you.</p>
+          
+          <p>Through our four specialized AI assistants, you can:</p>
+          
+          <ul class="about-features">
+            <li><strong>Mood Check:</strong> Get compassionate support for your emotional well-being and mental health</li>
+            <li><strong>Verse + Encouragement:</strong> Receive spiritual guidance and biblical encouragement tailored to your needs</li>
+            <li><strong>Daily Practice:</strong> Develop meaningful spiritual disciplines like prayer, meditation, and gratitude</li>
+            <li><strong>Spiritual Growth:</strong> Explore deeper aspects of your faith and relationship with God</li>
+          </ul>
+          
+          <p>BloomBuddy is more than just an app – it's your companion on the journey toward inner peace, spiritual maturity, and emotional healing. We're committed to providing a judgment-free environment where you can be authentic, vulnerable, and hopeful about your growth.</p>
+          
+          <p class="about-mission">Our mission is to help you bloom into the person you were created to be, one conversation at a time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -6,6 +6,36 @@
   <title>BloomBuddy</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/png" href="Images/favicon.png" />
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAF4xJYedIsOuKXD7JOLuR4gP74f4Tue90",
+      authDomain: "bloombuddy-id.firebaseapp.com",
+      projectId: "bloombuddy-id",
+      storageBucket: "bloombuddy-id.firebasestorage.app",
+      messagingSenderId: "837626738147",
+      appId: "1:837626738147:web:63ad0819361b0281dc9cd6",
+      measurementId: "G-SNEL7GGE3H"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    // Make auth available globally
+    window.auth = auth;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.onAuthStateChanged = onAuthStateChanged;
+  </script>
+  
+  <script src="script.js" defer></script>
 </head>
 <body>
     <header>
@@ -31,10 +61,61 @@
     <p class="subtitle">A place of peace.....</p>
 
     <div class="auth-buttons">
-      <a href="dashboard.html"><button class="btn">Log in</button></a>
-      <button class="btn">Sign up</button>
-      <button class="btn guest">Continue as guest</button>
+      <button class="btn" id="openLogin">Log in</button>
+      <button class="btn" id="openSignup">Sign up</button>
+      <button class="btn guest" id="continueGuest">Continue as guest</button>
     </div>
   </main>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-labelledby="loginTitle">
+      <button class="modal-close" data-close>&times;</button>
+      <h3 id="loginTitle" class="modal-title">Log in</h3>
+      <form id="loginForm" class="modal-form">
+        <label for="loginEmail">Email:</label>
+        <input type="email" id="loginEmail" required />
+
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" required />
+
+        <div class="modal-actions">
+          <button type="submit" class="btn solid">Log in</button>
+        </div>
+        <div class="modal-actions row">
+          <button type="button" class="btn outline" id="forgotPassword">forgot password</button>
+          <button type="button" class="btn outline" data-close>Back</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal" id="signupModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-labelledby="signupTitle">
+      <button class="modal-close" data-close>&times;</button>
+      <h3 id="signupTitle" class="modal-title">Create your account</h3>
+      <form id="signupForm" class="modal-form">
+        <label for="signupName">Full Name:</label>
+        <input type="text" id="signupName" required />
+
+        <label for="signupEmail">Email:</label>
+        <input type="email" id="signupEmail" required />
+
+        <label for="signupPassword">Password:</label>
+        <input type="password" id="signupPassword" minlength="6" required />
+
+        <label for="signupConfirm">Confirm:</label>
+        <input type="password" id="signupConfirm" minlength="6" required />
+
+        <div class="modal-actions">
+          <button type="submit" class="btn solid">Sign up</button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn outline" data-close>Back</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
