@@ -1,0 +1,53 @@
+# BloomBuddy .gitignore
+# CRITICAL: This file prevents API keys from being committed to Git
+
+# Environment Variables (NEVER commit these!)
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Testing
+coverage/
+.nyc_output/
+
+# Production
+*.production.js
+*.production.css
