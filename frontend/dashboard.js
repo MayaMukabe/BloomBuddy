@@ -27,12 +27,9 @@ function getEl(id) {
 // Sanitize user input to prevent XSS attacks 
 // TODOuse DOMPurify for production
 
+// Sanitize user input to prevent XSS attacks 
 function sanitizeInput(input) {
-  if (typeof input !== 'string') return '';
-  
-  const div = document.createElement('div');
-  div.textContent = input;
-  return div.innerHTML;
+  return DOMPurify.sanitize(input);
 }
 
 
@@ -415,8 +412,8 @@ function addMessageToChat(message, sender, isLoading = false) {
   
   const messageP = document.createElement('p');
   
-  // Sanitize message to prevent XSS
-  messageP.textContent = message;
+// Sanitize message to prevent XSS
+messageP.innerHTML = sanitizeInput(message);
   
   if (isLoading) {
     messageP.style.fontStyle = 'italic';
