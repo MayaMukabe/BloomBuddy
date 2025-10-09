@@ -110,6 +110,7 @@ const chatInput = getEl('chatInput');
 const sendBtn = getEl('sendBtn');
 const chatTitle = getEl('chatTitle');
 const initialMessage = getEl('initialMessage');
+const exportChatBtn = getEl('exportChatBtn');
 
 // Chat state
 let currentTopic = '';
@@ -484,6 +485,44 @@ function addMessageToChat(message, sender, isLoading = false) {
   return messageWrapper;
 }
 
+function exportChatHistory(){
+  if (chatHistory.length === 0) {
+    alert("There is no conversation to export.")
+    return;
+  }
+
+  const chatTitleText = chatTitle?.textContent || 'BloomBuddy Chat';
+  const date = new Date().toLocaleDateString();
+
+  //Format Chat history into a string
+  let formattedText = `Chat History: ${chatTitleText}\n`;
+  formattedText += `Exported on: ${date}\n\n`;
+
+  const config = topicConfigs[currentTopic];
+  if(config){
+    formattedText += `BloomBuddy: ${config.initialMessage}\n\n`;
+  }
+
+  chatHistory.forEach(message => {
+    const prefix = message.role === 'User' ? 'You:' : 'BloomBuddy:';
+    formattedText += `${prefix} ${message.content}\n\n`;
+  });
+
+  const blob = new Blob([formattedText], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  const safeFilename = chatTitleText.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  link.download = `BloomBuddy_Chat_${safeFilename}.txt`;
+
+  //Trigger Download and Clean Up
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+}
+
 // EVENT LISTENERS FOR CHAT INPUT
 //Send button click handle
 if (sendBtn) {
@@ -491,6 +530,13 @@ if (sendBtn) {
     rateLimitedSend(() => sendMessage());
   });
 }
+
+  
+  //Add click listener for the export button
+if (exportChatBtn) {
+  exportChatBtn.addEventListener('click', exportChatHistory);
+}
+
 //Enter key handler for chat input
 //Send on Enter, new line on Shift+Enter
 if (chatInput) {
@@ -500,7 +546,7 @@ if (chatInput) {
       rateLimitedSend(() => sendMessage());
     }
   });
-  
+
   // Auto-resize textarea as user types
   chatInput.addEventListener('input', () => {
     chatInput.style.height = 'auto';
@@ -538,6 +584,8 @@ window.addEventListener('offline', () => {
     }
   }
 });
+
+
 
 // ERROR BOUNDARY
 // Global error handler
