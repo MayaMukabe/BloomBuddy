@@ -433,29 +433,31 @@ async function sendMessage() {
 function addMessageToChat(message, sender, isLoading = false) {
   if (!chatMessages) return null;
   
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `message ${sender}-message`;
+  // Create a main wrapper for the message and its timestamp
+  const messageWrapper = document.createElement('div');
+  messageWrapper.className = `message ${sender}-message`;
   
+  // Create the bubble for the message content
   const contentDiv = document.createElement('div');
   contentDiv.className = 'message-content';
 
   // If it's a loading message, show the typing indicator
   if (isLoading) {
     contentDiv.innerHTML = `
-    <div class="typing-indicator">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     `;
   } else {
-    //Otherwise, show the sanitized message text
+    // Otherwise, show the sanitized message text
     const messageP = document.createElement('p');
     messageP.innerHTML = sanitizeInput(message);
     contentDiv.appendChild(messageP);
   }
 
-  // Create timestamp
+  // Create the timestamp
   const timestamp = new Date().toLocaleTimeString([], {
     hour: 'numeric',
     minute: '2-digit'
@@ -463,23 +465,22 @@ function addMessageToChat(message, sender, isLoading = false) {
   const timestampSpan = document.createElement('span');
   timestampSpan.className = 'timestamp';
   timestampSpan.textContent = timestamp;
-
-  //Append the content buble to the wrapper
+  
+  // Append the content bubble to the wrapper
   messageWrapper.appendChild(contentDiv);
-
+  // Only add a timestamp if it's not a loading indicator
   if (!isLoading) {
-    messageWrapper.appendChild(timestampSpan)
+    messageWrapper.appendChild(timestampSpan);
   }
-
-  //Add complete message to the chat window
+  
   chatMessages.appendChild(messageWrapper);
-
-  //Scroll to the bottom
+  
+  // Scroll to the bottom
   chatMessages.scrollTo({
     top: chatMessages.scrollHeight,
     behavior: 'smooth'
-  })
-
+  });
+  
   return messageWrapper;
 }
 
