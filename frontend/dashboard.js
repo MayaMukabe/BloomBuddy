@@ -25,9 +25,6 @@ function getEl(id) {
 }
 
 // Sanitize user input to prevent XSS attacks 
-// TODOuse DOMPurify for production
-
-// Sanitize user input to prevent XSS attacks 
 function sanitizeInput(input) {
   return DOMPurify.sanitize(input);
 }
@@ -73,6 +70,14 @@ window.onAuthStateChanged?.(window.auth, (user) => {
     // Store user ID for backend requests
     window.currentUserId = user.uid;
     window.currentUserEmail = user.email;
+
+    //Create or Update a user profile in FireStore
+    const userDocRef = window.doc(window.db, 'users', user.uid);
+    window.setDoc(userDocRef, {
+      displayName: user.displayName || 'Anonymous',
+      email: user.email,
+      lastLogin: window.serverTimestamp(),
+    }, { merge: true });
   } else {
     console.log('User not authenticated, redirecting to login');
     window.location.href = 'index.html';
@@ -110,6 +115,7 @@ const initialMessage = getEl('initialMessage');
 let currentTopic = '';
 let chatHistory = [];
 let isProcessing = false; // Prevent multiple simultaneous requests
+let currentConversationId = null;
 
 
 // Topic-specific configurations, each topic has its own title, initial message, and system prompt
@@ -173,6 +179,7 @@ function openChatModal(topic) {
   // Clear previous chat history
   chatHistory = [];
   isProcessing = false;
+  currentConversationId = null;
   
   // Reset chat messages display
   if (chatMessages) {
@@ -340,6 +347,28 @@ async function sendMessage() {
       loadingMessage.remove();
     }
     addMessageToChat(data.message, 'ai');
+
+    //Save converstaion to Firestore
+    if (!currentConversationId){
+      const conversationRef = await window.addDoc(window.collection(window.db, 'conversations'), {
+        userId: window.currentUserId,
+        topic: currentTopic,
+        startedAt: window.serverTimestamp(),
+      });
+      currentConversationId = conversationRef.id;
+    }
+
+    await window.addDoc(window.collection(window.db, 'conversations', currentConversationId, 'messages'), {
+      role: 'user',
+      content: message,
+      timestamp: window.serverTimestamp()
+    })
+
+    await window.addDoc(window.collection(window.db, 'conversations', currentConversationId, 'messages'), {
+      role: 'assistant',
+      content: data.message,
+      timestamp: window.serverTimestamp(),
+    });
     
     // Update chat history
     chatHistory.push(

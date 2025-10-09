@@ -144,9 +144,12 @@ signupForm?.addEventListener('submit', async (e) => {
     const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
     const user = userCredential.user;
     
-    // Update user profile with display name
-    await user.updateProfile({
-      displayName: name
+    // Create a user profile in Firestore
+    const userDocRef = window.doc(window.db, 'users', user.id);
+    await window.setDoc(userDocRef, {
+      displayName: name,
+      email: user.email,
+      createdAt: window.serverTimestamp(),
     });
     
     console.log('User created:', user);
