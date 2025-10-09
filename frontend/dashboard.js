@@ -183,13 +183,8 @@ function openChatModal(topic) {
   
   // Reset chat messages display
   if (chatMessages) {
-    chatMessages.innerHTML = `
-      <div class="message ai-message">
-        <div class="message-content">
-          <p>${config.initialMessage}</p>
-        </div>
-      </div>
-    `;
+    chatMessages.innerHTML = ''; //Clear the board first
+    addMessageToChat(config.initialMessage, 'ai'); // Add the initial message with timestamp
   }
   
   // Show modal
@@ -301,7 +296,7 @@ async function sendMessage() {
   }
   
   // Show loading state
-  const loadingMessage = addMessageToChat('Thinking...', 'ai', true);
+  const loadingMessage = addMessageToChat('', 'ai', true);
   
   try {
     console.log('Sending message to backend...');
@@ -324,6 +319,11 @@ async function sendMessage() {
         userId: window.currentUserId || 'anonymous'
       })
     });
+
+    // Always remove he typing indicator regardless of success or failure
+    if (loadingMessage && loadingMessage.parentNode){
+      loadingMessage.remove();
+    }
     
     console.log('Received response:', response.status);
     
@@ -438,28 +438,49 @@ function addMessageToChat(message, sender, isLoading = false) {
   
   const contentDiv = document.createElement('div');
   contentDiv.className = 'message-content';
-  
-  const messageP = document.createElement('p');
-  
-// Sanitize message to prevent XSS
-messageP.innerHTML = sanitizeInput(message);
-  
+
+  // If it's a loading message, show the typing indicator
   if (isLoading) {
-    messageP.style.fontStyle = 'italic';
-    messageP.style.opacity = '0.7';
+    contentDiv.innerHTML = `
+    <div class="typing-indicator">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    `;
+  } else {
+    //Otherwise, show the sanitized message text
+    const messageP = document.createElement('p');
+    messageP.innerHTML = sanitizeInput(message);
+    contentDiv.appendChild(messageP);
   }
-  
-  contentDiv.appendChild(messageP);
-  messageDiv.appendChild(contentDiv);
-  chatMessages.appendChild(messageDiv);
-  
-  // Scroll to bottom with smooth animation
+
+  // Create timestamp
+  const timestamp = new Date().toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+  const timestampSpan = document.createElement('span');
+  timestampSpan.className = 'timestamp';
+  timestampSpan.textContent = timestamp;
+
+  //Append the content buble to the wrapper
+  messageWrapper.appendChild(contentDiv);
+
+  if (!isLoading) {
+    messageWrapper.appendChild(timestampSpan)
+  }
+
+  //Add complete message to the chat window
+  chatMessages.appendChild(messageWrapper);
+
+  //Scroll to the bottom
   chatMessages.scrollTo({
     top: chatMessages.scrollHeight,
     behavior: 'smooth'
-  });
-  
-  return messageDiv;
+  })
+
+  return messageWrapper;
 }
 
 // EVENT LISTENERS FOR CHAT INPUT

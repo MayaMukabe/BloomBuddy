@@ -145,7 +145,7 @@ signupForm?.addEventListener('submit', async (e) => {
     const user = userCredential.user;
     
     // Create a user profile in Firestore
-    const userDocRef = window.doc(window.db, 'users', user.id);
+    const userDocRef = window.doc(window.db, 'users', user.uid);
     await window.setDoc(userDocRef, {
       displayName: name,
       email: user.email,

@@ -244,11 +244,12 @@ h2 {
 
 .message {
   display: flex;
+  flex-direction: column;
   margin-bottom: 15px;
 }
 
 .user-message {
-  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .ai-message {
@@ -261,6 +262,7 @@ h2 {
   border-radius: 18px;
   font-size: 16px;
   line-height: 1.4;
+  position: relative;
 }
 
 .user-message .message-content {
@@ -273,6 +275,46 @@ h2 {
   background: rgba(255,255,255,0.9);
   color: #000;
   border-bottom-left-radius: 4px;
+}
+
+.timestamp{
+  font-size: 11px;
+  color: #333;
+  margin-top: 5px;
+  padding: 0 8px;
+}
+
+.typing-indicator{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.typing-indicator span{
+  height: 8px;
+  width: 8px;
+  background-color: #555;
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: typing-pulse 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes typing-pulse {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.0);
+  }
 }
 
 .chat-input-container {
