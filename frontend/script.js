@@ -238,8 +238,17 @@ window.onAuthStateChanged?.(window.auth, (user) => {
 });
 
 // Optional: guest continue
-getEl('continueGuest')?.addEventListener('click', () => {
-  // window.location.href = 'dashboard.html';
-  alert('Continuing as guest...');
+getEl('continueGuest')?.addEventListener('click', async () => {
+
+  const guestBtn = getEl('continueGuest');
+  showLoading(guestBtn, 'Entering as Guest...');
+  try {
+    await window.signInAnonymously(window.auth);
+    window.location.href = 'dashboard.html';
+  } catch (error) {
+    console.error("Anonymous sign-in failed:", error);
+    alert("Could not sign in as a guest. Please try again.");
+    hideLoading(guestBtn, 'Continue as guest');
+  }
 });
 

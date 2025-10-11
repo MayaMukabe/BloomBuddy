@@ -62,14 +62,23 @@ const rateLimitedSend = createRateLimiter(1000);
 window.onAuthStateChanged?.(window.auth, (user) => {
   if (user) {
     console.log('User authenticated:', user.uid);
-    const userEmailEl = getEl('userEmail');
-    if (userEmailEl) {
-      userEmailEl.textContent = user.email || 'User';
-    }
-    
-    // Store user ID for backend requests
     window.currentUserId = user.uid;
-    window.currentUserEmail = user.email;
+
+    const userMenu = getEl('userMenu');
+    const guestMenu = getEl('guestMenu');
+
+    if (user.isAnonymous) {
+      console.log("User is in Guest Mode");
+      userMenu.style.display = 'none';
+      guestMenu.style.display = 'flex';
+    } else {
+      console.log("User is a permanent user.");
+      userMenu.style.display = 'flex';
+      guestMenu.style.display = 'none';
+
+      const userEmailEl = getEl('userEmail');
+      if (userEmailEl) userEmailEl.textContent = user.email || 'User';
+    }
 
     //Create or Update a user profile in FireStore
     const userDocRef = window.doc(window.db, 'users', user.uid);
@@ -118,6 +127,53 @@ let chatHistory = [];
 let isProcessing = false; // Prevent multiple simultaneous requests
 let currentConversationId = null;
 
+const upgradeGuestBtn = getEl('upgradeGuestBtn');
+const signupModal = getEl('signupModal');
+const signupForm = getEl('signupForm');
+
+if (upgradeGuestBtn) {
+  upgradeGuestBtn.addEventListener('click', () => {
+    if (signupModal) signupModal.setAttribute('aria-hidden', 'false');
+  });
+}
+
+if (signupForm) {
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = getEl('signupName').value.trim();
+    const email = getEl('signupEmail').value.trim();
+    const password = getEl('signupPassword').value;
+
+    const credential = window.EmailAuthProvider.credential(email, password);
+
+    try {
+      const userCredential = await window.linkWithCredential(window.auth.currentUser, credential);
+      const user = userCredential.user;
+
+      // update  profile with the new info after linking account
+      const userDocRef = window.doc(window.db, 'users', user.uid);
+      await window.setDoc(userDocRef, {
+        displayName: name,
+        email: user.email,
+        // createdAt is not set here to preserve the original guest creation date
+      }, { merge: true });
+
+      alert("Success! Your account is now saved.");
+      if (signupModal) signupModal.setAttribute('aria-hidden', 'true');
+      // Force a UI update by reloading the page
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Error linking account:", error);
+      if (error.code == 'auth/email-already-in-use') {
+        alert("This email is already in use by another account.");
+      } else {
+        alert("Could not create account. Please try again.");
+      }
+    }
+  });
+}
+
 
 // Topic-specific configurations, each topic has its own title, initial message, and system prompt
 const topicConfigs = {
@@ -159,6 +215,7 @@ function initializeButtons() {
     });
   });
 }
+
 
 
 // Open chat modal for specific topic
@@ -215,11 +272,11 @@ function closeChatModal() {
   isProcessing = false;
 }
 
-// Close modal on clicking close button or clicking outside
+// Close signup modal
 document.addEventListener('click', (e) => {
-  if (e.target.matches('[data-close]') || e.target.classList.contains('chat-modal')) {
-    closeChatModal();
-  }
+    if (e.target.matches('[data-close]') || e.target.classList.contains('modal')) {
+        if(signupModal) signupModal.setAttribute('aria-hidden', 'true');
+    }
 });
 
 // Close modal on Escape key
