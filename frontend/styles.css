@@ -111,6 +111,24 @@ h2 {
   background-color: #7b03b3c4;
 }
 
+.btn-google {
+  background-color: #a7dcff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-google img {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-google:hover {
+  background-color: #7b03b3c4;
+}
+
 /* Modal base */
 .modal {
   position: fixed;

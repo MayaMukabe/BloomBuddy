@@ -7,6 +7,7 @@ const signupModal = getEl('signupModal');
 
 const openLoginBtn = getEl('openLogin');
 const openSignupBtn = getEl('openSignup');
+const googleSignInBtn = getEl('googleSignIn');
 
 function openModal(modal) {
   if (!modal) return;
@@ -182,6 +183,48 @@ signupForm?.addEventListener('submit', async (e) => {
     hideLoading(submitBtn, 'Sign up');
   }
 });
+
+//Google Sign-In Funtionality
+async function signInWithGoogle() {
+  const provider = new window.GoogleAuthProvider();
+  showLoading(googleSignInBtn, 'Opening...');
+
+  try {
+    const result = await window.signInWithPopup(window.auth, provider);
+    const user = result.user;
+    const additionalUserInfo = window.getAdditionalUserInfo(result);
+
+    //create a profile if its a new user
+    if (additionalUserInfo.isNewUser) {
+      const userDocRef = window.doc(window.db, 'user', user.id);
+      await window.setDoc(userDocRef, {
+        displayName: user.displayName,
+        email: user.email,
+        createdAt: window.serverTimestamp(),
+      });
+      console.log('New User profile created in Firestore for:', user.displayName);
+
+    } 
+    //Redirect to the dashboard
+    window.location.href = 'dashboard.html';
+  } catch (error) {
+    console.error('Google Sign-In Error:', error);
+    let errorMessage = "Could not sign in with Google. ";
+    if (error.code === 'auth/popup-closed-by-user') {
+      errorMessage += "The sign-in window was closed.";
+    } else if (error.code === 'auth/account-exists-with-different-credentials') {
+      errorMessage += "An account already exists with this email address. Please sign in with your original method"
+    }
+    alert(errorMessage);
+  } finally {
+    hideLoading(googleSignInBtn, 'Sign in with Google');
+    googleSignInBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/> Sign in with Google';
+  }
+}
+
+if (googleSignInBtn) {
+  googleSignInBtn.addEventListener('click', signInWithGoogle);
+}
 
 // Monitor authentication state
 window.onAuthStateChanged?.(window.auth, (user) => {
