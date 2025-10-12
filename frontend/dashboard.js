@@ -272,11 +272,12 @@ function closeChatModal() {
   isProcessing = false;
 }
 
-// Close signup modal
+// Close chat modal and other modals
 document.addEventListener('click', (e) => {
-    if (e.target.matches('[data-close]') || e.target.classList.contains('modal')) {
-        if(signupModal) signupModal.setAttribute('aria-hidden', 'true');
-    }
+  // Check if the clicked element is a close button or the modal backdrop
+  if (e.target.matches('[data-close]') || e.target.classList.contains('chat-modal')) {
+    closeChatModal();
+  }
 });
 
 // Close modal on Escape key
