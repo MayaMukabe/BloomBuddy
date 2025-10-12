@@ -179,22 +179,22 @@ if (signupForm) {
 const topicConfigs = {
   mood: {
     title: '💭 Mood Check',
-    initialMessage: "Hello! I'm here to help you check in with your mood and emotional well-being. How are you feeling today?",
+    initialMessage:"Hello! I'm here to help you check in with your mood and emotional well-being. To start, you could tell me if you're doing okay, not sure, or struggling.",
     systemPrompt: "You are a compassionate mental health assistant helping with mood checks. Be supportive, empathetic, and offer gentle guidance. Ask follow-up questions to understand their emotional state better. Always encourage professional help for serious concerns."
   },
   verse: {
     title: '📖 Verse + Encouragement',
-    initialMessage: "Welcome! I'm here to provide you with spiritual encouragement and meaningful verses. What's on your heart today?",
-    systemPrompt: "You are a spiritual counselor providing biblical encouragement and verses. Be uplifting, faith-centered, and offer relevant scripture when appropriate. Focus on hope, peace, and God's love. Be respectful of different beliefs."
+    initialMessage: "Welcome! I'm here to provide you with spiritual encouragement and meaningful verses. What's on your heart today? You can mention feelings like anxiety, fear, doubt, sadness, stress, or confusion.",
+    systemPrompt:"You are a spiritual counselor providing biblical encouragement and verses. Be uplifting, faith-centered, and offer relevant scripture when appropriate. Focus on hope, peace, and God's love. Be respectful of different beliefs."
   },
   practice: {
     title: '✨ Daily Practice',
-    initialMessage: "Hi! I'm here to help you with your daily spiritual practices. What would you like to focus on today?",
+    initialMessage: "Hi! I'm here to help you with your daily spiritual practices. Would you like a daily affirmation, a gratitude prompt, a short prayer, or a journal reflection?",
     systemPrompt: "You are a spiritual practice guide helping with daily spiritual disciplines like prayer, meditation, gratitude, and mindfulness. Provide practical, actionable advice for spiritual growth that can be implemented immediately."
   },
   growth: {
     title: '🌱 Spiritual Growth',
-    initialMessage: "Hello! I'm here to support your spiritual growth journey. What area would you like to explore or develop?",
+    initialMessage: "Hello! I'm here to support your spiritual growth journey. Which area would you like to grow in? For example, you could mention faith, forgiveness, hope, or purpose.",
     systemPrompt: "You are a spiritual mentor focused on helping people grow in their faith and relationship with God. Provide wisdom, guidance, and encouragement for deeper spiritual development. Be thoughtful and inspiring."
   }
 };
@@ -511,7 +511,12 @@ function addMessageToChat(message, sender, isLoading = false) {
   } else {
     // Otherwise, show the sanitized message text
     const messageP = document.createElement('p');
-    messageP.innerHTML = sanitizeInput(message);
+    
+    // Replace newline characters with <br> tags for proper formatting
+    let  formattedMessage = message.replace(/\n/g, '<br>');
+    formattedMessage = formattedMessage.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    messageP.innerHTML = sanitizeInput(formattedMessage);
     contentDiv.appendChild(messageP);
   }
 
@@ -541,7 +546,6 @@ function addMessageToChat(message, sender, isLoading = false) {
   
   return messageWrapper;
 }
-
 function exportChatHistory(){
   if (chatHistory.length === 0) {
     alert("There is no conversation to export.")
