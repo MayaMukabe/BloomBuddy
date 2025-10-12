@@ -6,7 +6,7 @@
   <title>BloomBuddy</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/png" href="Images/favicon.png" />
-  
+  <link rel="stylesheet" href="dashboard.css" /> 
   <!-- Firebase SDK -->
   <script type="module">
     // Import the functions you need from the SDKs you need
@@ -52,21 +52,22 @@
 <body>
     <header>
       <div class="logo">
-      <img src="Images/BB-logo.png" alt="BloomBuddy Logo" class="logo-img" />
-      <span class="brand-name">BloomBuddy</span>
+        <div class="logo-text">BB</div>
+        <span class="brand-name">BloomBuddy</span>
       </div>
 
       <nav class="desktop-nav">
-      <a href="#">Articles</a>
-      <a href="#">Resources</a>
-      <a href="#">Podcasts</a>
-      <a href="#">About</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="resources.html">Resources</a>
+        <a href="podcasts.html">Podcasts</a>
+        <a href="#" id="aboutLink">About</a>
       </nav>
 
-      <div class="mobile-menu">
-      <span class="hamburger">☰</span>
+      <div class="user-menu">
+        <span id="userEmail" class="user-email"></span>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
-    </header>
+  </header>
 
   <main>
     <h2>WELCOME TO YOUR HUB</h2>
