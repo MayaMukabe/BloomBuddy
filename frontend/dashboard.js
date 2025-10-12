@@ -67,6 +67,20 @@ window.onAuthStateChanged?.(window.auth, (user) => {
     const userMenu = getEl('userMenu');
     const guestMenu = getEl('guestMenu');
 
+    const userEmailEl = getEl('userEmail');
+    if (userEmailEl) userEmailEl.textContent = user.email || 'user';
+
+    //Update profile dropdown info
+    const userInitial = getEl('userInitial');
+    const dropdownUserEmail = getEl('dropdownUserEmail');
+    if (userInitial) {
+      userInitial.textContent = (user.displayName || user.email || 'B').charAt(0).toUpperCase();
+    }
+
+    if (dropdownUserEmail) {
+      dropdownUserEmail.textContent = user.email || 'Guest';
+    }
+
     if (user.isAnonymous) {
       console.log("User is in Guest Mode");
       userMenu.style.display = 'none';
@@ -93,12 +107,29 @@ window.onAuthStateChanged?.(window.auth, (user) => {
   }
 });
 
+//PROFILE DROPDOWN MANAGEMENT
+const profileAvatar = getEl('profileAvatar');
+const profileDropdown = getEl('profileDropdown');
 
+if (profileAvatar) {
+  profileAvatar.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = profileDropdown.style.display === 'none' || !profileDropdown.style.display;
+    profileDropdown.style.display = isHidden ? 'flex' : 'none';
+  });
+}
+
+window.addEventListener('click', () => {
+  if (profileDropdown) {
+    profileDropdown.style.display = 'none';
+  };
+})
 // LOGOUT FUNCTIONALITY
 // Handle user logout
 const logoutBtn = getEl('logoutBtn');
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', async () => {
+document.addEventListener('click', async (e) => {
+  if (e.target.id === 'logoutBtn') {
+    e.preventDefault();
     try {
       await window.signOut(window.auth);
       console.log('User signed out successfully');
@@ -107,8 +138,8 @@ if (logoutBtn) {
       console.error('Logout error:', error);
       alert('Error signing out. Please try again.');
     }
-  });
-}
+  }
+});
 
 
 // CHAT MODAL MANAGEMENT

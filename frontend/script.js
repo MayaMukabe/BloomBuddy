@@ -222,9 +222,29 @@ async function signInWithGoogle() {
   }
 }
 
+
+
 if (googleSignInBtn) {
   googleSignInBtn.addEventListener('click', signInWithGoogle);
 }
+
+// LOGOUT FUNCTIONALITY
+// Handle user logout
+
+const logoutBtn = getEl('logoutBtn');
+document.addEventListener('click', async (e) => {
+  if (e.target.id === 'logoutBtn') {
+    e.preventDefault();
+    try {
+      await window.signOut(window.auth);
+      console.log('User signed out successfully');
+      window.location.href = 'index.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Error signing out. Please try again.');
+    }
+  }
+});
 
 // Monitor authentication state
 window.onAuthStateChanged?.(window.auth, (user) => {

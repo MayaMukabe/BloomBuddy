@@ -14,17 +14,23 @@ window.onAuthStateChanged?.(window.auth, (user) => {
   }
 });
 
-// Logout functionality
-getEl('logoutBtn')?.addEventListener('click', async () => {
-  try {
-    await window.signOut(window.auth);
-    window.location.href = 'index.html';
-  } catch (error) {
-    console.error('Logout error:', error);
-    alert('Error signing out. Please try again.');
+// LOGOUT FUNCTIONALITY
+// Handle user logout
+
+const logoutBtn = getEl('logoutBtn');
+document.addEventListener('click', async (e) => {
+  if (e.target.id === 'logoutBtn') {
+    e.preventDefault();
+    try {
+      await window.signOut(window.auth);
+      console.log('User signed out successfully');
+      window.location.href = 'index.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Error signing out. Please try again.');
+    }
   }
 });
-
 // About Modal Management (reused from dashboard)
 const aboutModal = getEl('aboutModal');
 

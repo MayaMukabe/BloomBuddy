@@ -33,6 +33,8 @@ header {
   padding: 20px;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1002;
 }
 
 .logo {
@@ -176,6 +178,88 @@ h2 {
   background-color: #b2f2ff;
   transform: translateY(-2px);
 }
+
+/*Profile Avatar Dropdown */
+.user-menu {
+  position: relative;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #8B5CF6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+  border: 2ox solid white;
+  transition: transformation 0.2x ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.1);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 220px;
+  background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 1001;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.dropdown-header{
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+#dropdownUserEmail {
+  font-size: 14px;
+  color: #ccc;
+  word-break: break-all;
+}
+
+.dropdown-item {
+  padding: 12px 20px;
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 15px;
+  display: flex;
+  transition: background-color 0.2s ease;
+  text-align: left;
+  gap: 15px;
+  align-items: center;
+}
+
+.dropdown-icon {
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item.logout .dropdown-icon  {
+  color: #ff6b6b;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
 
 /* Chat Modal */
 .chat-modal {
