@@ -157,6 +157,7 @@ let currentTopic = '';
 let chatHistory = [];
 let isProcessing = false; // Prevent multiple simultaneous requests
 let currentConversationId = null;
+let offlineQueue = [];
 
 const upgradeGuestBtn = getEl('upgradeGuestBtn');
 const signupModal = getEl('signupModal');
@@ -273,6 +274,7 @@ function openChatModal(topic) {
   // Reset chat messages display
   if (chatMessages) {
     chatMessages.innerHTML = ''; //Clear the board first
+    loadingMessagesFromLocalStorage();
     addMessageToChat(config.initialMessage, 'ai'); // Add the initial message with timestamp
   }
   
@@ -396,6 +398,16 @@ async function sendMessage() {
       ...chatHistory,
       { role: 'user', content: message }
     ];
+
+    if (!navigator.online) {
+      console.log('Offline: Queuing message. ');
+      const offlineMsg = { role: 'user', content: message, timestamp: new Date().toISOString() };
+      offlineQueue.push(offlineMsg);
+      saveOfflineQueueToLocalStorage();
+      loadingMessage.remove();
+      addMessageToChat('You are offline. Message will be sent when you reconnect.', 'ai');
+      return;
+    }
     
     // Make request to backend
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
@@ -465,6 +477,8 @@ async function sendMessage() {
       { role: 'user', content: message },
       { role: 'assistant', content: data.message }
     );
+
+    saveMessagesToLocalStorage();
     
     // Keep only last 20 messages to prevent context from getting too large
     if (chatHistory.length > 20) {
@@ -518,9 +532,75 @@ async function sendMessage() {
   }
 }
 
+//LOCAL STORAGE FUNCTIONS
+function saveMessagesToLocalStorage() {
+  localStorage.setItem(`chatHistory_${currentTopic}`, JSON.stringify(chatHistory));
+}
+
+function loadingMessagesFromLocalStorage() {
+  const savedHistory = localStorage.getItem(`chatHistory_${currentTopic}`);
+  if (savedHistory) {
+    chatHistory = JSON.parse(savedHistory);
+    chatHistory.forEach(msg => addMessageToChat(msg.content, msg.role, false, new Date(msg.timestamp)));
+  }
+}
+
+function saveOfflineQueueToLocalStorage() {
+  localStorage.setItem('offlineQueue', JSON.stringify(offlineQueue));
+}
+
+function loadOfflineQueueFromLocal() {
+  const savedQueue = localStorage.getItem('offlineQueue');
+  if (savedQueue) {
+    offlineQueue = JSON.parse(savedQueue);
+  }
+}
+
+async function syncMessagesWithFirestore() {
+  if (offlineQueue.length === 0) return;
+
+  console.log('Syncing offline messages...');
+  addMessageToChat('Reconnected. Syncing messages...', 'ai');
+
+  const queue = [...offlineQueue];
+  offlineQueue = [];
+  saveOfflineQueueToLocalStorage();
+
+  for (const msg of queue) {
+    await sendMessageToServer(msg);
+  }
+
+  addMessageToChat('Sync complete!', 'ai');
+}
+
+async function sendMessageToServer(msg) {
+  try {
+    const messages = [...chatHistory, { role: 'user', content: msg.content }];
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: messages,
+        topic: currentTopic,
+        userId: window.currentUserId || 'anonymous'
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to sync message');
+
+    const data = await response.json();
+    addMessageToChat(data.message, 'ai');
+    chatHistory.push({ role: 'user', content: msg.content }, { role: 'assistant', content: data.message });
+    saveMessagesToLocalStorage();
+  } catch (error) {
+    console.error('Failed to sync a message:', error);
+    addMessageToChat(`Failed to send message: "${msg.content.substring(0, 20)}..."`, 'ai');
+  }
+}
+
 
 //Add message to chat with sanitization to prevent XSS attacks
-function addMessageToChat(message, sender, isLoading = false) {
+function addMessageToChat(message, sender, isLoading = false, timestamp = new Date()) {
   if (!chatMessages) return null;
   
   // Create a main wrapper for the message and its timestamp
@@ -559,7 +639,10 @@ function addMessageToChat(message, sender, isLoading = false) {
   });
   const timestampSpan = document.createElement('span');
   timestampSpan.className = 'timestamp';
-  timestampSpan.textContent = timestamp;
+  timestampSpan.textContent = timestamp.toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit'
+  });
   
   // Append the content bubble to the wrapper
   messageWrapper.appendChild(contentDiv);
@@ -652,6 +735,7 @@ if (chatInput) {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Dashboard initializing...');
   initializeButtons();
+  loadOfflineQueueFromLocal();
   console.log('Dashboard initialized successfully');
 });
 
@@ -664,6 +748,7 @@ setTimeout(() => {
 
 window.addEventListener('online', () => {
   console.log('Connection restored');
+  syncMessagesWithFirestore();
 });
 
 window.addEventListener('offline', () => {
