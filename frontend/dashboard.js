@@ -274,7 +274,7 @@ function openChatModal(topic) {
   // Reset chat messages display
   if (chatMessages) {
     chatMessages.innerHTML = ''; //Clear the board first
-    loadingMessagesFromLocalStorage();
+    loadMessagesFromLocalStorage();
     addMessageToChat(config.initialMessage, 'ai'); // Add the initial message with timestamp
   }
   
@@ -399,13 +399,23 @@ async function sendMessage() {
       { role: 'user', content: message }
     ];
 
-    if (!navigator.online) {
+    if (!navigator.onLine) {
       console.log('Offline: Queuing message. ');
       const offlineMsg = { role: 'user', content: message, timestamp: new Date().toISOString() };
       offlineQueue.push(offlineMsg);
       saveOfflineQueueToLocalStorage();
-      loadingMessage.remove();
+      if (loadingMessage && loadingMessage.parentNode) {
+        loadingMessage.remove();
+      }
       addMessageToChat('You are offline. Message will be sent when you reconnect.', 'ai');
+      isProcessing = false;
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send';
+      }
+      if (chatInput) {
+        chatInput.focus();
+      }
       return;
     }
     
@@ -537,12 +547,28 @@ function saveMessagesToLocalStorage() {
   localStorage.setItem(`chatHistory_${currentTopic}`, JSON.stringify(chatHistory));
 }
 
-function loadingMessagesFromLocalStorage() {
+function loadMessagesFromLocalStorage() {
   const savedHistory = localStorage.getItem(`chatHistory_${currentTopic}`);
   if (savedHistory) {
-    chatHistory = JSON.parse(savedHistory);
-    chatHistory.forEach(msg => addMessageToChat(msg.content, msg.role, false, new Date(msg.timestamp)));
-  }
+    try {
+      chatHistory = JSON.parse(savedHistory);
+      chatHistory.forEach(msg => {
+      const timestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+      if (!isNaN(timestamp.getTime())) {
+        addMessageToChat(msg.content, msg.role, false, timestamp);
+      } else {
+        console.warn("Invalid timestamp found localStorage:", msg.timestamp);
+        addMessageToChat(msg.content, msg.role, false, new Date());
+      }
+    });
+  } catch (e) {
+    console.error("Failed to parse chat history from localStorage:", e);
+    localStorage.removeItem(`chatHistory_${currentTopic}`) // Clear corrupted data
+    chatHistory = []; //Reset History
+  }  
+} else {
+  chatHistory = []; //Initialize if nothing is saved
+}
 }
 
 function saveOfflineQueueToLocalStorage() {
@@ -600,18 +626,16 @@ async function sendMessageToServer(msg) {
 
 
 //Add message to chat with sanitization to prevent XSS attacks
-function addMessageToChat(message, sender, isLoading = false, timestamp = new Date()) {
+// dashboard.js
+function addMessageToChat(message, sender, isLoading = false, timestamp = new Date()) { 
   if (!chatMessages) return null;
   
-  // Create a main wrapper for the message and its timestamp
   const messageWrapper = document.createElement('div');
   messageWrapper.className = `message ${sender}-message`;
   
-  // Create the bubble for the message content
   const contentDiv = document.createElement('div');
   contentDiv.className = 'message-content';
 
-  // If it's a loading message, show the typing indicator
   if (isLoading) {
     contentDiv.innerHTML = `
       <div class="typing-indicator">
@@ -621,39 +645,28 @@ function addMessageToChat(message, sender, isLoading = false, timestamp = new Da
       </div>
     `;
   } else {
-    // Otherwise, show the sanitized message text
     const messageP = document.createElement('p');
-    
-    // Replace newline characters with <br> tags for proper formatting
-    let  formattedMessage = message.replace(/\n/g, '<br>');
+    let formattedMessage = message.replace(/\n/g, '<br>');
     formattedMessage = formattedMessage.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    
     messageP.innerHTML = sanitizeInput(formattedMessage);
     contentDiv.appendChild(messageP);
   }
 
-  // Create the timestamp
-  const timestamp = new Date().toLocaleTimeString([], {
-    hour: 'numeric',
-    minute: '2-digit'
-  });
+  // Create the timestamp element
   const timestampSpan = document.createElement('span');
   timestampSpan.className = 'timestamp';
-  timestampSpan.textContent = timestamp.toLocaleTimeString([], {
+  timestampSpan.textContent = timestamp.toLocaleTimeString([], { 
     hour: 'numeric',
     minute: '2-digit'
   });
   
-  // Append the content bubble to the wrapper
   messageWrapper.appendChild(contentDiv);
-  // Only add a timestamp if it's not a loading indicator
   if (!isLoading) {
     messageWrapper.appendChild(timestampSpan);
   }
   
   chatMessages.appendChild(messageWrapper);
   
-  // Scroll to the bottom
   chatMessages.scrollTo({
     top: chatMessages.scrollHeight,
     behavior: 'smooth'
