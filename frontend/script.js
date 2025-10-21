@@ -272,3 +272,92 @@ getEl('continueGuest')?.addEventListener('click', async () => {
   }
 });
 
+// Mobile Menu Handler
+function initializeMobileMenu() {
+  if (document.querySelector('.mobile-menu-btn')) return;
+  
+  const header = document.querySelector('header');
+  if (!header) return;
+
+  const mobileMenuBtn = document.createElement('button');
+  mobileMenuBtn.className = 'mobile-menu-btn';
+  mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
+  mobileMenuBtn.innerHTML = '☰';
+
+  const userMenu = document.querySelector('.user-menu');
+  if (userMenu) {
+    header.insertBefore(mobileMenuBtn, userMenu);
+  } else {
+    header.appendChild(mobileMenuBtn);
+  }
+
+  const mobileNavOverlay = document.createElement('div');
+  mobileNavOverlay.className = 'mobile-nav-overlay';
+  mobileNavOverlay.setAttribute('aria-hidden', 'true');
+  
+  const desktopNav = document.querySelector('.desktop-nav');
+  const navLinks = desktopNav ? Array.from(desktopNav.querySelectorAll('a')) : [];
+  
+  let navLinksHTML = '';
+  navLinks.forEach(link => {
+    navLinksHTML += `<a href="${link.href}">${link.textContent}</a>`;
+  });
+
+  mobileNavOverlay.innerHTML = `
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <div class="logo">
+          <div class="logo-text" style="font-size: 32px;">BB</div>
+          <span class="brand-name" style="font-size: 14px;">BloomBuddy</span>
+        </div>
+        <button class="mobile-nav-close" aria-label="Close navigation menu">&times;</button>
+      </div>
+      <div class="mobile-nav-links">
+        ${navLinksHTML}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(mobileNavOverlay);
+
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileNavOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  });
+
+  const closeBtn = mobileNavOverlay.querySelector('.mobile-nav-close');
+  closeBtn.addEventListener('click', closeMobileMenu);
+
+  mobileNavOverlay.addEventListener('click', (e) => {
+    if (e.target === mobileNavOverlay) {
+      closeMobileMenu();
+    }
+  });
+
+  const mobileLinks = mobileNavOverlay.querySelectorAll('.mobile-nav-links a');
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      closeMobileMenu();
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileNavOverlay.getAttribute('aria-hidden') === 'false') {
+      closeMobileMenu();
+    }
+  });
+
+  function closeMobileMenu() {
+    mobileNavOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMobileMenu);
+} else {
+  initializeMobileMenu();
+}
+
+setTimeout(initializeMobileMenu, 100);
+

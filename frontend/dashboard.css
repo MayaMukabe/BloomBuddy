@@ -10,6 +10,7 @@ html, body {
   padding: 0;
   height: 100%;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -30,11 +31,14 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 15px 20px;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 1002;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
 .logo {
@@ -43,10 +47,11 @@ header {
   align-items: center;
   justify-content: center;
   text-align: center;
+  min-width: 60px;
 }
 
 .logo-text {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: 900;
   color: #8B5CF6;
   text-shadow: 3px 3px 0px #000, 6px 6px 10px rgba(0,0,0,0.5);
@@ -55,14 +60,14 @@ header {
 
 .brand-name {
   font-family: 'Brush Script MT', cursive;
-  font-size: 22px;
+  font-size: 18px;
   color: white;
   margin-top: 5px;
 }
 
 .desktop-nav {
   display: flex;
-  gap: 30px;
+  gap: 20px;
   background: linear-gradient(to right, #ffc0cb, #c0eaff);
   padding: 10px 20px;
   border-radius: 8px;
@@ -72,17 +77,118 @@ header {
   color: #000;
   text-decoration: none;
   font-weight: bold;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 28px;
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* Mobile Navigation Overlay */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+}
+
+.mobile-nav-overlay[aria-hidden="false"] {
+  display: block;
+}
+
+.mobile-nav-content {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: 100%;
+  background: linear-gradient(to bottom, #5b3ba6, #b5edff);
+  transition: right 0.3s ease;
+  z-index: 2001;
+  overflow-y: auto;
+}
+
+.mobile-nav-overlay[aria-hidden="false"] .mobile-nav-content {
+  right: 0;
+}
+
+.mobile-nav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-nav-close {
+  background: #000;
+  color: #fff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.mobile-nav-links a {
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s ease;
+}
+
+.mobile-nav-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .user-menu {
   display: flex;
   align-items: center;
   gap: 15px;
+  position: relative;
 }
 
 .user-email {
   color: white;
   font-size: 14px;
+  display: none;
 }
 
 .logout-btn {
@@ -93,97 +199,14 @@ header {
   border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
+  display: none;
 }
 
 .logout-btn:hover {
   background: #ff5252;
 }
 
-/* Main Content */
-main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
-}
-
-.dashboard-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-}
-
-.chatbot-box {
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 40px 20px;
-  border-radius: 20px;
-  text-align: center;
-  color: #fff;
-  max-width: 600px;
-  width: 90%;
-  backdrop-filter: blur(10px);
-}
-
-.ai-icon {
-  font-size: 60px;
-  margin-bottom: 20px;
-  display: block;
-}
-
-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 30px;
-  color: white;
-}
-
-.button-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.dashboard-btn {
-  background-color: #82d9f8;
-  color: #000;
-  padding: 15px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-}
-
-.dashboard-btn:hover {
-  background-color: #b2f2ff;
-  transform: translateY(-2px);
-}
-
-/*Profile Avatar Dropdown */
-.user-menu {
-  position: relative;
-}
-
+/* Profile Avatar Dropdown */
 .profile-avatar {
   width: 40px;
   height: 40px;
@@ -196,8 +219,9 @@ h2 {
   font-weight: bold;
   font-size: 18px;
   cursor: pointer;
-  border: 2ox solid white;
-  transition: transformation 0.2x ease;
+  border: 2px solid white;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .profile-avatar:hover {
@@ -218,10 +242,9 @@ h2 {
   display: none;
   flex-direction: column;
   overflow: hidden;
-  cursor: pointer;
 }
 
-.dropdown-header{
+.dropdown-header {
   padding: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
@@ -249,17 +272,101 @@ h2 {
   width: 20px;
   height: 20px;
   color: #9ca3af;
+  flex-shrink: 0;
 }
 
 .dropdown-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.dropdown-item.logout .dropdown-icon  {
-  color: #ff6b6b;
-  border-top: 1px solid rgba(255,255,255,0.1);
+.dropdown-item.logout {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.dropdown-item.logout .dropdown-icon {
+  color: #ff6b6b;
+}
+
+/* Main Content */
+main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: calc(100vh - 80px);
+}
+
+.dashboard-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  padding: 20px;
+}
+
+.chatbot-box {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 40px 20px;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.ai-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.button-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.dashboard-btn {
+  background-color: #82d9f8;
+  color: #000;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dashboard-btn:hover {
+  background-color: #b2f2ff;
+  transform: translateY(-2px);
+}
 
 /* Chat Modal */
 .chat-modal {
@@ -281,6 +388,7 @@ h2 {
   width: 100%;
   max-width: 600px;
   height: 80vh;
+  max-height: 90vh;
   background: linear-gradient(to bottom, #b5edff, #ffb3c1 50%, #5b3ba6 100%);
   border: 5px solid #000;
   border-radius: 12px;
@@ -293,20 +401,22 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 15px;
   border-bottom: 2px solid #000;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .chat-header h3 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   margin: 0;
   flex-grow: 1;
   text-align: left;
+  min-width: 150px;
 }
 
-.export-btn{
+.export-btn {
   background: none;
   border: 1px solid #000;
   color: #000;
@@ -316,7 +426,7 @@ h2 {
   font-size: 12px;
   font-weight: bold;
   white-space: nowrap;
-  transition: background-colour 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .export-btn:hover {
@@ -335,6 +445,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .chat-messages {
@@ -367,6 +478,7 @@ h2 {
   font-size: 16px;
   line-height: 1.4;
   position: relative;
+  word-wrap: break-word;
 }
 
 .user-message .message-content {
@@ -381,21 +493,22 @@ h2 {
   border-bottom-left-radius: 4px;
 }
 
-.timestamp{
+.timestamp {
   font-size: 11px;
   color: #333;
   margin-top: 5px;
   padding: 0 8px;
 }
 
-.typing-indicator{
+.typing-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
+  padding: 10px 0;
 }
 
-.typing-indicator span{
+.typing-indicator span {
   height: 8px;
   width: 8px;
   background-color: #555;
@@ -423,7 +536,7 @@ h2 {
 
 .chat-input-container {
   display: flex;
-  padding: 20px;
+  padding: 15px;
   border-top: 2px solid #000;
   gap: 10px;
 }
@@ -435,6 +548,7 @@ h2 {
   border-radius: 25px;
   font-size: 16px;
   background: rgba(255,255,255,0.9);
+  min-height: 45px;
 }
 
 .send-btn {
@@ -446,6 +560,8 @@ h2 {
   cursor: pointer;
   font-weight: bold;
   transition: background 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .send-btn:hover {
@@ -455,48 +571,6 @@ h2 {
 .send-btn:disabled {
   background: #666;
   cursor: not-allowed;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .desktop-nav {
-    display: none;
-  }
-
-  .user-menu {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .user-email {
-    font-size: 12px;
-  }
-
-  .chatbot-box {
-    padding: 20px 10px;
-  }
-
-  h2 {
-    font-size: 1.2rem;
-  }
-
-  .button-group {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .dashboard-btn {
-    width: 100%;
-  }
-
-  .chat-modal-content {
-    height: 90vh;
-    margin: 10px;
-  }
-
-  .message-content {
-    max-width: 85%;
-  }
 }
 
 /* About Modal */
@@ -556,6 +630,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .about-body {
@@ -616,19 +691,166 @@ h2 {
   border: 2px solid #000;
 }
 
-/* Mobile Responsive for About Modal */
+/* Tablet Responsive (768px - 1024px) */
+@media (max-width: 1024px) {
+  .desktop-nav {
+    gap: 15px;
+    padding: 8px 15px;
+  }
+
+  .desktop-nav a {
+    font-size: 13px;
+  }
+
+  .logo-text {
+    font-size: 36px;
+  }
+
+  .brand-name {
+    font-size: 16px;
+  }
+}
+
+/* Mobile Responsive (max-width: 768px) */
 @media (max-width: 768px) {
+  header {
+    padding: 12px 15px;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .logo-text {
+    font-size: 32px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .user-email {
+    display: none;
+  }
+
+  .logout-btn {
+    display: none;
+  }
+
+  main {
+    padding: 20px 15px;
+    min-height: calc(100vh - 70px);
+  }
+
+  .overlay {
+    padding: 10px;
+  }
+
+  .chatbot-box {
+    padding: 30px 15px;
+  }
+
+  .ai-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+
+  .button-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .dashboard-btn {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 15px;
+  }
+
+  .chat-modal {
+    padding: 10px;
+  }
+
+  .chat-modal-content {
+    height: 90vh;
+    border-width: 3px;
+  }
+
+  .chat-header {
+    padding: 12px;
+  }
+
+  .chat-header h3 {
+    font-size: 18px;
+    min-width: auto;
+  }
+
+  .export-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .chat-close {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .chat-messages {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .message-content {
+    max-width: 85%;
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  .timestamp {
+    font-size: 10px;
+  }
+
+  .chat-input-container {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  #chatInput {
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+
+  .send-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
   .about-modal-content {
     margin: 10px;
     max-height: 95vh;
+    border-width: 3px;
+  }
+
+  .about-header {
+    padding: 15px;
+  }
+
+  .about-header h3 {
+    font-size: 22px;
   }
 
   .about-body {
     padding: 20px;
-  }
-
-  .about-header h3 {
-    font-size: 24px;
   }
 
   .about-logo-text {
@@ -641,5 +863,155 @@ h2 {
 
   .about-description {
     font-size: 14px;
+  }
+
+  .about-features {
+    padding-left: 15px;
+  }
+
+  .about-mission {
+    padding: 15px;
+    font-size: 14px;
+  }
+
+  .profile-dropdown {
+    width: 200px;
+  }
+
+  .dropdown-item {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+/* Small Mobile Responsive (max-width: 480px) */
+@media (max-width: 480px) {
+  header {
+    padding: 10px 12px;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+
+  .brand-name {
+    font-size: 12px;
+  }
+
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .mobile-menu-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+
+  main {
+    padding: 15px 10px;
+  }
+
+  .chatbot-box {
+    padding: 20px 12px;
+  }
+
+  .ai-icon {
+    font-size: 45px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .button-group {
+    gap: 10px;
+  }
+
+  .dashboard-btn {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+
+  .chat-header h3 {
+    font-size: 16px;
+  }
+
+  .export-btn {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .message-content {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  #chatInput {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .send-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .about-header h3 {
+    font-size: 20px;
+  }
+
+  .about-logo-text {
+    font-size: 32px;
+  }
+
+  .about-brand-name {
+    font-size: 18px;
+  }
+
+  .profile-dropdown {
+    width: 180px;
+    top: 50px;
+  }
+
+  .dropdown-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .dropdown-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Very Small Devices (max-width: 360px) */
+@media (max-width: 360px) {
+  .logo-text {
+    font-size: 24px;
+  }
+
+  .brand-name {
+    font-size: 11px;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  .dashboard-btn {
+    font-size: 13px;
+    padding: 10px 8px;
+  }
+
+  .chat-header h3 {
+    font-size: 15px;
+  }
+
+  .message-content {
+    max-width: 90%;
   }
 }
