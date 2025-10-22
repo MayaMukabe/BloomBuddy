@@ -231,85 +231,137 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
 // Mobile Menu Handler
 function initializeMobileMenu() {
   if (document.querySelector('.mobile-menu-btn')) return;
   
-  const header = document.querySelector('header');
-  if (!header) return;
-
-  const mobileMenuBtn = document.createElement('button');
-  mobileMenuBtn.className = 'mobile-menu-btn';
-  mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
-  mobileMenuBtn.innerHTML = '☰';
-
   const userMenu = document.querySelector('.user-menu');
-  if (userMenu) {
-    header.insertBefore(mobileMenuBtn, userMenu);
-  } else {
+  if (!userMenu) return;
+
+  // Hide desktop user menu on mobile
+  const mediaQuery = window.matchMedia('(max-width: 768px)');
+  
+  function handleMobileView(e) {
+    if (e.matches) {
+      userMenu.style.display = 'none';
+      if (!document.querySelector('.mobile-menu-btn')) {
+        createMobileMenu();
+      }
+    } else {
+      userMenu.style.display = 'flex';
+      const mobileBtn = document.querySelector('.mobile-menu-btn');
+      if (mobileBtn) mobileBtn.remove();
+    }
+  }
+
+  function createMobileMenu() {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    const mobileMenuBtn = document.createElement('button');
+    mobileMenuBtn.className = 'mobile-menu-btn';
+    mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
+    mobileMenuBtn.innerHTML = '☰';
+
+    // Insert where the user menu was
     header.appendChild(mobileMenuBtn);
-  }
 
-  const mobileNavOverlay = document.createElement('div');
-  mobileNavOverlay.className = 'mobile-nav-overlay';
-  mobileNavOverlay.setAttribute('aria-hidden', 'true');
-  
-  const desktopNav = document.querySelector('.desktop-nav');
-  const navLinks = desktopNav ? Array.from(desktopNav.querySelectorAll('a')) : [];
-  
-  let navLinksHTML = '';
-  navLinks.forEach(link => {
-    navLinksHTML += `<a href="${link.href}">${link.textContent}</a>`;
-  });
-
-  mobileNavOverlay.innerHTML = `
-    <div class="mobile-nav-content">
-      <div class="mobile-nav-header">
-        <div class="logo">
-          <div class="logo-text" style="font-size: 32px;">BB</div>
-          <span class="brand-name" style="font-size: 14px;">BloomBuddy</span>
-        </div>
-        <button class="mobile-nav-close" aria-label="Close navigation menu">&times;</button>
-      </div>
-      <div class="mobile-nav-links">
-        ${navLinksHTML}
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(mobileNavOverlay);
-
-  mobileMenuBtn.addEventListener('click', () => {
-    mobileNavOverlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  });
-
-  const closeBtn = mobileNavOverlay.querySelector('.mobile-nav-close');
-  closeBtn.addEventListener('click', closeMobileMenu);
-
-  mobileNavOverlay.addEventListener('click', (e) => {
-    if (e.target === mobileNavOverlay) {
-      closeMobileMenu();
-    }
-  });
-
-  const mobileLinks = mobileNavOverlay.querySelectorAll('.mobile-nav-links a');
-  mobileLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      closeMobileMenu();
-    });
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileNavOverlay.getAttribute('aria-hidden') === 'false') {
-      closeMobileMenu();
-    }
-  });
-
-  function closeMobileMenu() {
+    const mobileNavOverlay = document.createElement('div');
+    mobileNavOverlay.className = 'mobile-nav-overlay';
     mobileNavOverlay.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    
+    const desktopNav = document.querySelector('.desktop-nav');
+    const navLinks = desktopNav ? Array.from(desktopNav.querySelectorAll('a')) : [];
+    
+    let navLinksHTML = '';
+    navLinks.forEach(link => {
+      navLinksHTML += `<a href="${link.href}">${link.textContent}</a>`;
+    });
+
+    // Get user info
+    const userEmail = document.getElementById('dropdownUserEmail')?.textContent || 'Guest';
+    const userInitial = document.getElementById('userInitial')?.textContent || 'B';
+
+    mobileNavOverlay.innerHTML = `
+      <div class="mobile-nav-content">
+        <div class="mobile-nav-header">
+          <div class="logo">
+            <div class="logo-text" style="font-size: 32px;">BB</div>
+            <span class="brand-name" style="font-size: 14px;">BloomBuddy</span>
+          </div>
+          <button class="mobile-nav-close" aria-label="Close navigation menu">&times;</button>
+        </div>
+        <div class="mobile-nav-links">
+          ${navLinksHTML}
+        </div>
+        <div class="mobile-nav-footer">
+          <div class="mobile-user-info">
+            <div class="mobile-user-avatar">${userInitial}</div>
+            <div class="mobile-user-email">${userEmail}</div>
+          </div>
+          <button class="mobile-logout-btn" id="mobileLogoutBtn">
+            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(mobileNavOverlay);
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileNavOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+
+    const closeBtn = mobileNavOverlay.querySelector('.mobile-nav-close');
+    closeBtn.addEventListener('click', closeMobileMenu);
+
+    mobileNavOverlay.addEventListener('click', (e) => {
+      if (e.target === mobileNavOverlay) {
+        closeMobileMenu();
+      }
+    });
+
+    const mobileLinks = mobileNavOverlay.querySelectorAll('.mobile-nav-links a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMobileMenu();
+      });
+    });
+
+    // Mobile logout handler
+    const mobileLogoutBtn = mobileNavOverlay.querySelector('#mobileLogoutBtn');
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', async () => {
+        try {
+          await window.signOut(window.auth);
+          console.log('User signed out successfully');
+          window.location.href = 'index.html';
+        } catch (error) {
+          console.error('Logout error:', error);
+          alert('Error signing out. Please try again.');
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileNavOverlay.getAttribute('aria-hidden') === 'false') {
+        closeMobileMenu();
+      }
+    });
+
+    function closeMobileMenu() {
+      mobileNavOverlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
   }
+
+  mediaQuery.addListener(handleMobileView);
+  handleMobileView(mediaQuery);
 }
 
 if (document.readyState === 'loading') {
