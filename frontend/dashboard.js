@@ -8,7 +8,7 @@ const API_BASE_URL = (() => {
   }
   
   // Production environment
-  return 'https://your-backend-url.railway.app'; //TODO UPDATE THIS WITH DEPLOYED BACKEND URL!
+  return 'https://bloombuddy-backend.onrender.com'; 
 })();
 
 console.log('Using backend API:', API_BASE_URL);
