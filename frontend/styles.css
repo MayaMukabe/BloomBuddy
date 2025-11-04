@@ -346,10 +346,12 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 40px 20px;
-  min-height: calc(100vh - 80px);
+  padding-top: 140px; /* Account for sticky header - increased for better spacing */
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 h2 {
@@ -557,7 +559,8 @@ h2 {
 
   main {
     padding: 30px 15px;
-    min-height: calc(100vh - 70px);
+    padding-top: 120px; /* Account for sticky header on mobile */
+    min-height: 100vh;
   }
 
   h2 {
@@ -643,6 +646,8 @@ h2 {
 
   main {
     padding: 20px 12px;
+    padding-top: 110px; /* Account for sticky header on small mobile */
+    min-height: 100vh;
   }
 
   h2 {
@@ -778,6 +783,8 @@ h2 {
 @media (max-height: 500px) and (orientation: landscape) {
   main {
     padding: 20px 15px;
+    padding-top: 110px; /* Account for sticky header in landscape */
+    min-height: 100vh;
   }
 
   h2 {
@@ -814,6 +821,7 @@ h2 {
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 120px; /* Account for sticky header when scrolling */
 }
 
 /* Selection Styles */

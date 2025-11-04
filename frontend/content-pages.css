@@ -4,9 +4,11 @@
 .content-main {
   flex-grow: 1;
   padding: 20px;
-  min-height: calc(100vh - 80px);
+  padding-top: 140px; /* Account for sticky header - increased for better spacing */
+  min-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .content-container {
@@ -18,7 +20,7 @@
 .content-header {
   text-align: center;
   margin-bottom: 30px;
-  padding-top: 20px;
+  padding-top: 0;
 }
 
 .content-header h1 {
@@ -131,6 +133,51 @@
   color: rgba(255,255,255,0.9);
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .content-main {
+    padding: 20px 15px;
+    padding-top: 120px; /* Account for sticky header on mobile */
+    min-height: 100vh;
+  }
+
+  .content-header h1 {
+    font-size: 2rem;
+  }
+
+  .content-subtitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-main {
+    padding: 15px 10px;
+    padding-top: 110px; /* Account for sticky header on small mobile */
+    min-height: 100vh;
+  }
+
+  .content-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .content-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .resource-section,
+  .podcast-section {
+    padding: 15px;
+  }
+
+  .resource-buttons,
+  .podcast-buttons,
+  .crisis-buttons,
+  .coming-soon-buttons {
+    grid-template-columns: 1fr;
+  }
 }
 
 /*

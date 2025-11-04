@@ -24,6 +24,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-top: 0; /* Ensure no padding that would affect layout */
 }
 
 /* Header */
@@ -357,10 +358,12 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 40px 20px;
-  min-height: calc(100vh - 80px);
+  padding-top: 140px; /* Account for sticky header - increased for better spacing */
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .dashboard-container {
@@ -812,7 +815,8 @@ h2 {
 
   main {
     padding: 20px 15px;
-    min-height: calc(100vh - 70px);
+    padding-top: 120px; /* Account for sticky header on mobile */
+    min-height: 100vh;
   }
 
   .overlay {
@@ -981,6 +985,8 @@ h2 {
 
   main {
     padding: 15px 10px;
+    padding-top: 110px; /* Account for sticky header on small mobile */
+    min-height: 100vh;
   }
 
   .chatbot-box {

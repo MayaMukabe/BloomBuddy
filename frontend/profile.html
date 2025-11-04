@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - BloomBuddy</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="profile.css" />
+  <link rel="icon" type="image/png" href="Images/favicon.png" />
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAF4xJYedIsOuKXD7JOLuR4gP74f4Tue90",
+      authDomain: "bloombuddy-id.firebaseapp.com",
+      projectId: "bloombuddy-id",
+      storageBucket: "bloombuddy-id.firebasestorage.app",
+      messagingSenderId: "837626738147",
+      appId: "1:837626738147:web:63ad0819361b0281dc9cd6",
+      measurementId: "G-SNEL7GGE3H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    window.auth = auth;
+    window.db = db;
+    window.signOut = signOut;
+    window.onAuthStateChanged = onAuthStateChanged;
+    window.doc = doc;
+    window.getDoc = getDoc;
+    window.setDoc = setDoc;
+    window.updateDoc = updateDoc;
+    window.serverTimestamp = serverTimestamp;
+    window.updateProfile = updateProfile;
+    window.updateEmail = updateEmail;
+    window.updatePassword = updatePassword;
+    window.reauthenticateWithCredential = reauthenticateWithCredential;
+    window.EmailAuthProvider = EmailAuthProvider;
+  </script>
+  
+  <script src="profile.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-text">BB</div>
+      <span class="brand-name">BloomBuddy</span>
+    </div>
+
+    <nav class="desktop-nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="resources.html">Resources</a>
+      <a href="podcasts.html">Podcasts</a>
+      <a href="#" id="aboutLink">About</a>
+    </nav>
+
+    <div class="user-menu">
+      <div class="profile-avatar" id="profileAvatar">
+        <span id="userInitial">B</span>
+      </div>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <span id="dropdownUserEmail">user@example.com</span>
+        </div>
+        <a href="profile.html" class="dropdown-item">
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+          </svg>
+          My Profile
+        </a>
+        <a href="#" class="dropdown-item">
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.532 1.532 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+          Settings
+        </a>
+        <a href="#" id="logoutBtn" class="dropdown-item logout">
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+          Logout
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="profile-main">
+    <div class="profile-container">
+      <div class="profile-header">
+        <h1>My Profile</h1>
+        <p class="profile-subtitle">Manage your account settings and preferences</p>
+      </div>
+
+      <!-- Profile Tabs -->
+      <div class="profile-tabs">
+        <button class="tab-btn active" data-tab="profile">Profile</button>
+        <button class="tab-btn" data-tab="preferences">Preferences</button>
+        <button class="tab-btn" data-tab="security">Security</button>
+        <button class="tab-btn" data-tab="data">My Data</button>
+      </div>
+
+      <!-- Profile Tab Content -->
+      <div class="tab-content active" id="profileTab">
+        <div class="profile-section">
+          <div class="profile-avatar-large">
+            <div class="avatar-circle" id="profileAvatarLarge">
+              <span id="profileInitialLarge">B</span>
+            </div>
+            <button class="change-avatar-btn" id="changeAvatarBtn">Change Avatar</button>
+          </div>
+
+          <form class="profile-form" id="profileForm">
+            <div class="form-group">
+              <label for="displayName">Display Name</label>
+              <input type="text" id="displayName" placeholder="Your name" />
+              <span class="form-help">This is how you'll appear in the app</span>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="your@email.com" />
+              <span class="form-help">Your email address for login and notifications</span>
+            </div>
+
+            <div class="form-group">
+              <label for="bio">About Me</label>
+              <textarea id="bio" rows="4" placeholder="Share a bit about yourself and your spiritual journey..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="favoriteVerse">Favorite Bible Verse</label>
+              <input type="text" id="favoriteVerse" placeholder="e.g., Philippians 4:13" />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Save Changes</button>
+              <button type="button" class="btn-secondary" id="cancelProfileBtn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Preferences Tab Content -->
+      <div class="tab-content" id="preferencesTab">
+        <div class="profile-section">
+          <h2>App Preferences</h2>
+          
+          <div class="preference-group">
+            <div class="preference-item">
+              <div class="preference-info">
+                <h3>Daily Reminder</h3>
+                <p>Receive a daily reminder to check in with BloomBuddy</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="dailyReminder" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="preference-item">
+              <div class="preference-info">
+                <h3>Verse of the Day</h3>
+                <p>Get a daily Bible verse delivered to you</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="verseOfDay" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="preference-item">
+              <div class="preference-info">
+                <h3>Prayer Reminders</h3>
+                <p>Reminders for your prayer times</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="prayerReminders" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="preference-group">
+            <h3>Preferred Topics</h3>
+            <div class="topic-tags">
+              <button class="topic-tag" data-topic="anxiety">Anxiety</button>
+              <button class="topic-tag" data-topic="faith">Faith</button>
+              <button class="topic-tag" data-topic="gratitude">Gratitude</button>
+              <button class="topic-tag" data-topic="prayer">Prayer</button>
+              <button class="topic-tag" data-topic="peace">Peace</button>
+              <button class="topic-tag" data-topic="hope">Hope</button>
+              <button class="topic-tag" data-topic="forgiveness">Forgiveness</button>
+              <button class="topic-tag" data-topic="strength">Strength</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="savePreferencesBtn">Save Preferences</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Tab Content -->
+      <div class="tab-content" id="securityTab">
+        <div class="profile-section">
+          <h2>Security Settings</h2>
+          
+          <div class="security-item">
+            <div class="security-info">
+              <h3>Change Password</h3>
+              <p>Update your password to keep your account secure</p>
+            </div>
+            <button class="btn-secondary" id="changePasswordBtn">Change Password</button>
+          </div>
+
+          <div class="security-item">
+            <div class="security-info">
+              <h3>Account Status</h3>
+              <p id="accountStatus">Regular Account</p>
+            </div>
+          </div>
+
+          <div class="security-item">
+            <div class="security-info">
+              <h3>Member Since</h3>
+              <p id="memberSince">Loading...</p>
+            </div>
+          </div>
+
+          <div class="security-item">
+            <div class="security-info">
+              <h3>Last Login</h3>
+              <p id="lastLogin">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Data Tab Content -->
+      <div class="tab-content" id="dataTab">
+        <div class="profile-section">
+          <h2>My Data & Privacy</h2>
+          
+          <div class="data-item">
+            <div class="data-info">
+              <h3>Conversation History</h3>
+              <p>Download all your chat conversations with BloomBuddy</p>
+            </div>
+            <button class="btn-secondary" id="downloadDataBtn">Download Data</button>
+          </div>
+
+          <div class="data-item">
+            <div class="data-info">
+              <h3>Clear Chat History</h3>
+              <p>Delete all your conversation history (cannot be undone)</p>
+            </div>
+            <button class="btn-danger" id="clearHistoryBtn">Clear History</button>
+          </div>
+
+          <div class="data-item">
+            <div class="data-info">
+              <h3>Delete Account</h3>
+              <p>Permanently delete your account and all associated data</p>
+            </div>
+            <button class="btn-danger" id="deleteAccountBtn">Delete Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Change Password Modal -->
+  <div class="modal" id="passwordModal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h3 class="modal-title">Change Password</h3>
+      <form id="passwordForm" class="modal-form">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" required />
+
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" minlength="6" required />
+
+        <label for="confirmNewPassword">Confirm New Password</label>
+        <input type="password" id="confirmNewPassword" minlength="6" required />
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Update Password</button>
+          <button type="button" class="btn-secondary" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Avatar Selection Modal -->
+  <div class="modal" id="avatarModal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h3 class="modal-title">Choose Avatar Color</h3>
+      <div class="avatar-colors">
+        <button class="avatar-color-btn" data-color="#8B5CF6" style="background: #8B5CF6;"></button>
+        <button class="avatar-color-btn" data-color="#EF4444" style="background: #EF4444;"></button>
+        <button class="avatar-color-btn" data-color="#10B981" style="background: #10B981;"></button>
+        <button class="avatar-color-btn" data-color="#F59E0B" style="background: #F59E0B;"></button>
+        <button class="avatar-color-btn" data-color="#3B82F6" style="background: #3B82F6;"></button>
+        <button class="avatar-color-btn" data-color="#EC4899" style="background: #EC4899;"></button>
+        <button class="avatar-color-btn" data-color="#6366F1" style="background: #6366F1;"></button>
+        <button class="avatar-color-btn" data-color="#14B8A6" style="background: #14B8A6;"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal (reused from dashboard) -->
+  <div class="about-modal" id="aboutModal" aria-hidden="true">
+    <div class="about-modal-content">
+      <div class="about-header">
+        <h3>About BloomBuddy</h3>
+        <button class="about-close" data-close>&times;</button>
+      </div>
+      
+      <div class="about-body">
+        <div class="about-logo">
+          <div class="about-logo-text">BB</div>
+          <span class="about-brand-name">BloomBuddy</span>
+        </div>
+        
+        <div class="about-description">
+          <p>Welcome to <strong>BloomBuddy</strong>, your personal sanctuary for spiritual growth and emotional well-being.</p>
+          <p class="about-mission">Our mission is to help you bloom into the person you were created to be, one conversation at a time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
