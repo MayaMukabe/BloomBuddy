@@ -250,10 +250,36 @@ document.addEventListener('click', async (e) => {
 window.onAuthStateChanged?.(window.auth, (user) => {
   if (user) {
     console.log('User is signed in:', user);
-    // User is signed in, you can redirect or update UI
+    // Update profile dropdown info
+    const userInitial = getEl('userInitial');
+    const dropdownUserEmail = getEl('dropdownUserEmail');
+    if (userInitial) {
+      userInitial.textContent = (user.displayName || user.email || 'B').charAt(0).toUpperCase();
+    }
+    if (dropdownUserEmail) {
+      dropdownUserEmail.textContent = user.email || 'Guest';
+    }
   } else {
     console.log('User is signed out');
     // User is signed out
+  }
+});
+
+// PROFILE DROPDOWN MANAGEMENT
+const profileAvatar = getEl('profileAvatar');
+const profileDropdown = getEl('profileDropdown');
+
+if (profileAvatar) {
+  profileAvatar.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = profileDropdown.style.display === 'none' || !profileDropdown.style.display;
+    profileDropdown.style.display = isHidden ? 'flex' : 'none';
+  });
+}
+
+window.addEventListener('click', () => {
+  if (profileDropdown) {
+    profileDropdown.style.display = 'none';
   }
 });
 

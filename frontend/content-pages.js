@@ -6,11 +6,40 @@ function getEl(id) { return document.getElementById(id); }
 window.onAuthStateChanged?.(window.auth, (user) => {
   if (user) {
     console.log('User is signed in:', user);
-    getEl('userEmail').textContent = user.email || 'User';
+    const userEmailEl = getEl('userEmail');
+    if (userEmailEl) userEmailEl.textContent = user.email || 'User';
+    
+    // Update profile dropdown info
+    const userInitial = getEl('userInitial');
+    const dropdownUserEmail = getEl('dropdownUserEmail');
+    if (userInitial) {
+      userInitial.textContent = (user.displayName || user.email || 'B').charAt(0).toUpperCase();
+    }
+    if (dropdownUserEmail) {
+      dropdownUserEmail.textContent = user.email || 'Guest';
+    }
   } else {
     console.log('User is signed out');
     // Redirect to login if not authenticated
     window.location.href = 'index.html';
+  }
+});
+
+// PROFILE DROPDOWN MANAGEMENT
+const profileAvatar = getEl('profileAvatar');
+const profileDropdown = getEl('profileDropdown');
+
+if (profileAvatar) {
+  profileAvatar.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = profileDropdown.style.display === 'none' || !profileDropdown.style.display;
+    profileDropdown.style.display = isHidden ? 'flex' : 'none';
+  });
+}
+
+window.addEventListener('click', () => {
+  if (profileDropdown) {
+    profileDropdown.style.display = 'none';
   }
 });
 

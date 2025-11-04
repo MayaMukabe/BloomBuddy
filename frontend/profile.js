@@ -61,8 +61,17 @@ async function loadUserProfile(userId) {
           prayerReminders: false,
           topics: []
         },
-        createdAt: new Date().toISOString()
+        createdAt: window.serverTimestamp()
       };
+      
+      // Save the new profile to Firestore
+      await window.setDoc(userDocRef, userProfile);
+      console.log('New profile created and saved to Firestore');
+      
+      // Populate the UI with the new profile
+      populateProfileForm(userProfile);
+      populatePreferences(userProfile);
+      populateSecurityInfo(userProfile);
     }
   } catch (error) {
     console.error('Error loading profile:', error);
@@ -86,6 +95,12 @@ function populateProfileForm(profile) {
   // Set avatar color
   if (profileAvatarLarge && profile.avatarColor) {
     profileAvatarLarge.style.backgroundColor = profile.avatarColor;
+  }
+  
+  // Also update the header avatar color
+  const profileAvatar = getEl('profileAvatar');
+  if (profileAvatar && profile.avatarColor) {
+    profileAvatar.style.backgroundColor = profile.avatarColor;
   }
 }
 
@@ -124,12 +139,30 @@ function populateSecurityInfo(profile) {
   }
   
   if (memberSince && profile.createdAt) {
-    const date = new Date(profile.createdAt);
+    // Handle Firestore Timestamp
+    let date;
+    if (profile.createdAt.toDate) {
+      // Firestore Timestamp
+      date = profile.createdAt.toDate();
+    } else if (profile.createdAt.seconds) {
+      // Firestore Timestamp as object
+      date = new Date(profile.createdAt.seconds * 1000);
+    } else if (typeof profile.createdAt === 'string') {
+      // ISO string
+      date = new Date(profile.createdAt);
+    } else {
+      // Fallback to current date
+      date = new Date();
+    }
+    
     memberSince.textContent = date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
     });
+  } else if (memberSince) {
+    // Fallback if no createdAt found
+    memberSince.textContent = 'Not available';
   }
   
   if (lastLogin) {
@@ -282,8 +315,12 @@ avatarColorBtns.forEach(btn => {
     // Update UI
     const profileAvatarLarge = getEl('profileAvatarLarge');
     const profileAvatar = getEl('profileAvatar');
-    if (profileAvatarLarge) profileAvatarLarge.style.backgroundColor = color;
-    if (profileAvatar) profileAvatar.style.backgroundColor = color;
+    if (profileAvatarLarge) {
+      profileAvatarLarge.style.backgroundColor = color;
+    }
+    if (profileAvatar) {
+      profileAvatar.style.backgroundColor = color;
+    }
     
     // Save to Firestore
     try {
