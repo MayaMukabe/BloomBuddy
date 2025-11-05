@@ -455,3 +455,13 @@ if (document.readyState === 'loading') {
 setTimeout(initializeMobileMenu, 100);
 
 console.log('Authentication handlers initialized with error handling');
+
+document.getElementById('backToLogin')?.addEventListener('click', () => {
+  document.getElementById('forgotPasswordModal')?.setAttribute('aria-hidden', 'true');
+  document.getElementById('loginModal')?.setAttribute('aria-hidden', 'false');
+});
+
+// Also make Google signup button work the same as signin
+document.getElementById('googleSignUp')?.addEventListener('click', () => {
+  document.getElementById('googleSignIn')?.click();
+});

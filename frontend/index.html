@@ -120,54 +120,186 @@
   </main>
 
   <!-- Login Modal -->
-  <div class="modal" id="loginModal" aria-hidden="true">
-    <div class="modal-content" role="dialog" aria-labelledby="loginTitle">
-      <button class="modal-close" data-close>&times;</button>
-      <h3 id="loginTitle" class="modal-title">Log in</h3>
-      <form id="loginForm" class="modal-form">
-        <label for="loginEmail">Email:</label>
-        <input type="email" id="loginEmail" required />
+  <div class="modal" id="loginModal" aria-hidden="true" role="dialog" aria-labelledby="loginTitle">
+    <div class="modal-content">
+      <button class="modal-close" data-close aria-label="Close">&times;</button>
+      
+      <h3 id="loginTitle" class="modal-title">Welcome back</h3>
+      <p class="modal-subtitle">Sign in to continue your journey</p>
+      
+      <form id="loginForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="loginEmail">Email address</label>
+          <input 
+            type="email" 
+            id="loginEmail" 
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
 
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" required />
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input 
+            type="password" 
+            id="loginPassword" 
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
+
+        <div class="secondary-actions">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #6b7280;">
+            <input type="checkbox" name="remember" style="width: auto; margin: 0;">
+            Remember me
+          </label>
+          <button type="button" class="btn-text" id="forgotPasswordLink">
+            Forgot password?
+          </button>
+        </div>
 
         <div class="modal-actions">
-          <button type="submit" class="btn solid">Log in</button>
+          <button type="submit" class="btn-primary">Sign in</button>
         </div>
-        <div class="modal-actions row">
-          <button type="button" class="btn outline" id="forgotPassword">forgot password</button>
-          <button type="button" class="btn outline" data-close>Back</button>
+      </form>
+
+      <div class="divider">or continue with</div>
+
+      <div class="social-login">
+        <button type="button" class="btn-google" id="googleSignIn">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/>
+          Sign in with Google
+        </button>
+      </div>
+
+      <div class="switch-form">
+        Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
+      </div>
+    </div>
+  </div>
+
+  <!--Signup Modal -->
+  <div class="modal" id="signupModal" aria-hidden="true" role="dialog" aria-labelledby="signupTitle">
+    <div class="modal-content">
+      <button class="modal-close" data-close aria-label="Close">&times;</button>
+      
+      <h3 id="signupTitle" class="modal-title">Create account</h3>
+      <p class="modal-subtitle">Start your spiritual growth journey</p>
+      
+      <form id="signupForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="signupName">Full name</label>
+          <input 
+            type="text" 
+            id="signupName" 
+            name="name"
+            placeholder="John Doe"
+            autocomplete="name"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email address</label>
+          <input 
+            type="email" 
+            id="signupEmail" 
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input 
+            type="password" 
+            id="signupPassword" 
+            name="password"
+            placeholder="At least 6 characters"
+            autocomplete="new-password"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signupConfirm">Confirm password</label>
+          <input 
+            type="password" 
+            id="signupConfirm" 
+            name="confirmPassword"
+            placeholder="Re-enter your password"
+            autocomplete="new-password"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Create account</button>
+        </div>
+      </form>
+
+      <div class="divider">or sign up with</div>
+
+      <div class="social-login">
+        <button type="button" class="btn-google" id="googleSignUp">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/>
+          Sign up with Google
+        </button>
+      </div>
+
+      <div class="switch-form">
+        Already have an account? <button type="button" id="switchToLogin">Sign in</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal" id="forgotPasswordModal" aria-hidden="true" role="dialog" aria-labelledby="forgotPasswordTitle">
+    <div class="modal-content forgot-password-content">
+      <button class="modal-close" data-close aria-label="Close">&times;</button>
+      
+      <div class="forgot-password-icon">🔑</div>
+      
+      <h3 id="forgotPasswordTitle" class="modal-title">Reset password</h3>
+      <p class="forgot-password-text">
+        Enter your email address and we'll send you a link to reset your password.
+      </p>
+      
+      <form id="forgotPasswordForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="resetEmail">Email address</label>
+          <input 
+            type="email" 
+            id="resetEmail" 
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required 
+          />
+          <span class="error-message"></span>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Send reset link</button>
+          <button type="button" class="btn-text" id="backToLogin" data-close style="width: 100%; padding: 8px;">
+            Back to sign in
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Signup Modal -->
-  <div class="modal" id="signupModal" aria-hidden="true">
-    <div class="modal-content" role="dialog" aria-labelledby="signupTitle">
-      <button class="modal-close" data-close>&times;</button>
-      <h3 id="signupTitle" class="modal-title">Create your account</h3>
-      <form id="signupForm" class="modal-form">
-        <label for="signupName">Full Name:</label>
-        <input type="text" id="signupName" required />
-
-        <label for="signupEmail">Email:</label>
-        <input type="email" id="signupEmail" required />
-
-        <label for="signupPassword">Password:</label>
-        <input type="password" id="signupPassword" minlength="6" required />
-
-        <label for="signupConfirm">Confirm:</label>
-        <input type="password" id="signupConfirm" minlength="6" required />
-
-        <div class="modal-actions">
-          <button type="submit" class="btn solid">Sign up</button>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn outline" data-close>Back</button>
-        </div>
-      </form>
-    </div>
-  </div>
 </body>
 </html>
