@@ -385,6 +385,85 @@ input:checked + .toggle-slider:before {
   box-shadow: 0 0 20px rgba(255,255,255,0.5);
 }
 
+.reminder-time-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: background 0.2s ease;
+}
+
+.reminder-time-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.reminder-time-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reminder-time-icon {
+  font-size: 24px;
+}
+
+.reminder-time-details h4 {
+  color: white;
+  font-size: 16px;
+  margin: 0 0 3px 0;
+}
+
+.reminder-time-details p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  margin: 0;
+}
+
+.reminder-time-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.reminder-time-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reminder-time-btn.edit {
+  background: rgba(130, 217, 248, 0.2);
+  color: #82d9f8;
+}
+
+.reminder-time-btn.edit:hover {
+  background: rgba(130, 217, 248, 0.3);
+  transform: translateY(-1px);
+}
+
+.reminder-time-btn.delete {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+}
+
+.reminder-time-btn.delete:hover {
+  background: rgba(255, 107, 107, 0.3);
+  transform: translateY(-1px);
+}
+
+.no-reminders {
+  text-align: center;
+  padding: 30px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .profile-main {
@@ -459,6 +538,20 @@ input:checked + .toggle-slider:before {
   .avatar-color-btn {
     width: 50px;
     height: 50px;
+  }
+
+  .reminder-time-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .reminder-time-actions {
+    width: 100%;
+  }
+
+  .reminder-time-btn {
+    flex: 1;
   }
 }
 

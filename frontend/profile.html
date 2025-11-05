@@ -47,6 +47,7 @@
   </script>
   
   <script src="profile.js" defer></script>
+  <script src="reminder-system.js" defer></script>
 </head>
 <body>
   <header>
@@ -197,6 +198,114 @@
               <button class="topic-tag" data-topic="strength">Strength</button>
             </div>
           </div>
+
+          <div class="preference-group">
+              <h3>📅 Daily Check-in Reminders</h3>
+              <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 15px;">
+                Set reminders to help you maintain a consistent spiritual practice
+              </p>
+
+              <!-- Enable Reminders Toggle -->
+              <div class="preference-item">
+                <div class="preference-info">
+                  <h3>Enable Reminders</h3>
+                  <p>Receive daily check-in reminders at your chosen times</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="enableReminders" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Enable Notifications Toggle -->
+              <div class="preference-item" id="notificationToggle" style="display: none;">
+                <div class="preference-info">
+                  <h3>Push Notifications</h3>
+                  <p>Receive browser notifications even when BloomBuddy isn't open</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="enableNotifications" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Reminder Times List -->
+              <div id="reminderTimesSection" style="display: none; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                  <h4 style="color: white; margin: 0; font-size: 1.1rem;">Reminder Times</h4>
+                  <button class="btn-secondary" id="addReminderBtn" style="padding: 8px 16px; font-size: 14px;">
+                    + Add Time
+                  </button>
+                </div>
+
+                <div id="reminderTimesList">
+                  <!-- Reminder times will be populated here -->
+                </div>
+
+                <!-- Quiet Hours Section -->
+                <div style="margin-top: 30px;">
+                  <div class="preference-item">
+                    <div class="preference-info">
+                      <h3>🌙 Quiet Hours</h3>
+                      <p>Don't send reminders during these hours</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="enableQuietHours" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div id="quietHoursSettings" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                      <div>
+                        <label style="color: white; font-size: 14px; display: block; margin-bottom: 5px;">Start Time</label>
+                        <input type="time" id="quietHoursStart" value="22:00" style="width: 100%; padding: 8px; border-radius: 5px; border: 2px solid #7a5c86; background: rgba(255,255,255,0.9);" />
+                      </div>
+                      <div>
+                        <label style="color: white; font-size: 14px; display: block; margin-bottom: 5px;">End Time</label>
+                        <input type="time" id="quietHoursEnd" value="07:00" style="width: 100%; padding: 8px; border-radius: 5px; border: 2px solid #7a5c86; background: rgba(255,255,255,0.9);" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Reminder Statistics -->
+                <div style="margin-top: 30px; padding: 20px; background: rgba(130, 217, 248, 0.2); border-radius: 10px; border: 1px solid rgba(130, 217, 248, 0.3);">
+                  <h4 style="color: white; margin: 0 0 15px 0; font-size: 1.1rem;">📊 Reminder Statistics</h4>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                      <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin: 0;">This Week</p>
+                      <p style="color: white; font-size: 24px; font-weight: bold; margin: 5px 0 0 0;" id="statsThisWeek">0</p>
+                    </div>
+                    <div>
+                      <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin: 0;">All Time</p>
+                      <p style="color: white; font-size: 24px; font-weight: bold; margin: 5px 0 0 0;" id="statsTotal">0</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Reminder Modal -->
+            <div class="modal" id="addReminderModal" aria-hidden="true">
+              <div class="modal-content">
+                <button class="modal-close" data-close>&times;</button>
+                <h3 class="modal-title">Add Reminder Time</h3>
+                <form id="addReminderForm" class="modal-form">
+                  <label for="reminderTime">Time</label>
+                  <input type="time" id="reminderTime" required />
+
+                  <label for="reminderLabel">Label</label>
+                  <input type="text" id="reminderLabel" placeholder="e.g., Morning Check-in" required maxlength="50" />
+
+                  <div class="modal-actions">
+                    <button type="submit" class="btn-primary">Add Reminder</button>
+                    <button type="button" class="btn-secondary" data-close>Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
 
           <div class="form-actions">
             <button class="btn-primary" id="savePreferencesBtn">Save Preferences</button>

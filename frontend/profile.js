@@ -551,3 +551,207 @@ window.addEventListener('click', () => {
 });
 
 console.log('Profile page initialized');
+
+
+// DAILY CHECK-IN REMINDERS INITIALIZATION
+
+(async function initReminders() {
+  // Wait for auth and reminder system to be ready
+  if (!window.auth || !window.ReminderSystem) {
+    setTimeout(initReminders, 100);
+    return;
+  }
+
+  let reminderSystem;
+  let currentSettings = null;
+
+  // Wait for user authentication
+  window.onAuthStateChanged(window.auth, async (user) => {
+    if (!user) return;
+
+    // Initialize reminder system
+    reminderSystem = new window.ReminderSystem();
+    await reminderSystem.init(user.uid);
+
+    // Load current settings
+    currentSettings = await reminderSystem.loadUserReminders();
+    
+    // Populate UI
+    await populateReminderUI();
+    await updateReminderStats();
+
+    // Setup event listeners
+    setupReminderListeners();
+  });
+
+  // Populate the reminder UI with current settings
+  async function populateReminderUI() {
+    const enableReminders = getEl('enableReminders');
+    const enableNotifications = getEl('enableNotifications');
+    const enableQuietHours = getEl('enableQuietHours');
+    const reminderTimesSection = getEl('reminderTimesSection');
+    const notificationToggle = getEl('notificationToggle');
+    const quietHoursSettings = getEl('quietHoursSettings');
+
+    if (!currentSettings) return;
+
+    // Set toggle states
+    enableReminders.checked = currentSettings.enabled;
+    enableNotifications.checked = currentSettings.notificationsEnabled;
+    enableQuietHours.checked = currentSettings.quietHours?.enabled || false;
+
+    // Show/hide sections
+    reminderTimesSection.style.display = currentSettings.enabled ? 'block' : 'none';
+    notificationToggle.style.display = currentSettings.enabled ? 'flex' : 'none';
+    quietHoursSettings.style.display = currentSettings.quietHours?.enabled ? 'block' : 'none';
+
+    // Set quiet hours times
+    if (currentSettings.quietHours) {
+      getEl('quietHoursStart').value = currentSettings.quietHours.start;
+      getEl('quietHoursEnd').value = currentSettings.quietHours.end;
+    }
+
+    // Populate reminder times
+    populateReminderTimes();
+  }
+
+  // Populate reminder times list
+  function populateReminderTimes() {
+    const timesList = getEl('reminderTimesList');
+    
+    if (!currentSettings.times || currentSettings.times.length === 0) {
+      timesList.innerHTML = '<div class="no-reminders">No reminders set. Click "Add Time" to create one.</div>';
+      return;
+    }
+
+    timesList.innerHTML = currentSettings.times.map(reminder => `
+      <div class="reminder-time-item">
+        <div class="reminder-time-info">
+          <span class="reminder-time-icon">⏰</span>
+          <div class="reminder-time-details">
+            <h4>${reminder.label}</h4>
+            <p>${formatTime(reminder.time)}</p>
+          </div>
+        </div>
+        <div class="reminder-time-actions">
+          <button class="reminder-time-btn delete" data-time="${reminder.time}">Remove</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Add delete handlers
+    timesList.querySelectorAll('.reminder-time-btn.delete').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (confirm('Remove this reminder?')) {
+          await reminderSystem.removeReminder(btn.dataset.time);
+          currentSettings = await reminderSystem.loadUserReminders();
+          populateReminderTimes();
+          await updateReminderStats();
+        }
+      });
+    });
+  }
+
+  // Format time for display
+  function formatTime(time) {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  }
+
+  // Setup all event listeners
+  function setupReminderListeners() {
+    // Enable reminders toggle
+    getEl('enableReminders')?.addEventListener('change', async (e) => {
+      await reminderSystem.toggleReminders(e.target.checked);
+      currentSettings = await reminderSystem.loadUserReminders();
+      await populateReminderUI();
+    });
+
+    // Enable notifications toggle
+    getEl('enableNotifications')?.addEventListener('change', async (e) => {
+      if (e.target.checked) {
+        try {
+          const granted = await reminderSystem.requestNotificationPermission();
+          if (!granted) {
+            e.target.checked = false;
+            alert('Notification permission denied. Please enable notifications in your browser settings.');
+            return;
+          }
+        } catch (error) {
+          e.target.checked = false;
+          alert('Failed to enable notifications: ' + error.message);
+          return;
+        }
+      }
+      
+      currentSettings.notificationsEnabled = e.target.checked;
+      await reminderSystem.saveReminderSettings(currentSettings);
+    });
+
+    // Quiet hours toggle
+    getEl('enableQuietHours')?.addEventListener('change', async (e) => {
+      const quietHoursSettings = getEl('quietHoursSettings');
+      if (quietHoursSettings) {
+        quietHoursSettings.style.display = e.target.checked ? 'block' : 'none';
+      }
+      
+      currentSettings.quietHours.enabled = e.target.checked;
+      await reminderSystem.saveReminderSettings(currentSettings);
+    });
+
+    // Quiet hours time changes
+    ['quietHoursStart', 'quietHoursEnd'].forEach(id => {
+      getEl(id)?.addEventListener('change', async (e) => {
+        if (id === 'quietHoursStart') {
+          currentSettings.quietHours.start = e.target.value;
+        } else {
+          currentSettings.quietHours.end = e.target.value;
+        }
+        await reminderSystem.saveReminderSettings(currentSettings);
+      });
+    });
+
+    // Add reminder button
+    getEl('addReminderBtn')?.addEventListener('click', () => {
+      const modal = getEl('addReminderModal');
+      if (modal) {
+        modal.setAttribute('aria-hidden', 'false');
+      }
+    });
+
+    // Add reminder form
+    getEl('addReminderForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const time = getEl('reminderTime').value;
+      const label = getEl('reminderLabel').value.trim();
+      
+      await reminderSystem.addReminder(time, label);
+      currentSettings = await reminderSystem.loadUserReminders();
+      populateReminderTimes();
+      await updateReminderStats();
+      
+      // Close modal and reset form
+      const modal = getEl('addReminderModal');
+      if (modal) {
+        modal.setAttribute('aria-hidden', 'true');
+      }
+      e.target.reset();
+    });
+  }
+
+  // Update reminder statistics
+  async function updateReminderStats() {
+    const stats = await reminderSystem.getReminderStats();
+    const statsThisWeek = getEl('statsThisWeek');
+    const statsTotal = getEl('statsTotal');
+    
+    if (statsThisWeek) statsThisWeek.textContent = stats.thisWeek;
+    if (statsTotal) statsTotal.textContent = stats.total;
+  }
+})();
+
+console.log('Reminder initialization script loaded');

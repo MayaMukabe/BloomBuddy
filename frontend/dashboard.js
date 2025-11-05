@@ -59,7 +59,7 @@ const rateLimitedSend = createRateLimiter(1000);
 // FIREBASE AUTH STATE MANAGEMENT
 
 // Authentication state listener, redirects to login if user is not authenticated
-window.onAuthStateChanged?.(window.auth, (user) => {
+window.onAuthStateChanged?.(window.auth, async (user) => {
   if (user) {
     console.log('User authenticated:', user.uid);
     window.currentUserId = user.uid;
@@ -101,11 +101,21 @@ window.onAuthStateChanged?.(window.auth, (user) => {
       email: user.email,
       lastLogin: window.serverTimestamp(),
     }, { merge: true });
+
+
+    // Initialize reminders here
+    if (window.ReminderSystem) {
+      const reminderSystem = new window.ReminderSystem();
+      await reminderSystem.init(user.uid);
+      window.reminderSystem = reminderSystem; // Make globally accessible
+    }
+
   } else {
     console.log('User not authenticated, redirecting to login');
     window.location.href = 'index.html';
   }
 });
+
 
 //PROFILE DROPDOWN MANAGEMENT
 const profileAvatar = getEl('profileAvatar');
