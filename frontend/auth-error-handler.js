@@ -1,57 +1,48 @@
-// Centralized authentication error handling with user-friendly messages
+
 class AuthErrorHandler {
   constructor() {
     this.errorMap = {
       // Authentication Errors
       'auth/user-not-found': {
         title: 'Account Not Found',
-        message: 'No account exists with this email address. Please check your email or sign up for a new account.',
-        action: 'Sign Up'
+        message: 'No account exists with this email address. Please sign up.',
+        action: 'Sign Up',
+        fieldId: 'loginEmail'
       },
       'auth/wrong-password': {
         title: 'Incorrect Password',
-        message: 'The password you entered is incorrect. Please try again or reset your password.',
-        action: 'Forgot Password?'
+        message: 'The password you entered is incorrect. Please try again.',
+        action: 'Forgot Password?',
+        fieldId: 'loginPassword'
       },
       'auth/invalid-email': {
         title: 'Invalid Email',
         message: 'Please enter a valid email address.',
-        action: null
+        action: null,
+        fieldId: 'loginEmail' // Also applies to signupEmail, resetEmail
       },
       'auth/email-already-in-use': {
         title: 'Email Already Registered',
-        message: 'An account with this email already exists. Please log in or use a different email address.',
-        action: 'Log In'
+        message: 'An account with this email already exists. Please log in.',
+        action: 'Log In',
+        fieldId: 'signupEmail'
       },
       'auth/weak-password': {
         title: 'Weak Password',
         message: 'Please choose a stronger password with at least 6 characters.',
-        action: null
+        action: null,
+        fieldId: 'signupPassword'
       },
       'auth/too-many-requests': {
         title: 'Too Many Attempts',
         message: 'Too many unsuccessful attempts. Please wait a few minutes before trying again.',
         action: null
       },
-      'auth/user-disabled': {
-        title: 'Account Disabled',
-        message: 'This account has been disabled. Please contact support for assistance.',
-        action: 'Contact Support'
-      },
-      'auth/operation-not-allowed': {
-        title: 'Sign-In Method Disabled',
-        message: 'This sign-in method is currently unavailable. Please try another method.',
-        action: null
-      },
       'auth/invalid-credential': {
         title: 'Invalid Credentials',
         message: 'The email or password you entered is incorrect. Please try again.',
-        action: null
-      },
-      'auth/requires-recent-login': {
-        title: 'Session Expired',
-        message: 'For security, please log in again to continue with this action.',
-        action: 'Log In Again'
+        action: null,
+        fieldId: 'loginEmail'
       },
       'auth/popup-closed-by-user': {
         title: 'Sign-In Cancelled',
@@ -65,82 +56,52 @@ class AuthErrorHandler {
       },
       'auth/account-exists-with-different-credential': {
         title: 'Account Already Exists',
-        message: 'An account already exists with this email using a different sign-in method. Please use your original sign-in method.',
-        action: null
+        message: 'An account already exists with this email using a different sign-in method.',
+        action: null,
+        fieldId: 'loginEmail'
       },
       'auth/network-request-failed': {
         title: 'Connection Error',
         message: 'Unable to connect. Please check your internet connection and try again.',
         action: null
       },
-      'auth/invalid-verification-code': {
-        title: 'Invalid Code',
-        message: 'The verification code is incorrect. Please try again.',
-        action: null
-      },
-      'auth/invalid-verification-id': {
-        title: 'Verification Failed',
-        message: 'The verification session has expired. Please request a new code.',
-        action: null
-      },
-      'auth/missing-verification-code': {
-        title: 'Code Required',
-        message: 'Please enter the verification code.',
-        action: null
-      },
       'auth/missing-email': {
         title: 'Email Required',
         message: 'Please enter your email address.',
-        action: null
+        action: null,
+        fieldId: 'loginEmail' // and others
       },
       'auth/missing-password': {
         title: 'Password Required',
         message: 'Please enter your password.',
-        action: null
-      },
-      'auth/invalid-action-code': {
-        title: 'Invalid Link',
-        message: 'This link is invalid or has expired. Please request a new one.',
-        action: null
-      },
-      'auth/expired-action-code': {
-        title: 'Link Expired',
-        message: 'This link has expired. Please request a new one.',
-        action: null
-      },
-      'auth/credential-already-in-use': {
-        title: 'Credential In Use',
-        message: 'This credential is already associated with another account.',
-        action: null
-      },
-      
-      // Network Errors
-      'network-error': {
-        title: 'Connection Problem',
-        message: 'Unable to connect to our servers. Please check your internet connection.',
-        action: null
-      },
-      'timeout': {
-        title: 'Request Timeout',
-        message: 'The request took too long. Please try again.',
-        action: null
+        action: null,
+        fieldId: 'loginPassword'
       },
       
       // Validation Errors
       'validation/passwords-no-match': {
         title: 'Passwords Don\'t Match',
         message: 'The passwords you entered don\'t match. Please try again.',
-        action: null
+        action: null,
+        fieldId: 'signupConfirm'
       },
       'validation/password-too-short': {
         title: 'Password Too Short',
         message: 'Your password must be at least 6 characters long.',
-        action: null
+        action: null,
+        fieldId: 'signupPassword'
       },
       'validation/email-invalid': {
         title: 'Invalid Email',
         message: 'Please enter a valid email address.',
-        action: null
+        action: null,
+        fieldId: 'signupEmail' // Default to signup, but will be dynamic
+      },
+      'validation/name-required': {
+        title: 'Name Required',
+        message: 'Please enter your full name.',
+        action: null,
+        fieldId: 'signupName'
       },
       'validation/field-required': {
         title: 'Required Field',
@@ -163,33 +124,78 @@ class AuthErrorHandler {
    * @returns {Object} - Error information with title, message, and action
    */
   getErrorInfo(error) {
-    // Handle non-Firebase errors
     if (!error || !error.code) {
       return this.errorMap['default'];
     }
-
-    // Get error code from Firebase error
     const errorCode = error.code;
-    
-    // Return mapped error or default
     return this.errorMap[errorCode] || this.errorMap['default'];
   }
 
   /**
-   * Handle authentication error and show toast
+   * Shows an inline error message under the specified form field.
+   * @param {string} fieldId - The ID of the input field.
+   * @param {string} message - The error message to display.
+   */
+  showInlineError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+
+    const formGroup = field.closest('.form-group');
+    if (!formGroup) return;
+
+    const errorMessage = formGroup.querySelector('.error-message');
+    if (!errorMessage) return;
+
+    errorMessage.textContent = message;
+    formGroup.classList.add('error');
+  }
+
+  /**
+   * Clears all inline error messages within a specific form.
+   * @param {HTMLElement} formElement - The form element to clear errors from.
+   */
+  clearInlineErrors(formElement) {
+    if (!formElement) return;
+    formElement.querySelectorAll('.form-group.error').forEach((group) => {
+      group.classList.remove('error');
+      const errorMessage = group.querySelector('.error-message');
+      if (errorMessage) {
+        errorMessage.textContent = '';
+      }
+    });
+  }
+
+  /**
+   * Handle authentication error, showing inline or toast message
    * @param {Error} error - The error to handle
    * @param {Function} actionCallback - Optional callback for action button
+   * @param {HTMLElement} [formElement=null] - The form to show inline errors on.
    */
-  handle(error, actionCallback = null) {
+  handle(error, actionCallback = null, formElement = null) {
     const errorInfo = this.getErrorInfo(error);
     
-    // Log error for debugging (sanitized)
+    // Log error for debugging
     console.error('Auth error handled:', {
       code: error?.code || 'unknown',
-      title: errorInfo.title
+      title: errorInfo.title,
+      field: errorInfo.fieldId
     });
 
-    // Show toast notification
+    // --- Inline Error Logic ---
+    // Try to find the field ID from the error map, or from the error object itself (for validation)
+    const fieldId = errorInfo.fieldId || error.fieldId;
+
+    if (fieldId && formElement) {
+      // Find the specific field in the context of the passed form
+      const field = formElement.querySelector(`#${fieldId}`);
+      if (field) {
+        this.showInlineError(fieldId, errorInfo.message);
+        field.focus();
+        return; // Don't show a toast if we showed an inline error
+      }
+    }
+    
+    // --- Toast Notification Logic (Fallback) ---
     ToastNotification.show({
       type: 'error',
       title: errorInfo.title,
@@ -208,32 +214,52 @@ class AuthErrorHandler {
   validateAuthInput(data) {
     const { email, password, confirmPassword, name } = data;
 
-    // Check required fields
-    if (!email || !password) {
-      const error = new Error('Required field missing');
-      error.code = 'validation/field-required';
+    // --- Signup Validation ---
+    if (name !== undefined && !name) {
+      const error = new Error('Name required');
+      error.code = 'validation/name-required';
+      error.fieldId = 'signupName';
       return error;
     }
 
-    // Validate email format
+    // --- Universal Validation ---
+    if (!email) {
+      const error = new Error('Email required');
+      error.code = 'auth/missing-email';
+      error.fieldId = data.fieldId || 'loginEmail'; // Use provided fieldId or default
+      return error;
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       const error = new Error('Invalid email format');
       error.code = 'validation/email-invalid';
+      error.fieldId = data.fieldId || 'loginEmail';
       return error;
     }
 
-    // Validate password length
+    if (password === undefined) {
+      return null; // Not all forms need password (e.g., forgot password)
+    }
+
+    if (!password) {
+      const error = new Error('Password required');
+      error.code = 'auth/missing-password';
+      error.fieldId = data.fieldId || 'loginPassword';
+      return error;
+    }
+    
     if (password.length < 6) {
       const error = new Error('Password too short');
       error.code = 'validation/password-too-short';
+      error.fieldId = data.fieldId || 'signupPassword';
       return error;
     }
 
-    // Validate password match (if confirming)
     if (confirmPassword !== undefined && password !== confirmPassword) {
       const error = new Error('Passwords do not match');
       error.code = 'validation/passwords-no-match';
+      error.fieldId = 'signupConfirm';
       return error;
     }
 
@@ -359,8 +385,8 @@ class LoadingManager {
     if (!button) return;
     
     button.disabled = true;
-    button.dataset.originalText = button.textContent;
-    button.textContent = text;
+    button.dataset.originalText = button.innerHTML; // Use innerHTML to save icon
+    button.innerHTML = text; // Use innerHTML
     button.classList.add('loading');
   }
 
@@ -368,7 +394,7 @@ class LoadingManager {
     if (!button) return;
     
     button.disabled = false;
-    button.textContent = button.dataset.originalText || 'Submit';
+    button.innerHTML = button.dataset.originalText || 'Submit'; // Use innerHTML
     button.classList.remove('loading');
     delete button.dataset.originalText;
   }

@@ -1,19 +1,49 @@
-// script.js - Refactored with proper error handling (NO ALERTS)
+
 
 function getEl(id) { return document.getElementById(id); }
 
+// Modal Elements
 const loginModal = getEl('loginModal');
 const signupModal = getEl('signupModal');
+const forgotPasswordModal = getEl('forgotPasswordModal');
+
+// Main Page Buttons
 const openLoginBtn = getEl('openLogin');
 const openSignupBtn = getEl('openSignup');
-const googleSignInBtn = getEl('googleSignIn');
+const continueGuestBtn = getEl('continueGuest');
+
+// Modal Switching Buttons
+const switchToSignupBtn = getEl('switchToSignup');
+const switchToLoginBtn = getEl('switchToLogin');
+const forgotPasswordLinkBtn = getEl('forgotPasswordLink');
+const backToLoginBtn = getEl('backToLogin');
+
+// Forms
+const loginForm = getEl('loginForm');
+const signupForm = getEl('signupForm');
+const forgotPasswordForm = getEl('forgotPasswordForm');
+
 
 // Modal Management
 function openModal(modal) {
   if (!modal) return;
+  // Close all other modals first
+  closeModal(loginModal);
+  closeModal(signupModal);
+  closeModal(forgotPasswordModal);
+  
+  // Open the target modal
   modal.setAttribute('aria-hidden', 'false');
   const firstInput = modal.querySelector('input');
   if (firstInput) firstInput.focus();
+
+  // Reset forgot password modal to initial state
+  if (modal === forgotPasswordModal) {
+    getEl('forgotPasswordInitial').style.display = 'block';
+    getEl('forgotPasswordSuccess').style.display = 'none';
+    forgotPasswordForm.reset();
+    window.authErrorHandler.clearInlineErrors(forgotPasswordForm);
+  }
 }
 
 function closeModal(modal) {
@@ -21,10 +51,13 @@ function closeModal(modal) {
   modal.setAttribute('aria-hidden', 'true');
 }
 
+// --- Event Listeners for Modal Navigation ---
+
+// Main page buttons
 openLoginBtn?.addEventListener('click', () => openModal(loginModal));
 openSignupBtn?.addEventListener('click', () => openModal(signupModal));
 
-// Close modal handlers
+// Modal close buttons
 document.addEventListener('click', (e) => {
   const target = e.target;
   if (!(target instanceof Element)) return;
@@ -43,16 +76,23 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeModal(loginModal);
     closeModal(signupModal);
+    closeModal(forgotPasswordModal);
   }
 });
 
-// Firebase Authentication Handlers
-const loginForm = getEl('loginForm');
-const signupForm = getEl('signupForm');
+// Modal switching links
+switchToSignupBtn?.addEventListener('click', () => openModal(signupModal));
+switchToLoginBtn?.addEventListener('click', () => openModal(loginModal));
+forgotPasswordLinkBtn?.addEventListener('click', () => openModal(forgotPasswordModal));
+backToLoginBtn?.addEventListener('click', () => openModal(loginModal));
+
+
+// --- Firebase Authentication Handlers ---
 
 // Handle Login
 loginForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
+  window.authErrorHandler.clearInlineErrors(loginForm); // Clear previous errors
   
   const emailInput = getEl('loginEmail');
   const passwordInput = getEl('loginPassword');
@@ -62,9 +102,13 @@ loginForm?.addEventListener('submit', async (e) => {
   const password = passwordInput.value;
 
   // Validate input
-  const validationError = window.authErrorHandler.validateAuthInput({ email, password });
+  const validationError = window.authErrorHandler.validateAuthInput({ 
+    email, 
+    password, 
+    fieldId: 'loginEmail' // Default field for email error
+  });
   if (validationError) {
-    window.authErrorHandler.handle(validationError);
+    window.authErrorHandler.handle(validationError, null, loginForm);
     return;
   }
 
@@ -75,32 +119,22 @@ loginForm?.addEventListener('submit', async (e) => {
     const user = userCredential.user;
     
     console.log('User logged in:', user.uid);
-    
-    // Show success message
     ToastNotification.success('You\'ve successfully signed in!', 'Welcome Back');
-    
     closeModal(loginModal);
     
-    // Redirect to dashboard
     setTimeout(() => {
       window.location.href = 'dashboard.html';
     }, 500);
     
   } catch (error) {
     console.error('Login error:', error.code);
-    
-    // Handle error with action callback for "Forgot Password"
     window.authErrorHandler.handle(error, () => {
-      // Action callback for forgot password
       if (error.code === 'auth/wrong-password') {
-        // TODO: Implement forgot password flow
-        ToastNotification.info('Password reset feature coming soon!', 'Forgot Password');
+        openModal(forgotPasswordModal);
       } else if (error.code === 'auth/user-not-found') {
-        // Switch to signup modal
-        closeModal(loginModal);
         openModal(signupModal);
       }
-    });
+    }, loginForm); // Pass form for inline errors
   } finally {
     LoadingManager.hide(submitBtn);
   }
@@ -109,6 +143,7 @@ loginForm?.addEventListener('submit', async (e) => {
 // Handle Signup
 signupForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
+  window.authErrorHandler.clearInlineErrors(signupForm); // Clear previous errors
   
   const nameInput = getEl('signupName');
   const emailInput = getEl('signupEmail');
@@ -126,11 +161,12 @@ signupForm?.addEventListener('submit', async (e) => {
     email, 
     password, 
     confirmPassword, 
-    name 
+    name,
+    fieldId: 'signupEmail' // Default field for email error
   });
   
   if (validationError) {
-    window.authErrorHandler.handle(validationError);
+    window.authErrorHandler.handle(validationError, null, signupForm);
     return;
   }
 
@@ -140,7 +176,6 @@ signupForm?.addEventListener('submit', async (e) => {
     const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
     const user = userCredential.user;
     
-    // Create user profile in Firestore
     const userDocRef = window.doc(window.db, 'users', user.uid);
     await window.setDoc(userDocRef, {
       displayName: name,
@@ -149,48 +184,77 @@ signupForm?.addEventListener('submit', async (e) => {
     });
     
     console.log('User created:', user.uid);
-    
-    // Show success message
     ToastNotification.success(
       `Welcome to BloomBuddy, ${name}! Your account has been created.`,
       'Account Created'
     );
-    
     closeModal(signupModal);
     
-    // Redirect to dashboard
     setTimeout(() => {
       window.location.href = 'dashboard.html';
     }, 1000);
     
   } catch (error) {
     console.error('Signup error:', error.code);
-    
-    // Handle error with action callback
     window.authErrorHandler.handle(error, () => {
       if (error.code === 'auth/email-already-in-use') {
-        // Switch to login modal
-        closeModal(signupModal);
         openModal(loginModal);
       }
-    });
+    }, signupForm); // Pass form for inline errors
   } finally {
     LoadingManager.hide(submitBtn);
   }
 });
 
-// Google Sign-In
-async function signInWithGoogle() {
+// Handle Forgot Password
+forgotPasswordForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  window.authErrorHandler.clearInlineErrors(forgotPasswordForm);
+
+  const emailInput = getEl('resetEmail');
+  const email = emailInput.value.trim();
+  const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+
+  const validationError = window.authErrorHandler.validateAuthInput({ 
+    email,
+    fieldId: 'resetEmail'
+  });
+  if (validationError) {
+    window.authErrorHandler.handle(validationError, null, forgotPasswordForm);
+    return;
+  }
+
+  LoadingManager.show(submitBtn, 'Sending link...');
+
+  try {
+    await window.sendPasswordResetEmail(window.auth, email);
+    
+    // Show success message INSIDE the modal
+    getEl('resetEmailSuccess').textContent = email;
+    getEl('forgotPasswordInitial').style.display = 'none';
+    getEl('forgotPasswordSuccess').style.display = 'block';
+
+  } catch (error) {
+    console.error('Forgot Password error:', error.code);
+    window.authErrorHandler.handle(error, null, forgotPasswordForm);
+  } finally {
+    LoadingManager.hide(submitBtn);
+  }
+});
+
+
+// Google Sign-In (Now attached to all Google buttons)
+async function signInWithGoogle(e) {
   const provider = new window.GoogleAuthProvider();
+  const googleBtn = e.currentTarget;
   
-  LoadingManager.show(googleSignInBtn, 'Opening...');
+  LoadingManager.show(googleBtn, 'Opening...');
 
   try {
     const result = await window.signInWithPopup(window.auth, provider);
     const user = result.user;
     const additionalUserInfo = window.getAdditionalUserInfo(result);
 
-    // Create profile if new user
     if (additionalUserInfo.isNewUser) {
       const userDocRef = window.doc(window.db, 'users', user.uid);
       await window.setDoc(userDocRef, {
@@ -208,7 +272,6 @@ async function signInWithGoogle() {
       ToastNotification.success('Successfully signed in!', 'Welcome Back');
     }
 
-    // Redirect to dashboard
     setTimeout(() => {
       window.location.href = 'dashboard.html';
     }, 500);
@@ -217,21 +280,27 @@ async function signInWithGoogle() {
     console.error('Google Sign-In Error:', error.code);
     window.authErrorHandler.handle(error);
   } finally {
-    LoadingManager.hide(googleSignInBtn);
     // Restore Google button HTML
-    googleSignInBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/> Sign in with Google';
+    const originalHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/> Sign in with Google';
+    googleBtn.innerHTML = originalHTML; // Use innerHTML to restore image
+    LoadingManager.hide(googleBtn);
+    // Re-set the innerHTML as LoadingManager.hide() might overwrite it
+    googleBtn.innerHTML = originalHTML;
+    if (googleBtn.closest('#signupModal')) {
+      googleBtn.innerHTML = googleBtn.innerHTML.replace('Sign in', 'Sign up');
+    }
   }
 }
 
-if (googleSignInBtn) {
-  googleSignInBtn.addEventListener('click', signInWithGoogle);
-}
+// Attach to all Google sign-in buttons
+document.querySelectorAll('.google-signin-btn').forEach(btn => {
+  btn.addEventListener('click', signInWithGoogle);
+});
+
 
 // Guest Sign-In
-getEl('continueGuest')?.addEventListener('click', async () => {
-  const guestBtn = getEl('continueGuest');
-  
-  LoadingManager.show(guestBtn, 'Entering as guest...');
+continueGuestBtn?.addEventListener('click', async () => {
+  LoadingManager.show(continueGuestBtn, 'Entering as guest...');
   
   try {
     await window.signInAnonymously(window.auth);
@@ -248,7 +317,7 @@ getEl('continueGuest')?.addEventListener('click', async () => {
   } catch (error) {
     console.error('Anonymous sign-in failed:', error.code);
     window.authErrorHandler.handle(error);
-    LoadingManager.hide(guestBtn);
+    LoadingManager.hide(continueGuestBtn);
   }
 });
 
@@ -257,7 +326,6 @@ window.onAuthStateChanged?.(window.auth, (user) => {
   if (user) {
     console.log('User authenticated:', user.uid);
     
-    // Update UI with user info
     const userInitial = getEl('userInitial');
     const dropdownUserEmail = getEl('dropdownUserEmail');
     
@@ -273,7 +341,6 @@ window.onAuthStateChanged?.(window.auth, (user) => {
 });
 
 // Logout Functionality
-const logoutBtn = getEl('logoutBtn');
 document.addEventListener('click', async (e) => {
   if (e.target.id === 'logoutBtn') {
     e.preventDefault();
@@ -313,7 +380,6 @@ window.addEventListener('click', () => {
   }
 });
 
-// Mobile Menu Handler
 function initializeMobileMenu() {
   if (document.querySelector('.mobile-menu-btn')) return;
   
@@ -454,14 +520,5 @@ if (document.readyState === 'loading') {
 
 setTimeout(initializeMobileMenu, 100);
 
-console.log('Authentication handlers initialized with error handling');
+console.log('Authentication handlers initialized with inline errors and full modal logic.');
 
-document.getElementById('backToLogin')?.addEventListener('click', () => {
-  document.getElementById('forgotPasswordModal')?.setAttribute('aria-hidden', 'true');
-  document.getElementById('loginModal')?.setAttribute('aria-hidden', 'false');
-});
-
-// Also make Google signup button work the same as signin
-document.getElementById('googleSignUp')?.addEventListener('click', () => {
-  document.getElementById('googleSignIn')?.click();
-});
