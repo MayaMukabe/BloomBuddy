@@ -19,7 +19,7 @@ class AuthErrorHandler {
         title: 'Invalid Email',
         message: 'Please enter a valid email address.',
         action: null,
-        fieldId: 'loginEmail' // Also applies to signupEmail, resetEmail
+        fieldId: null // Will be determined by form context
       },
       'auth/email-already-in-use': {
         title: 'Email Already Registered',
@@ -42,7 +42,7 @@ class AuthErrorHandler {
         title: 'Invalid Credentials',
         message: 'The email or password you entered is incorrect. Please try again.',
         action: null,
-        fieldId: 'loginEmail'
+        fieldId: null // Will show on email field by default, but can be context-aware
       },
       'auth/popup-closed-by-user': {
         title: 'Sign-In Cancelled',
@@ -69,13 +69,13 @@ class AuthErrorHandler {
         title: 'Email Required',
         message: 'Please enter your email address.',
         action: null,
-        fieldId: 'loginEmail' // and others
+        fieldId: null // Will be determined by form context
       },
       'auth/missing-password': {
         title: 'Password Required',
         message: 'Please enter your password.',
         action: null,
-        fieldId: 'loginPassword'
+        fieldId: null // Will be determined by form context
       },
       
       // Validation Errors
@@ -95,7 +95,7 @@ class AuthErrorHandler {
         title: 'Invalid Email',
         message: 'Please enter a valid email address.',
         action: null,
-        fieldId: 'signupEmail' // Default to signup, but will be dynamic
+        fieldId: null // Will be determined by form context
       },
       'validation/name-required': {
         title: 'Name Required',
@@ -135,9 +135,17 @@ class AuthErrorHandler {
    * Shows an inline error message under the specified form field.
    * @param {string} fieldId - The ID of the input field.
    * @param {string} message - The error message to display.
+   * @param {HTMLElement} [formElement=null] - Optional form context to search within.
    */
-  showInlineError(fieldId, message) {
-    const field = document.getElementById(fieldId);
+  showInlineError(fieldId, message, formElement = null) {
+    // Try to find field within form context first, then globally
+    let field = null;
+    if (formElement) {
+      field = formElement.querySelector(`#${fieldId}`);
+    }
+    if (!field) {
+      field = document.getElementById(fieldId);
+    }
     if (!field) return;
 
     const formGroup = field.closest('.form-group');
@@ -148,6 +156,13 @@ class AuthErrorHandler {
 
     errorMessage.textContent = message;
     formGroup.classList.add('error');
+    field.setAttribute('aria-invalid', 'true');
+    
+    // Set up aria-describedby for accessibility
+    if (!errorMessage.id) {
+      errorMessage.id = `error-${fieldId}`;
+    }
+    field.setAttribute('aria-describedby', errorMessage.id);
   }
 
   /**
@@ -162,7 +177,70 @@ class AuthErrorHandler {
       if (errorMessage) {
         errorMessage.textContent = '';
       }
+      const input = group.querySelector('input, textarea, select');
+      if (input) {
+        input.removeAttribute('aria-invalid');
+        input.removeAttribute('aria-describedby');
+      }
     });
+  }
+
+  /**
+   * Get the correct field ID based on form context
+   * @param {string} fieldId - The field ID from error map
+   * @param {HTMLElement} formElement - The form element to check context
+   * @returns {string|null} - The correct field ID for this form context
+   */
+  getContextualFieldId(fieldId, formElement) {
+    if (!fieldId || !formElement) return fieldId;
+
+    // Check if the field exists in this form
+    if (formElement.querySelector(`#${fieldId}`)) {
+      return fieldId;
+    }
+
+    // Map common field names to context-specific IDs
+    const formId = formElement.id;
+    const fieldMap = {
+      'loginForm': {
+        'loginEmail': 'loginEmail',
+        'loginPassword': 'loginPassword',
+        'signupEmail': 'loginEmail',
+        'resetEmail': 'loginEmail'
+      },
+      'signupForm': {
+        'loginEmail': 'signupEmail',
+        'signupEmail': 'signupEmail',
+        'resetEmail': 'signupEmail',
+        'loginPassword': 'signupPassword'
+      },
+      'forgotPasswordForm': {
+        'loginEmail': 'resetEmail',
+        'signupEmail': 'resetEmail',
+        'resetEmail': 'resetEmail'
+      }
+    };
+
+    const contextMap = fieldMap[formId];
+    if (contextMap && contextMap[fieldId]) {
+      // Verify the mapped field exists
+      const mappedId = contextMap[fieldId];
+      if (formElement.querySelector(`#${mappedId}`)) {
+        return mappedId;
+      }
+    }
+
+    // Try to find any email/password field in the form if the specific one doesn't exist
+    if (fieldId.includes('Email') || fieldId.includes('email')) {
+      const emailField = formElement.querySelector('input[type="email"]');
+      if (emailField) return emailField.id;
+    }
+    if (fieldId.includes('Password') || fieldId.includes('password')) {
+      const passwordField = formElement.querySelector('input[type="password"]');
+      if (passwordField) return passwordField.id;
+    }
+
+    return null;
   }
 
   /**
@@ -183,19 +261,56 @@ class AuthErrorHandler {
 
     // --- Inline Error Logic ---
     // Try to find the field ID from the error map, or from the error object itself (for validation)
-    const fieldId = errorInfo.fieldId || error.fieldId;
+    let fieldId = errorInfo.fieldId || error.fieldId;
 
+    // If fieldId is null, try to determine it from error code and form context
+    if (!fieldId && formElement) {
+      const errorCode = error?.code || '';
+      
+      // Determine field ID based on error code
+      if (errorCode.includes('email') || errorCode === 'auth/invalid-email' || 
+          errorCode === 'auth/missing-email' || errorCode === 'validation/email-invalid') {
+        // Find email field in form
+        const emailField = formElement.querySelector('input[type="email"]');
+        if (emailField) fieldId = emailField.id;
+      } else if (errorCode.includes('password') || errorCode === 'auth/wrong-password' || 
+                 errorCode === 'auth/missing-password' || errorCode === 'auth/weak-password' ||
+                 errorCode === 'validation/password-too-short') {
+        // Find password field in form
+        const passwordField = formElement.querySelector('input[type="password"]');
+        if (passwordField) fieldId = passwordField.id;
+      } else if (errorCode === 'auth/invalid-credential') {
+        // Show on email field for invalid credentials
+        const emailField = formElement.querySelector('input[type="email"]');
+        if (emailField) fieldId = emailField.id;
+      }
+    }
+
+    // Get context-aware field ID if we have a form and fieldId
     if (fieldId && formElement) {
-      // Find the specific field in the context of the passed form
+      fieldId = this.getContextualFieldId(fieldId, formElement);
+    }
+
+    // Try to show inline error
+    if (fieldId && formElement) {
       const field = formElement.querySelector(`#${fieldId}`);
       if (field) {
-        this.showInlineError(fieldId, errorInfo.message);
-        field.focus();
+        this.showInlineError(fieldId, errorInfo.message, formElement);
+        // Only focus if it's a user input error (not network/system errors)
+        const isUserInputError = error?.code?.startsWith('auth/invalid') || 
+                                error?.code?.startsWith('auth/wrong') ||
+                                error?.code?.startsWith('auth/missing') ||
+                                error?.code?.startsWith('validation/');
+        if (isUserInputError) {
+          // Small delay to ensure error is visible before focusing
+          setTimeout(() => field.focus(), 100);
+        }
         return; // Don't show a toast if we showed an inline error
       }
     }
     
     // --- Toast Notification Logic (Fallback) ---
+    // Only show toast for errors that can't be shown inline (network errors, system errors, etc.)
     ToastNotification.show({
       type: 'error',
       title: errorInfo.title,
@@ -209,32 +324,52 @@ class AuthErrorHandler {
   /**
    * Validate form input and return custom validation error if needed
    * @param {Object} data - Form data to validate
+   * @param {HTMLElement} [formElement=null] - Optional form element for context-aware field IDs
    * @returns {Error|null} - Validation error or null if valid
    */
-  validateAuthInput(data) {
+  validateAuthInput(data, formElement = null) {
     const { email, password, confirmPassword, name } = data;
 
+    // Helper to get the correct field ID based on form context
+    const getFieldId = (defaultId, emailId = null, passwordId = null) => {
+      if (data.fieldId) return data.fieldId;
+      if (formElement) {
+        // Try to find the field in the form
+        if (formElement.querySelector(`#${defaultId}`)) {
+          return defaultId;
+        }
+        // Try email/password fallbacks
+        if (emailId && formElement.querySelector(`#${emailId}`)) {
+          return emailId;
+        }
+        if (passwordId && formElement.querySelector(`#${passwordId}`)) {
+          return passwordId;
+        }
+      }
+      return defaultId;
+    };
+
     // --- Signup Validation ---
-    if (name !== undefined && !name) {
+    if (name !== undefined && !name.trim()) {
       const error = new Error('Name required');
       error.code = 'validation/name-required';
-      error.fieldId = 'signupName';
+      error.fieldId = getFieldId('signupName');
       return error;
     }
 
     // --- Universal Validation ---
-    if (!email) {
+    if (!email || !email.trim()) {
       const error = new Error('Email required');
       error.code = 'auth/missing-email';
-      error.fieldId = data.fieldId || 'loginEmail'; // Use provided fieldId or default
+      error.fieldId = getFieldId('loginEmail', 'signupEmail', 'resetEmail');
       return error;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       const error = new Error('Invalid email format');
       error.code = 'validation/email-invalid';
-      error.fieldId = data.fieldId || 'loginEmail';
+      error.fieldId = getFieldId('loginEmail', 'signupEmail', 'resetEmail');
       return error;
     }
 
@@ -245,14 +380,14 @@ class AuthErrorHandler {
     if (!password) {
       const error = new Error('Password required');
       error.code = 'auth/missing-password';
-      error.fieldId = data.fieldId || 'loginPassword';
+      error.fieldId = getFieldId('loginPassword', null, 'signupPassword');
       return error;
     }
     
     if (password.length < 6) {
       const error = new Error('Password too short');
       error.code = 'validation/password-too-short';
-      error.fieldId = data.fieldId || 'signupPassword';
+      error.fieldId = getFieldId('signupPassword', null, 'loginPassword');
       return error;
     }
 

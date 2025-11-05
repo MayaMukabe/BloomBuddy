@@ -32,6 +32,11 @@ function openModal(modal) {
   closeModal(signupModal);
   closeModal(forgotPasswordModal);
   
+  // Clear errors from all forms
+  if (loginForm) window.authErrorHandler.clearInlineErrors(loginForm);
+  if (signupForm) window.authErrorHandler.clearInlineErrors(signupForm);
+  if (forgotPasswordForm) window.authErrorHandler.clearInlineErrors(forgotPasswordForm);
+  
   // Open the target modal
   modal.setAttribute('aria-hidden', 'false');
   const firstInput = modal.querySelector('input');
@@ -86,6 +91,47 @@ switchToLoginBtn?.addEventListener('click', () => openModal(loginModal));
 forgotPasswordLinkBtn?.addEventListener('click', () => openModal(forgotPasswordModal));
 backToLoginBtn?.addEventListener('click', () => openModal(loginModal));
 
+// --- Real-time Error Clearing on Input ---
+// Clear errors when user starts typing in any auth form field
+function setupInputErrorClearing(form) {
+  if (!form) return;
+  
+  const inputs = form.querySelectorAll('input');
+  inputs.forEach(input => {
+    // Clear error for this specific field when user types
+    input.addEventListener('input', () => {
+      const formGroup = input.closest('.form-group');
+      if (formGroup && formGroup.classList.contains('error')) {
+        formGroup.classList.remove('error');
+        const errorMessage = formGroup.querySelector('.error-message');
+        if (errorMessage) {
+          errorMessage.textContent = '';
+        }
+        input.removeAttribute('aria-invalid');
+        input.removeAttribute('aria-describedby');
+      }
+    });
+    
+    // Also clear on focus
+    input.addEventListener('focus', () => {
+      const formGroup = input.closest('.form-group');
+      if (formGroup && formGroup.classList.contains('error')) {
+        formGroup.classList.remove('error');
+        const errorMessage = formGroup.querySelector('.error-message');
+        if (errorMessage) {
+          errorMessage.textContent = '';
+        }
+        input.removeAttribute('aria-invalid');
+        input.removeAttribute('aria-describedby');
+      }
+    });
+  });
+}
+
+// Setup error clearing for all auth forms
+if (loginForm) setupInputErrorClearing(loginForm);
+if (signupForm) setupInputErrorClearing(signupForm);
+if (forgotPasswordForm) setupInputErrorClearing(forgotPasswordForm);
 
 // --- Firebase Authentication Handlers ---
 
@@ -104,9 +150,8 @@ loginForm?.addEventListener('submit', async (e) => {
   // Validate input
   const validationError = window.authErrorHandler.validateAuthInput({ 
     email, 
-    password, 
-    fieldId: 'loginEmail' // Default field for email error
-  });
+    password
+  }, loginForm);
   if (validationError) {
     window.authErrorHandler.handle(validationError, null, loginForm);
     return;
@@ -161,9 +206,8 @@ signupForm?.addEventListener('submit', async (e) => {
     email, 
     password, 
     confirmPassword, 
-    name,
-    fieldId: 'signupEmail' // Default field for email error
-  });
+    name
+  }, signupForm);
   
   if (validationError) {
     window.authErrorHandler.handle(validationError, null, signupForm);
@@ -216,9 +260,8 @@ forgotPasswordForm?.addEventListener('submit', async (e) => {
   const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
 
   const validationError = window.authErrorHandler.validateAuthInput({ 
-    email,
-    fieldId: 'resetEmail'
-  });
+    email
+  }, forgotPasswordForm);
   if (validationError) {
     window.authErrorHandler.handle(validationError, null, forgotPasswordForm);
     return;
