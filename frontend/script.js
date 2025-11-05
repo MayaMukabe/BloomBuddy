@@ -1,18 +1,17 @@
-// Modal logic and basic demo handlers
+// script.js - Refactored with proper error handling (NO ALERTS)
 
 function getEl(id) { return document.getElementById(id); }
 
 const loginModal = getEl('loginModal');
 const signupModal = getEl('signupModal');
-
 const openLoginBtn = getEl('openLogin');
 const openSignupBtn = getEl('openSignup');
 const googleSignInBtn = getEl('googleSignIn');
 
+// Modal Management
 function openModal(modal) {
   if (!modal) return;
   modal.setAttribute('aria-hidden', 'false');
-  // focus first input for accessibility
   const firstInput = modal.querySelector('input');
   if (firstInput) firstInput.focus();
 }
@@ -25,17 +24,16 @@ function closeModal(modal) {
 openLoginBtn?.addEventListener('click', () => openModal(loginModal));
 openSignupBtn?.addEventListener('click', () => openModal(signupModal));
 
+// Close modal handlers
 document.addEventListener('click', (e) => {
   const target = e.target;
   if (!(target instanceof Element)) return;
 
-  // Close buttons
   if (target.matches('[data-close]')) {
     const modal = target.closest('.modal');
     if (modal) closeModal(modal);
   }
 
-  // Click outside content
   if (target.classList.contains('modal')) {
     closeModal(target);
   }
@@ -48,104 +46,101 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Firebase Authentication handlers
+// Firebase Authentication Handlers
 const loginForm = getEl('loginForm');
 const signupForm = getEl('signupForm');
 
-// Show loading state
-function showLoading(button, text = 'Loading...') {
-  button.disabled = true;
-  button.textContent = text;
-}
-
-function hideLoading(button, originalText) {
-  button.disabled = false;
-  button.textContent = originalText;
-}
-
-// Handle login
+// Handle Login
 loginForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email = /** @type {HTMLInputElement} */ (getEl('loginEmail')).value.trim();
-  const password = /** @type {HTMLInputElement} */ (getEl('loginPassword')).value;
+  
+  const emailInput = getEl('loginEmail');
+  const passwordInput = getEl('loginPassword');
   const submitBtn = loginForm.querySelector('button[type="submit"]');
   
-  if (!email || !password) {
-    alert('Please fill in all fields.');
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  // Validate input
+  const validationError = window.authErrorHandler.validateAuthInput({ email, password });
+  if (validationError) {
+    window.authErrorHandler.handle(validationError);
     return;
   }
 
-  showLoading(submitBtn, 'Signing in...');
+  LoadingManager.show(submitBtn, 'Signing in...');
 
   try {
     const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
     const user = userCredential.user;
     
-    console.log('User logged in:', user);
-    alert(`Welcome back! Logged in as: ${user.email}`);
+    console.log('User logged in:', user.uid);
+    
+    // Show success message
+    ToastNotification.success('You\'ve successfully signed in!', 'Welcome Back');
+    
     closeModal(loginModal);
     
     // Redirect to dashboard
-    window.location.href = 'dashboard.html';
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 500);
     
   } catch (error) {
-    console.error('Login error:', error);
-    let errorMessage = 'Login failed. ';
+    console.error('Login error:', error.code);
     
-    switch (error.code) {
-      case 'auth/user-not-found':
-        errorMessage += 'No account found with this email.';
-        break;
-      case 'auth/wrong-password':
-        errorMessage += 'Incorrect password.';
-        break;
-      case 'auth/invalid-email':
-        errorMessage += 'Invalid email address.';
-        break;
-      case 'auth/too-many-requests':
-        errorMessage += 'Too many failed attempts. Please try again later.';
-        break;
-      default:
-        errorMessage += error.message;
-    }
-    
-    alert(errorMessage);
+    // Handle error with action callback for "Forgot Password"
+    window.authErrorHandler.handle(error, () => {
+      // Action callback for forgot password
+      if (error.code === 'auth/wrong-password') {
+        // TODO: Implement forgot password flow
+        ToastNotification.info('Password reset feature coming soon!', 'Forgot Password');
+      } else if (error.code === 'auth/user-not-found') {
+        // Switch to signup modal
+        closeModal(loginModal);
+        openModal(signupModal);
+      }
+    });
   } finally {
-    hideLoading(submitBtn, 'Log in');
+    LoadingManager.hide(submitBtn);
   }
 });
 
-// Handle signup
+// Handle Signup
 signupForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const name = /** @type {HTMLInputElement} */ (getEl('signupName')).value.trim();
-  const email = /** @type {HTMLInputElement} */ (getEl('signupEmail')).value.trim();
-  const password = /** @type {HTMLInputElement} */ (getEl('signupPassword')).value;
-  const confirm = /** @type {HTMLInputElement} */ (getEl('signupConfirm')).value;
+  
+  const nameInput = getEl('signupName');
+  const emailInput = getEl('signupEmail');
+  const passwordInput = getEl('signupPassword');
+  const confirmInput = getEl('signupConfirm');
   const submitBtn = signupForm.querySelector('button[type="submit"]');
 
-  if (!name || !email || !password || !confirm) {
-    alert('Please fill in all fields.');
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const confirmPassword = confirmInput.value;
+
+  // Validate input
+  const validationError = window.authErrorHandler.validateAuthInput({ 
+    email, 
+    password, 
+    confirmPassword, 
+    name 
+  });
+  
+  if (validationError) {
+    window.authErrorHandler.handle(validationError);
     return;
   }
 
-  if (password !== confirm) {
-    alert('Passwords do not match.');
-    return;
-  }
-
-  if (password.length < 6) {
-    alert('Password must be at least 6 characters long.');
-    return;
-  }
-
-  showLoading(submitBtn, 'Creating account...');
+  LoadingManager.show(submitBtn, 'Creating account...');
 
   try {
     const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
     const user = userCredential.user;
     
-    // Create a user profile in Firestore
+    // Create user profile in Firestore
     const userDocRef = window.doc(window.db, 'users', user.uid);
     await window.setDoc(userDocRef, {
       displayName: name,
@@ -153,106 +148,119 @@ signupForm?.addEventListener('submit', async (e) => {
       createdAt: window.serverTimestamp(),
     });
     
-    console.log('User created:', user);
-    alert(`Welcome, ${name}! Your account has been created successfully.`);
+    console.log('User created:', user.uid);
+    
+    // Show success message
+    ToastNotification.success(
+      `Welcome to BloomBuddy, ${name}! Your account has been created.`,
+      'Account Created'
+    );
+    
     closeModal(signupModal);
     
     // Redirect to dashboard
-    window.location.href = 'dashboard.html';
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 1000);
     
   } catch (error) {
-    console.error('Signup error:', error);
-    let errorMessage = 'Account creation failed. ';
+    console.error('Signup error:', error.code);
     
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        errorMessage += 'An account with this email already exists.';
-        break;
-      case 'auth/invalid-email':
-        errorMessage += 'Invalid email address.';
-        break;
-      case 'auth/weak-password':
-        errorMessage += 'Password is too weak.';
-        break;
-      default:
-        errorMessage += error.message;
-    }
-    
-    alert(errorMessage);
+    // Handle error with action callback
+    window.authErrorHandler.handle(error, () => {
+      if (error.code === 'auth/email-already-in-use') {
+        // Switch to login modal
+        closeModal(signupModal);
+        openModal(loginModal);
+      }
+    });
   } finally {
-    hideLoading(submitBtn, 'Sign up');
+    LoadingManager.hide(submitBtn);
   }
 });
 
-//Google Sign-In Funtionality
+// Google Sign-In
 async function signInWithGoogle() {
   const provider = new window.GoogleAuthProvider();
-  showLoading(googleSignInBtn, 'Opening...');
+  
+  LoadingManager.show(googleSignInBtn, 'Opening...');
 
   try {
     const result = await window.signInWithPopup(window.auth, provider);
     const user = result.user;
     const additionalUserInfo = window.getAdditionalUserInfo(result);
 
-    //create a profile if its a new user
+    // Create profile if new user
     if (additionalUserInfo.isNewUser) {
-      const userDocRef = window.doc(window.db, 'user', user.id);
+      const userDocRef = window.doc(window.db, 'users', user.uid);
       await window.setDoc(userDocRef, {
         displayName: user.displayName,
         email: user.email,
         createdAt: window.serverTimestamp(),
       });
-      console.log('New User profile created in Firestore for:', user.displayName);
-
-    } 
-    //Redirect to the dashboard
-    window.location.href = 'dashboard.html';
-  } catch (error) {
-    console.error('Google Sign-In Error:', error);
-    let errorMessage = "Could not sign in with Google. ";
-    if (error.code === 'auth/popup-closed-by-user') {
-      errorMessage += "The sign-in window was closed.";
-    } else if (error.code === 'auth/account-exists-with-different-credentials') {
-      errorMessage += "An account already exists with this email address. Please sign in with your original method"
+      console.log('New user profile created:', user.uid);
+      
+      ToastNotification.success(
+        `Welcome to BloomBuddy, ${user.displayName}!`,
+        'Account Created'
+      );
+    } else {
+      ToastNotification.success('Successfully signed in!', 'Welcome Back');
     }
-    alert(errorMessage);
+
+    // Redirect to dashboard
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 500);
+    
+  } catch (error) {
+    console.error('Google Sign-In Error:', error.code);
+    window.authErrorHandler.handle(error);
   } finally {
-    hideLoading(googleSignInBtn, 'Sign in with Google');
+    LoadingManager.hide(googleSignInBtn);
+    // Restore Google button HTML
     googleSignInBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/> Sign in with Google';
   }
 }
-
-
 
 if (googleSignInBtn) {
   googleSignInBtn.addEventListener('click', signInWithGoogle);
 }
 
-// LOGOUT FUNCTIONALITY
-// Handle user logout
-
-const logoutBtn = getEl('logoutBtn');
-document.addEventListener('click', async (e) => {
-  if (e.target.id === 'logoutBtn') {
-    e.preventDefault();
-    try {
-      await window.signOut(window.auth);
-      console.log('User signed out successfully');
-      window.location.href = 'index.html';
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('Error signing out. Please try again.');
-    }
+// Guest Sign-In
+getEl('continueGuest')?.addEventListener('click', async () => {
+  const guestBtn = getEl('continueGuest');
+  
+  LoadingManager.show(guestBtn, 'Entering as guest...');
+  
+  try {
+    await window.signInAnonymously(window.auth);
+    
+    ToastNotification.info(
+      'You\'re using guest mode. Sign up to save your progress!',
+      'Guest Mode'
+    );
+    
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 500);
+    
+  } catch (error) {
+    console.error('Anonymous sign-in failed:', error.code);
+    window.authErrorHandler.handle(error);
+    LoadingManager.hide(guestBtn);
   }
 });
 
-// Monitor authentication state
+// Monitor Authentication State
 window.onAuthStateChanged?.(window.auth, (user) => {
   if (user) {
-    console.log('User is signed in:', user);
-    // Update profile dropdown info
+    console.log('User authenticated:', user.uid);
+    
+    // Update UI with user info
     const userInitial = getEl('userInitial');
     const dropdownUserEmail = getEl('dropdownUserEmail');
+    
     if (userInitial) {
       userInitial.textContent = (user.displayName || user.email || 'B').charAt(0).toUpperCase();
     }
@@ -260,12 +268,34 @@ window.onAuthStateChanged?.(window.auth, (user) => {
       dropdownUserEmail.textContent = user.email || 'Guest';
     }
   } else {
-    console.log('User is signed out');
-    // User is signed out
+    console.log('User signed out');
   }
 });
 
-// PROFILE DROPDOWN MANAGEMENT
+// Logout Functionality
+const logoutBtn = getEl('logoutBtn');
+document.addEventListener('click', async (e) => {
+  if (e.target.id === 'logoutBtn') {
+    e.preventDefault();
+    
+    try {
+      await window.signOut(window.auth);
+      console.log('User signed out successfully');
+      
+      ToastNotification.success('You\'ve been signed out successfully.', 'Signed Out');
+      
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 500);
+      
+    } catch (error) {
+      console.error('Logout error:', error.code);
+      window.authErrorHandler.handle(error);
+    }
+  }
+});
+
+// Profile Dropdown Management
 const profileAvatar = getEl('profileAvatar');
 const profileDropdown = getEl('profileDropdown');
 
@@ -283,22 +313,6 @@ window.addEventListener('click', () => {
   }
 });
 
-// Optional: guest continue
-getEl('continueGuest')?.addEventListener('click', async () => {
-
-  const guestBtn = getEl('continueGuest');
-  showLoading(guestBtn, 'Entering as Guest...');
-  try {
-    await window.signInAnonymously(window.auth);
-    window.location.href = 'dashboard.html';
-  } catch (error) {
-    console.error("Anonymous sign-in failed:", error);
-    alert("Could not sign in as a guest. Please try again.");
-    hideLoading(guestBtn, 'Continue as guest');
-  }
-});
-
-
 // Mobile Menu Handler
 function initializeMobileMenu() {
   if (document.querySelector('.mobile-menu-btn')) return;
@@ -306,7 +320,6 @@ function initializeMobileMenu() {
   const userMenu = document.querySelector('.user-menu');
   if (!userMenu) return;
 
-  // Hide desktop user menu on mobile
   const mediaQuery = window.matchMedia('(max-width: 768px)');
   
   function handleMobileView(e) {
@@ -331,7 +344,6 @@ function initializeMobileMenu() {
     mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
     mobileMenuBtn.innerHTML = '☰';
 
-    // Insert where the user menu was
     header.appendChild(mobileMenuBtn);
 
     const mobileNavOverlay = document.createElement('div');
@@ -346,7 +358,6 @@ function initializeMobileMenu() {
       navLinksHTML += `<a href="${link.href}">${link.textContent}</a>`;
     });
 
-    // Get user info
     const userEmail = document.getElementById('dropdownUserEmail')?.textContent || 'Guest';
     const userInitial = document.getElementById('userInitial')?.textContent || 'B';
 
@@ -400,17 +411,21 @@ function initializeMobileMenu() {
       });
     });
 
-    // Mobile logout handler
     const mobileLogoutBtn = mobileNavOverlay.querySelector('#mobileLogoutBtn');
     if (mobileLogoutBtn) {
       mobileLogoutBtn.addEventListener('click', async () => {
         try {
           await window.signOut(window.auth);
           console.log('User signed out successfully');
-          window.location.href = 'index.html';
+          
+          ToastNotification.success('You\'ve been signed out.', 'Signed Out');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 500);
         } catch (error) {
-          console.error('Logout error:', error);
-          alert('Error signing out. Please try again.');
+          console.error('Logout error:', error.code);
+          window.authErrorHandler.handle(error);
         }
       });
     }
@@ -438,3 +453,5 @@ if (document.readyState === 'loading') {
 }
 
 setTimeout(initializeMobileMenu, 100);
+
+console.log('Authentication handlers initialized with error handling');
