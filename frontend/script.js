@@ -111,20 +111,6 @@ function setupInputErrorClearing(form) {
         input.removeAttribute('aria-describedby');
       }
     });
-    
-    // Also clear on focus
-    input.addEventListener('focus', () => {
-      const formGroup = input.closest('.form-group');
-      if (formGroup && formGroup.classList.contains('error')) {
-        formGroup.classList.remove('error');
-        const errorMessage = formGroup.querySelector('.error-message');
-        if (errorMessage) {
-          errorMessage.textContent = '';
-        }
-        input.removeAttribute('aria-invalid');
-        input.removeAttribute('aria-describedby');
-      }
-    });
   });
 }
 
