@@ -445,7 +445,7 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 1000;
+  z-index: 1003;
 }
 
 .chat-modal[aria-hidden="false"] {
@@ -650,7 +650,7 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 1000;
+  z-index: 1003;
 }
 
 .about-modal[aria-hidden="false"] {
