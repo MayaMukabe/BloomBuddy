@@ -393,7 +393,7 @@ app.use((err, req, res, next) => {
 });
 
 //START SERVER
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log('===========================================');
   console.log(`BloomBuddy Backend Server Started`);
   console.log(`Listening on ${PORT}`);
@@ -405,7 +405,7 @@ app.listen(PORT, () => {
 //GRACEFUL SHUTDOWN
 
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received. received.Shutting down gracefully...');
+  console.log('SIGTERM received. Shutting down gracefully...');
   server.close(() => {
     console.log('Server Closed');
     process.exit(0);
