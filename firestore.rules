@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Conversations: Users can create and read their own conversations
+    match /conversations/{conversationId} {
+      // Users can read their own conversations
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      
+      // Users can create conversations where userId matches their auth uid
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      
+      // Users can update their own conversations (optional, for future features)
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid;
+      
+      // Messages subcollection: Users can read and write messages in their own conversations
+      match /messages/{messageId} {
+        allow read: if request.auth != null && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
+        allow create: if request.auth != null && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
+      }
+    }
+    
+    // Reminder activity (if needed)
+    match /users/{userId}/reminderActivity/{activityId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+

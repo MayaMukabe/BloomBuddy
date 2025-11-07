@@ -161,6 +161,11 @@ const sendBtn = getEl('sendBtn');
 const chatTitle = getEl('chatTitle');
 const initialMessage = getEl('initialMessage');
 const exportChatBtn = getEl('exportChatBtn');
+const historyBtn = getEl('historyBtn');
+const conversationHistorySidebar = getEl('conversationHistorySidebar');
+const historyCloseBtn = getEl('historyCloseBtn');
+const historyList = getEl('historyList');
+const historyTopicFilter = getEl('historyTopicFilter');
 
 // Chat state
 let currentTopic = '';
@@ -168,6 +173,7 @@ let chatHistory = [];
 let isProcessing = false; // Prevent multiple simultaneous requests
 let currentConversationId = null;
 let offlineQueue = [];
+let conversations = []; // Store fetched conversations
 
 const upgradeGuestBtn = getEl('upgradeGuestBtn');
 const signupModal = getEl('signupModal');
@@ -312,8 +318,306 @@ function closeChatModal() {
   if (chatModal) {
     chatModal.setAttribute('aria-hidden', 'true');
   }
+  // Close history sidebar when closing chat modal
+  if (conversationHistorySidebar) {
+    conversationHistorySidebar.setAttribute('aria-hidden', 'true');
+  }
+  // Reset conversation state
+  currentConversationId = null;
+  chatHistory = [];
   isProcessing = false;
 }
+
+// CONVERSATION HISTORY MANAGEMENT
+
+// Fetch conversations from Firestore
+async function fetchConversations(topicFilter = '') {
+  if (!window.currentUserId || !window.db) {
+    console.warn('User not authenticated or Firestore not initialized');
+    console.warn('currentUserId:', window.currentUserId);
+    console.warn('db:', window.db);
+    return [];
+  }
+
+  try {
+    console.log('Fetching conversations for user:', window.currentUserId);
+    const conversationsRef = window.collection(window.db, 'conversations');
+    
+    // Try query with orderBy first, fallback to simple query if index is missing
+    let snapshot;
+    try {
+      let queryConstraints = [
+        window.where('userId', '==', window.currentUserId)
+      ];
+
+      // If topic filter is specified, add it to the query
+      if (topicFilter) {
+        queryConstraints.push(window.where('topic', '==', topicFilter));
+      }
+
+      queryConstraints.push(window.orderBy('startedAt', 'desc'));
+      
+      const q = window.query(conversationsRef, ...queryConstraints);
+      snapshot = await window.getDocs(q);
+    } catch (orderByError) {
+      console.warn('Error with orderBy query (index may be missing), trying without orderBy:', orderByError);
+      // Fallback: query without orderBy if index doesn't exist
+      let queryConstraints = [
+        window.where('userId', '==', window.currentUserId)
+      ];
+
+      if (topicFilter) {
+        queryConstraints.push(window.where('topic', '==', topicFilter));
+      }
+      
+      const q = window.query(conversationsRef, ...queryConstraints);
+      snapshot = await window.getDocs(q);
+      
+      // Sort manually in JavaScript
+      const docs = snapshot.docs.sort((a, b) => {
+        const aTime = a.data().startedAt?.toDate()?.getTime() || 0;
+        const bTime = b.data().startedAt?.toDate()?.getTime() || 0;
+        return bTime - aTime; // Descending order
+      });
+      snapshot = { docs };
+    }
+
+    console.log(`Found ${snapshot.docs.length} conversations`);
+    const conversationList = [];
+
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      console.log('Processing conversation:', doc.id, data);
+      
+      // Fetch the first message to use as preview
+      let preview = 'No messages yet';
+      try {
+        const messagesRef = window.collection(window.db, 'conversations', doc.id, 'messages');
+        const messagesQuery = window.query(
+          messagesRef, 
+          window.orderBy('timestamp', 'asc'), 
+          window.limit(1)
+        );
+        const messagesSnapshot = await window.getDocs(messagesQuery);
+        
+        if (!messagesSnapshot.empty) {
+          const firstMessage = messagesSnapshot.docs[0].data();
+          preview = firstMessage.content.substring(0, 60) + (firstMessage.content.length > 60 ? '...' : '');
+        }
+      } catch (msgError) {
+        console.warn('Error fetching messages preview for conversation', doc.id, ':', msgError);
+        // Try without orderBy
+        try {
+          const messagesRef = window.collection(window.db, 'conversations', doc.id, 'messages');
+          const messagesSnapshot = await window.getDocs(
+            window.query(messagesRef, window.limit(1))
+          );
+          if (!messagesSnapshot.empty) {
+            const firstMessage = messagesSnapshot.docs[0].data();
+            preview = firstMessage.content.substring(0, 60) + (firstMessage.content.length > 60 ? '...' : '');
+          }
+        } catch (e) {
+          console.warn('Could not fetch message preview:', e);
+        }
+      }
+
+      conversationList.push({
+        id: doc.id,
+        topic: data.topic || 'unknown',
+        startedAt: data.startedAt?.toDate() || new Date(),
+        preview: preview
+      });
+    }
+
+    console.log('Returning conversation list:', conversationList);
+    return conversationList;
+  } catch (error) {
+    console.error('Error fetching conversations:', error);
+    console.error('Error details:', error.message, error.code);
+    // Show user-friendly error in history list
+    if (historyList) {
+      historyList.innerHTML = `<div class="history-empty" style="color: #d32f2f;">
+        Error loading conversations: ${error.message || 'Unknown error'}. 
+        Please check the console for details.
+      </div>`;
+    }
+    return [];
+  }
+}
+
+// Display conversations in the history sidebar
+async function displayConversations(topicFilter = '') {
+  if (!historyList) {
+    console.error('History list element not found');
+    return;
+  }
+
+  console.log('Displaying conversations with filter:', topicFilter);
+  historyList.innerHTML = '<div class="history-loading">Loading conversations...</div>';
+  
+  conversations = await fetchConversations(topicFilter);
+  console.log('Conversations fetched:', conversations.length);
+  
+  if (conversations.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">No conversations found. Start a new conversation to see it here!</div>';
+    return;
+  }
+
+  historyList.innerHTML = '';
+  
+  conversations.forEach((conversation, index) => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.setAttribute('data-conversation-id', conversation.id);
+    if (conversation.id === currentConversationId) {
+      item.classList.add('active');
+    }
+
+    const topicName = topicConfigs[conversation.topic]?.title || conversation.topic;
+    const date = conversation.startedAt.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+
+    item.innerHTML = `
+      <div class="history-item-topic">${topicName}</div>
+      <div class="history-item-preview">${sanitizeInput(conversation.preview)}</div>
+      <div class="history-item-date">${date}</div>
+    `;
+
+    item.addEventListener('click', () => {
+      console.log('Loading conversation:', conversation.id);
+      loadConversation(conversation.id);
+    });
+
+    historyList.appendChild(item);
+  });
+  
+  console.log('Displayed', conversations.length, 'conversations');
+}
+
+// Load a conversation from Firestore
+async function loadConversation(conversationId) {
+  if (!conversationId || !window.db) {
+    console.error('Invalid conversation ID or Firestore not initialized');
+    return;
+  }
+
+  try {
+    // Fetch conversation metadata
+    const conversationRef = window.doc(window.db, 'conversations', conversationId);
+    const conversationDoc = await window.getDoc(conversationRef);
+
+    if (!conversationDoc.exists()) {
+      console.error('Conversation not found');
+      return;
+    }
+
+    const conversationData = conversationDoc.data();
+    
+    // Fetch all messages for this conversation
+    const messagesRef = window.collection(window.db, 'conversations', conversationId, 'messages');
+    const messagesSnapshot = await window.getDocs(
+      window.query(messagesRef, window.orderBy('timestamp', 'asc'))
+    );
+
+    // Update current conversation state
+    currentConversationId = conversationId;
+    currentTopic = conversationData.topic || currentTopic;
+    
+    // Update UI with conversation topic
+    const config = topicConfigs[currentTopic];
+    if (config && chatTitle) {
+      chatTitle.textContent = config.title;
+    }
+
+    // Clear current chat display
+    if (chatMessages) {
+      chatMessages.innerHTML = '';
+    }
+
+    // Load messages into chat
+    chatHistory = [];
+    messagesSnapshot.forEach(doc => {
+      const messageData = doc.data();
+      const timestamp = messageData.timestamp?.toDate() || new Date();
+      
+      // Add to chat history
+      chatHistory.push({
+        role: messageData.role,
+        content: messageData.content,
+        timestamp: timestamp.toISOString()
+      });
+
+      // Display message in chat
+      addMessageToChat(messageData.content, messageData.role === 'user' ? 'user' : 'ai', false, timestamp);
+    });
+
+    // Add initial message if no messages exist
+    if (chatHistory.length === 0 && config) {
+      addMessageToChat(config.initialMessage, 'ai');
+    }
+
+    // Update active state in history list and refresh if sidebar is open
+    if (historyList) {
+      // Refresh the conversation list to update active state
+      if (conversationHistorySidebar && conversationHistorySidebar.getAttribute('aria-hidden') === 'false') {
+        const selectedTopic = historyTopicFilter?.value || '';
+        await displayConversations(selectedTopic);
+      }
+    }
+
+    // Close history sidebar
+    if (conversationHistorySidebar) {
+      conversationHistorySidebar.setAttribute('aria-hidden', 'true');
+    }
+
+    console.log('Conversation loaded successfully');
+  } catch (error) {
+    console.error('Error loading conversation:', error);
+    addMessageToChat('Error loading conversation. Please try again.', 'ai');
+  }
+}
+
+// Toggle history sidebar
+function toggleHistorySidebar() {
+  if (!conversationHistorySidebar) return;
+  
+  const isHidden = conversationHistorySidebar.getAttribute('aria-hidden') === 'true';
+  conversationHistorySidebar.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+  
+  if (isHidden) {
+    // Load conversations when opening sidebar
+    const selectedTopic = historyTopicFilter?.value || '';
+    displayConversations(selectedTopic);
+  }
+}
+
+// Event listeners for history sidebar
+if (historyBtn) {
+  historyBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleHistorySidebar();
+  });
+}
+
+if (historyCloseBtn) {
+  historyCloseBtn.addEventListener('click', () => {
+    if (conversationHistorySidebar) {
+      conversationHistorySidebar.setAttribute('aria-hidden', 'true');
+    }
+  });
+}
+
+if (historyTopicFilter) {
+  historyTopicFilter.addEventListener('change', (e) => {
+    displayConversations(e.target.value);
+  });
+}
+
 
 // Close chat modal and other modals
 document.addEventListener('click', (e) => {
@@ -472,25 +776,45 @@ async function sendMessage() {
 
     //Save converstaion to Firestore
     if (!currentConversationId){
-      const conversationRef = await window.addDoc(window.collection(window.db, 'conversations'), {
-        userId: window.currentUserId,
-        topic: currentTopic,
-        startedAt: window.serverTimestamp(),
-      });
-      currentConversationId = conversationRef.id;
+      console.log('Creating new conversation for user:', window.currentUserId, 'topic:', currentTopic);
+      try {
+        const conversationRef = await window.addDoc(window.collection(window.db, 'conversations'), {
+          userId: window.currentUserId,
+          topic: currentTopic,
+          startedAt: window.serverTimestamp(),
+        });
+        currentConversationId = conversationRef.id;
+        console.log('Created conversation with ID:', currentConversationId);
+        
+        // Refresh history sidebar if it's open
+        if (conversationHistorySidebar && conversationHistorySidebar.getAttribute('aria-hidden') === 'false') {
+          const selectedTopic = historyTopicFilter?.value || '';
+          await displayConversations(selectedTopic);
+        }
+      } catch (error) {
+        console.error('Error creating conversation:', error);
+        throw error; // Re-throw to be caught by outer try-catch
+      }
     }
 
-    await window.addDoc(window.collection(window.db, 'conversations', currentConversationId, 'messages'), {
-      role: 'user',
-      content: message,
-      timestamp: window.serverTimestamp()
-    })
+    console.log('Saving messages to conversation:', currentConversationId);
+    try {
+      await window.addDoc(window.collection(window.db, 'conversations', currentConversationId, 'messages'), {
+        role: 'user',
+        content: message,
+        timestamp: window.serverTimestamp()
+      });
 
-    await window.addDoc(window.collection(window.db, 'conversations', currentConversationId, 'messages'), {
-      role: 'assistant',
-      content: data.message,
-      timestamp: window.serverTimestamp(),
-    });
+      await window.addDoc(window.collection(window.db, 'conversations', currentConversationId, 'messages'), {
+        role: 'assistant',
+        content: data.message,
+        timestamp: window.serverTimestamp(),
+      });
+      console.log('Messages saved successfully');
+    } catch (error) {
+      console.error('Error saving messages:', error);
+      // Don't throw - allow chat to continue even if save fails
+    }
     
     // Update chat history
     chatHistory.push(
