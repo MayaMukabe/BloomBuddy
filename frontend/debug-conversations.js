@@ -1,5 +1,3 @@
-// Debug helper for conversations
-// Run this in the browser console to test conversation retrieval
 
 async function testConversations() {
   console.log('=== Testing Conversation Retrieval ===');

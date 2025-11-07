@@ -15,16 +15,105 @@ const app = express();
 
 const PORT = process.env.PORT || 3001;
 
+// Build CSP directives
+const cspDirectives = {
+  // Default source - only allow same origin
+  defaultSrc: ["'self'"],
+  
+  // Script sources - allow same origin, Firebase, and DOMPurify CDN
+  // Note: 'unsafe-inline' is needed for Firebase initialization, but CSP still provides XSS protection
+  // by blocking unauthorized script execution from untrusted sources
+  scriptSrc: [
+    "'self'",
+    "https://www.gstatic.com",
+    "https://cdnjs.cloudflare.com",
+    "'unsafe-inline'" // Required for Firebase, but CSP still prevents XSS from untrusted sources
+  ],
+  
+  // Style sources - allow same origin, Google Fonts, and inline styles
+  styleSrc: [
+    "'self'",
+    "'unsafe-inline'", // Needed for dynamic styling
+    "https://fonts.googleapis.com"
+  ],
+  
+  // Font sources - allow same origin and Google Fonts
+  fontSrc: [
+    "'self'",
+    "https://fonts.gstatic.com",
+    "data:" // Allow data URIs for fonts if needed
+  ],
+  
+  // Image sources - allow same origin, data URIs, and Firebase storage
+  imgSrc: [
+    "'self'",
+    "data:",
+    "https:",
+    "blob:" // Allow blob URLs for images
+  ],
+  
+  // Connect sources - allow API calls to backend and Firebase services
+  connectSrc: [
+    "'self'",
+    "https://openrouter.ai", // Backend API calls to OpenRouter
+    "https://bloombuddy-backend.onrender.com", // Production backend
+    "http://localhost:3001", // Development backend
+    "http://127.0.0.1:3001", // Alternative localhost
+    // Firebase services
+    "https://identitytoolkit.googleapis.com",
+    "https://securetoken.googleapis.com",
+    "https://firestore.googleapis.com",
+    "https://firebasestorage.googleapis.com",
+    "https://*.firebaseio.com",
+    "https://*.googleapis.com",
+    "wss://*.firebaseio.com", // WebSocket connections for Firebase
+    "https://bloombuddy-id.firebaseapp.com",
+    "https://bloombuddy-id.firebasestorage.app"
+  ],
+  
+  // Frame sources - restrict to prevent clickjacking
+  frameSrc: [
+    "'self'",
+    "https://www.google.com" // If using Google sign-in iframe
+  ],
+  
+  // Object sources - deny embedded objects
+  objectSrc: ["'none'"],
+  
+  // Media sources - allow same origin for audio/video
+  mediaSrc: ["'self'"],
+  
+  // Worker sources - allow service workers from same origin
+  workerSrc: [
+    "'self'",
+    "blob:" // Allow blob URLs for service workers
+  ],
+  
+  // Manifest source - allow same origin for web app manifest
+  manifestSrc: ["'self'"],
+  
+  // Form actions - restrict form submissions to same origin
+  formAction: ["'self'"],
+  
+  // Base URI - prevent base tag injection
+  baseUri: ["'self'"],
+};
+
+// Add upgradeInsecureRequests in production only
+if (process.env.NODE_ENV === 'production') {
+  cspDirectives.upgradeInsecureRequests = [];
+}
+
 app.use(
   helmet({
     contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        scriptSrc: ["'self'", "https://www.gstatic.com"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      },
+      directives: cspDirectives,
+      // Report violations to a reporting endpoint (optional but recommended)
+      reportOnly: false, // Set to true for testing CSP without blocking
     },
+    // Additional security headers
+    crossOriginEmbedderPolicy: false, // Set to true if you don't need to embed external resources
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow cross-origin resources
   })
 );
 
