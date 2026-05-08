@@ -1,33 +1,78 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ========== USER DOCUMENT ==========
     // Users can read and write their own user document
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Mood History: users/{uid}/moodHistory/{date}
+      match /moodHistory/{date} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Journal Entries: users/{uid}/journal/{date}
+      match /journal/{date} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Conversation Context (AI memory): users/{uid}/context/{docId}
+      match /context/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Reminder Activity: users/{uid}/reminderActivity/{activityId}
+      match /reminderActivity/{activityId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Guided Programs: users/{uid}/programs/{programDoc}
+      match /programs/{programDoc} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
-    
-    // Conversations: Users can create and read their own conversations
+
+    // ========== CONVERSATIONS ==========
     match /conversations/{conversationId} {
       // Users can read their own conversations
       allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      
+
       // Users can create conversations where userId matches their auth uid
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      
-      // Users can update their own conversations (optional, for future features)
+
+      // Users can update their own conversations
       allow update: if request.auth != null && resource.data.userId == request.auth.uid;
-      
-      // Messages subcollection: Users can read and write messages in their own conversations
+
+      // Messages subcollection
       match /messages/{messageId} {
         allow read: if request.auth != null && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
         allow create: if request.auth != null && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
       }
     }
-    
-    // Reminder activity (if needed)
-    match /users/{userId}/reminderActivity/{activityId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+    // ========== PRAYER WALL ==========
+    match /prayers/{prayerId} {
+      // Any authenticated user can read all prayers
+      allow read: if request.auth != null;
+
+      // Any authenticated user can create a prayer (must include their userId)
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() > 0
+                    && request.resource.data.text.size() <= 2000;
+
+      // Any authenticated user can update prayCount and prayedBy (for the "Praying" button)
+      // But cannot modify the original prayer text, category, or userId
+      allow update: if request.auth != null
+                    && request.resource.data.text == resource.data.text
+                    && request.resource.data.category == resource.data.category
+                    && request.resource.data.userId == resource.data.userId
+                    && request.resource.data.authorName == resource.data.authorName;
+
+      // Only the author can delete their own prayer
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
   }
 }
-

@@ -10,10 +10,51 @@ const morgan = require("morgan");
 
 const rateLimit = require("express-rate-limit");
 const { ipKeyGenerator } = require('express-rate-limit');
+const { requestLogger, globalErrorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
 const PORT = process.env.PORT || 3001;
+
+// ========== TOKEN BUDGET SYSTEM ==========
+// In-memory daily token tracker per user
+// Resets daily. For multi-server: swap to Redis/Firestore
+const DAILY_TOKEN_BUDGET = parseInt(process.env.DAILY_TOKEN_BUDGET) || 25000;
+const tokenUsage = {}; // { 'userId:YYYY-MM-DD': { tokens: N, requests: N } }
+
+function getUsageKey(userId) {
+  const today = new Date().toISOString().split('T')[0];
+  return `${userId}:${today}`;
+}
+
+function getUserUsage(userId) {
+  const key = getUsageKey(userId);
+  if (!tokenUsage[key]) {
+    tokenUsage[key] = { tokens: 0, requests: 0 };
+  }
+  return tokenUsage[key];
+}
+
+function recordTokenUsage(userId, tokensUsed) {
+  const usage = getUserUsage(userId);
+  usage.tokens += tokensUsed;
+  usage.requests += 1;
+}
+
+function getRemainingBudget(userId) {
+  const usage = getUserUsage(userId);
+  return Math.max(0, DAILY_TOKEN_BUDGET - usage.tokens);
+}
+
+// Clean up stale entries daily (prevent memory leak)
+setInterval(() => {
+  const today = new Date().toISOString().split('T')[0];
+  for (const key of Object.keys(tokenUsage)) {
+    if (!key.endsWith(today)) {
+      delete tokenUsage[key];
+    }
+  }
+}, 60 * 60 * 1000); // Every hour
 
 // Build CSP directives
 const cspDirectives = {
@@ -143,6 +184,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb'}));
 if (process.env.NODE_ENV !== 'production'){
   app.use(morgan('dev'));
 }
+// Structured request logger (all environments)
+app.use(requestLogger);
 
 //RATE LIMITING CONFIGURATION
 
@@ -190,6 +233,54 @@ app.get('/health', (req, res) => {
   });
 });
 
+// VERSE OF THE DAY ENDPOINT
+const DAILY_VERSES = [
+  { text: "The Lord is my shepherd; I shall not want.", ref: "Psalm 23:1", theme: "peace" },
+  { text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.", ref: "Jeremiah 29:11", theme: "hope" },
+  { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.", ref: "Joshua 1:9", theme: "courage" },
+  { text: "Cast all your anxiety on him because he cares for you.", ref: "1 Peter 5:7", theme: "peace" },
+  { text: "I can do all things through Christ who strengthens me.", ref: "Philippians 4:13", theme: "strength" },
+  { text: "The Lord is close to the brokenhearted and saves those who are crushed in spirit.", ref: "Psalm 34:18", theme: "comfort" },
+  { text: "Trust in the Lord with all your heart and lean not on your own understanding.", ref: "Proverbs 3:5", theme: "faith" },
+  { text: "But those who hope in the Lord will renew their strength. They will soar on wings like eagles.", ref: "Isaiah 40:31", theme: "hope" },
+  { text: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.", ref: "Philippians 4:6", theme: "peace" },
+  { text: "And we know that in all things God works for the good of those who love him.", ref: "Romans 8:28", theme: "faith" },
+  { text: "The Lord is my light and my salvation — whom shall I fear?", ref: "Psalm 27:1", theme: "courage" },
+  { text: "Come to me, all you who are weary and burdened, and I will give you rest.", ref: "Matthew 11:28", theme: "comfort" },
+  { text: "He gives strength to the weary and increases the power of the weak.", ref: "Isaiah 40:29", theme: "strength" },
+  { text: "The peace of God, which transcends all understanding, will guard your hearts and your minds.", ref: "Philippians 4:7", theme: "peace" },
+  { text: "When I am afraid, I put my trust in you.", ref: "Psalm 56:3", theme: "faith" },
+  { text: "God is our refuge and strength, an ever-present help in trouble.", ref: "Psalm 46:1", theme: "strength" },
+  { text: "Be still, and know that I am God.", ref: "Psalm 46:10", theme: "peace" },
+  { text: "The Lord your God is with you, the Mighty Warrior who saves. He will take great delight in you.", ref: "Zephaniah 3:17", theme: "love" },
+  { text: "For God has not given us a spirit of fear, but of power and of love and of a sound mind.", ref: "2 Timothy 1:7", theme: "courage" },
+  { text: "Weeping may stay for the night, but rejoicing comes in the morning.", ref: "Psalm 30:5", theme: "hope" },
+  { text: "Have I not commanded you? Be strong and courageous. Do not be afraid.", ref: "Joshua 1:9", theme: "courage" },
+  { text: "The Lord will fight for you; you need only to be still.", ref: "Exodus 14:14", theme: "faith" },
+  { text: "He heals the brokenhearted and binds up their wounds.", ref: "Psalm 147:3", theme: "comfort" },
+  { text: "Even though I walk through the darkest valley, I will fear no evil, for you are with me.", ref: "Psalm 23:4", theme: "courage" },
+  { text: "Let all that you do be done in love.", ref: "1 Corinthians 16:14", theme: "love" },
+  { text: "This is the day that the Lord has made; let us rejoice and be glad in it.", ref: "Psalm 118:24", theme: "gratitude" },
+  { text: "Give thanks to the Lord, for he is good; his love endures forever.", ref: "Psalm 107:1", theme: "gratitude" },
+  { text: "The joy of the Lord is your strength.", ref: "Nehemiah 8:10", theme: "strength" },
+  { text: "Therefore, if anyone is in Christ, the new creation has come: The old has gone, the new is here!", ref: "2 Corinthians 5:17", theme: "hope" },
+  { text: "But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness.", ref: "Galatians 5:22", theme: "growth" },
+];
+
+app.get('/api/verse-of-the-day', generalLimiter, (req, res) => {
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+  const verse = DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
+
+  res.status(200).json({
+    success: true,
+    verse: verse.text,
+    reference: verse.ref,
+    theme: verse.theme,
+    date: now.toISOString().split('T')[0],
+  });
+});
+
 //CHAT ENDPOINT - MAIN FUNCTIONALITY
 app.post('/api/chat', chatLimiter, async (req, res) => {
   console.log('Chat request received:', new Date().toISOString());
@@ -198,7 +289,20 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     //Validate Request
 
     //Extract and validate required fields from request body
-    const { messages, topic, userId } = req.body;
+    const { messages, topic, userId, userContext } = req.body;
+
+    // Check token budget before processing
+    const effectiveUserId = userId || req.ip || 'anonymous';
+    const remaining = getRemainingBudget(effectiveUserId);
+    if (remaining <= 0) {
+      console.warn(`Token budget exceeded for user: ${effectiveUserId}`);
+      return res.status(429).json({
+        error: 'Daily limit reached',
+        message: 'You\'ve reached your daily conversation limit. Your budget resets at midnight. Come back tomorrow! 🌅',
+        budgetExceeded: true,
+        remaining: 0,
+      });
+    }
 
     //check if messsages array exists and has content
     if (!messages || !Array.isArray(messages) || messages.length ===0){
@@ -320,13 +424,44 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                      * Teaching: "Ephesians 4:32 says 'Be kind and compassionate to one another, forgiving each other, just as in Christ God forgave you.'"
                      * Truth: "Forgiveness doesn't mean what happened was okay. It means you're choosing freedom over bitterness."
                      * Application: "Start by asking God to help you want to forgive."`,
+
+      journal: `You are BloomBuddy, offering a gentle spiritual reflection on a journal entry.
+
+               **Your Core Directives:**
+              1.  Do NOT introduce yourself - the user already knows you.
+              2.  Read the user's journal entry carefully and reflect on it with warmth and empathy.
+              3.  Keep your reflection to 2-3 sentences max. Be brief and meaningful.
+              4.  Include one relevant Bible verse that connects to the emotion or theme in their entry.
+              5.  End with a short, encouraging thought - not a question.
+              6.  Never give advice unless asked. Simply reflect and encourage.`,
     };
+
+    // Build context string from userContext (if provided)
+    let contextString = '';
+    if (userContext) {
+      const parts = [];
+      if (userContext.userName) parts.push(`The user's name is ${userContext.userName}.`);
+      if (userContext.recentMoodKeywords && userContext.recentMoodKeywords.length > 0) {
+        parts.push(`They've recently expressed feelings of: ${userContext.recentMoodKeywords.join(', ')}.`);
+      }
+      if (userContext.recentTopics && userContext.recentTopics.length > 0) {
+        const topicLabels = { mood: 'mood check', verse: 'verse encouragement', practice: 'daily practice', growth: 'spiritual growth', journal: 'journaling' };
+        const labels = userContext.recentTopics.map(t => topicLabels[t] || t);
+        parts.push(`Their recent conversations have been about: ${labels.join(', ')}.`);
+      }
+      if (userContext.conversationCount) {
+        parts.push(`They've had ${userContext.conversationCount} conversations with you so far.`);
+      }
+      if (parts.length > 0) {
+        contextString = '\n\nUSER CONTEXT (reference naturally, don\'t list this back to them):\n' + parts.join(' ');
+      }
+    }
 
     //Build the complete message array with system prompt
     const completeMessages = [
       {
         role: 'system',
-        content: systemPrompts[topic] + '\n\nalways be respectful, helpful, and supportive. Keep resonses  concise but meaningful.',
+        content: systemPrompts[topic] + '\n\nIMPORTANT GUIDELINES:\n- Keep responses to 2-3 short paragraphs unless the user asks you to elaborate.\n- Speak like a wise, caring friend — not a therapist reading from a manual.\n- Be grounded in faith but never preachy or aggressive. Let scripture feel like a gentle invitation, not a lecture.\n- Avoid bullet-point lists in your first response. Use natural, flowing language.\n- Never start with "I understand" or "That\'s a great question." Be genuine and specific to what the user actually said.\n- If the user shares something heavy, sit with them first before offering advice.' + contextString,
       },
       ...messages,// add all user mesages
     ];
@@ -414,11 +549,20 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     const aiMessage = data.choices[0].message.content;
     console.log(`Chat request completed sucessfully for topic: ${topic}`);
 
+    // Track token usage
+    const tokensUsed = data.usage?.total_tokens || 0;
+    const effectiveUserIdForTracking = userId || req.ip || 'anonymous';
+    if (tokensUsed > 0) {
+      recordTokenUsage(effectiveUserIdForTracking, tokensUsed);
+      console.log(`Tokens used: ${tokensUsed}, Remaining: ${getRemainingBudget(effectiveUserIdForTracking)}`);
+    }
+
     //Send the response back to the client
     res.status(200).json({
       success: true,
       message: aiMessage,
       usage: data.usage || null, //Includes token usage if availabe
+      remaining: getRemainingBudget(effectiveUserIdForTracking),
       timestamp: new Date().toISOString(),
     });
     } catch (error){
@@ -430,6 +574,22 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
         message: 'An unexpected error occurred. Please try again later.',
       });
     }
+});
+
+// USAGE CHECK ENDPOINT
+app.get('/api/usage', generalLimiter, (req, res) => {
+  const userId = req.query.userId || req.ip || 'anonymous';
+  const usage = getUserUsage(userId);
+  const remaining = getRemainingBudget(userId);
+
+  res.status(200).json({
+    success: true,
+    tokensUsed: usage.tokens,
+    requestsToday: usage.requests,
+    remaining: remaining,
+    dailyBudget: DAILY_TOKEN_BUDGET,
+    percentUsed: Math.round((usage.tokens / DAILY_TOKEN_BUDGET) * 100),
+  });
 });
 
 //FIREBASE AUTH VERICATION ENDPOINT
@@ -458,28 +618,9 @@ app.post('/api/verify-auth', authLimiter, async (req, res) => {
   }
 });
 
-//404 HANDLER TO CATCH ALL UNFINED ROUTES
-app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not found',
-    message:`The endpoint ${req.method} ${req.path} does not exist`,
-  });
-});
-
-//GLOBAL ERROR HANDLER
-
-app.use((err, req, res, next) => {
-  console.error('Global error handler:', err);
-  //Dont leak arror details in production
-  const message = process.env.NODE_ENV === 'production'
-    ? 'An unexpected error occurred'
-    : err.message;
-
-  res.status(err.status || 500).json({
-    error: 'Server error',
-    message: message,
-  });
-});
+//404 HANDLER + GLOBAL ERROR HANDLER
+app.use(notFoundHandler);
+app.use(globalErrorHandler);
 
 //START SERVER
 const server = app.listen(PORT, () => {

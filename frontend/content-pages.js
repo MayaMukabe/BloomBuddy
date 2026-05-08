@@ -119,7 +119,7 @@ const resourceData = {
     author: 'by Rick Warren',
     description: 'A 40-day spiritual journey to discover your purpose and meaning in life. This bestselling book helps you understand God\'s plan for your life and how to live with purpose.',
     details: 'This transformative book takes you on a 40-day spiritual journey to discover the answer to life\'s most important question: "What on earth am I here for?" Rick Warren guides you through five biblical purposes that will give your life meaning and direction.',
-    link: '#',
+    link: 'https://www.amazon.com/Purpose-Driven-Life-What-Earth/dp/031033750X',
     linkText: 'Find on Amazon'
   },
   'jesus-calling': {
@@ -127,7 +127,7 @@ const resourceData = {
     author: 'by Sarah Young',
     description: 'Daily devotions written as if Jesus is speaking directly to you. A comforting and inspiring devotional that brings peace and encouragement to your daily life.',
     details: 'Experience a deeper relationship with Jesus as you savor the presence of the One who understands you perfectly and loves you forever. With Scripture and personal reflections, this devotional helps you hear God\'s voice in your daily life.',
-    link: '#',
+    link: 'https://www.amazon.com/Jesus-Calling-Enjoying-Peace-Presence/dp/1591451884',
     linkText: 'Find on Amazon'
   },
   'boundaries': {
@@ -135,8 +135,140 @@ const resourceData = {
     author: 'by Dr. Henry Cloud & Dr. John Townsend',
     description: 'Learn to set healthy boundaries in relationships and life. This book provides practical guidance for establishing limits that protect your emotional and spiritual well-being.',
     details: 'When to say yes, when to say no to take control of your life. This book shows you how to set boundaries with family, friends, and colleagues while maintaining loving relationships.',
-    link: '#',
+    link: 'https://www.amazon.com/Boundaries-Updated-Expanded-When-Control/dp/0310351804',
     linkText: 'Find on Amazon'
+  },
+  'youversion': {
+    title: 'YouVersion Bible App',
+    author: 'Free Bible Study App',
+    description: 'The world\'s most popular Bible app with over 2,000 Bible versions in 1,600+ languages. Includes reading plans, audio Bibles, and a vibrant community.',
+    details: 'Access the Bible anytime, anywhere. Features include daily verse widgets, reading plans designed by pastors and authors, bookmarks, highlights, and the ability to share verses with friends.',
+    link: 'https://www.youversion.com/',
+    linkText: 'Visit YouVersion'
+  },
+  'headspace': {
+    title: 'Headspace',
+    author: 'Meditation & Mindfulness',
+    description: 'A guided meditation and mindfulness app that helps reduce stress, improve focus, and sleep better through hundreds of meditation sessions.',
+    details: 'Whether you\'re new to meditation or an experienced practitioner, Headspace offers courses and single sessions on everything from stress and anxiety to sleep and focus.',
+    link: 'https://www.headspace.com/',
+    linkText: 'Visit Headspace'
+  },
+  'pray': {
+    title: 'Pray.com',
+    author: 'Prayer & Faith Community',
+    description: 'The #1 app for daily prayer, Bible stories, and sleep content. Join millions in building a daily prayer habit with guided prayers and devotionals.',
+    details: 'Features daily prayers, bedtime Bible stories, worship music, and a faith-based community. Perfect for starting and ending your day with intention and peace.',
+    link: 'https://pray.com/',
+    linkText: 'Visit Pray.com'
+  },
+  'bible-gateway': {
+    title: 'Bible Gateway',
+    author: 'Online Bible Study',
+    description: 'A searchable online Bible in over 200 versions and 70 languages. Read, hear, study, and explore the Bible with powerful tools and resources.',
+    details: 'Features include keyword search, passage lookup, reading plans, devotionals, newsletters, and extensive commentaries from trusted Bible scholars.',
+    link: 'https://www.biblegateway.com/',
+    linkText: 'Visit Bible Gateway'
+  },
+  'focus-family': {
+    title: 'Focus on the Family',
+    author: 'Family & Marriage Resources',
+    description: 'Providing trusted advice on marriage, parenting, and faith since 1977. Offers articles, broadcasts, counseling referrals, and practical resources.',
+    details: 'Focus on the Family helps families thrive through broadcasts, podcasts, articles, and licensed counseling referrals covering marriage, parenting, faith, and social issues.',
+    link: 'https://www.focusonthefamily.com/',
+    linkText: 'Visit Focus on the Family'
+  },
+  'psychology-today': {
+    title: 'Psychology Today',
+    author: 'Mental Health Resources',
+    description: 'The world\'s largest mental health resource. Find therapists, psychiatrists, support groups, and trusted information about mental health conditions.',
+    details: 'Features a comprehensive therapist directory, articles on mental health topics, and evidence-based insights on relationships, anxiety, depression, and personal growth.',
+    link: 'https://www.psychologytoday.com/',
+    linkText: 'Visit Psychology Today'
+  }
+};
+
+const podcastData = {
+  'bible-project': {
+    title: 'The Bible Project',
+    host: 'Tim Mackie & Jon Collins',
+    category: 'Biblical Studies',
+    description: 'Explore the Bible\'s unified story through animated videos and deep-dive conversations. Tim and Jon walk through biblical themes, word studies, and book overviews.',
+    details: 'Each episode makes complex biblical concepts accessible and engaging. Perfect for anyone wanting to understand the Bible\'s big picture and how each book fits together.',
+    link: 'https://open.spotify.com/show/65KFEK2OaBglkGE0wUPH8x',
+    linkText: 'Listen on Spotify'
+  },
+  'elevation': {
+    title: 'Elevation with Steven Furtick',
+    host: 'Steven Furtick',
+    category: 'Inspiration',
+    description: 'Powerful sermons and teachings from Elevation Church pastor Steven Furtick. Uplifting messages about faith, purpose, and overcoming obstacles.',
+    details: 'Pastor Steven Furtick delivers dynamic, practical messages that challenge you to live boldly and trust God in every season of life.',
+    link: 'https://open.spotify.com/show/1bMlpjb5hOGwVZJWYPPLPE',
+    linkText: 'Listen on Spotify'
+  },
+  'on-purpose': {
+    title: 'On Purpose with Jay Shetty',
+    host: 'Jay Shetty',
+    category: 'Mindfulness',
+    description: 'Former monk Jay Shetty interviews thought leaders, authors, and celebrities about purpose, mindfulness, and living intentionally.',
+    details: 'Jay brings ancient wisdom to modern life through conversations about relationships, mental health, career, and personal growth with world-class guests.',
+    link: 'https://open.spotify.com/show/5EqqB52m2bsr4k1Ii7sStc',
+    linkText: 'Listen on Spotify'
+  },
+  'anxiety-coaches': {
+    title: 'The Anxiety Coaches Podcast',
+    host: 'Gina Ryan',
+    category: 'Mental Health',
+    description: 'Practical strategies for managing anxiety and panic. Gina Ryan shares actionable tools, mindset shifts, and encouragement for anyone struggling with anxiety.',
+    details: 'Episodes cover topics like breaking the anxiety cycle, managing panic attacks, building confidence, and developing a calmer mindset through evidence-based approaches.',
+    link: 'https://open.spotify.com/show/0xDgYXN5WsBFm3EYNsMGbA',
+    linkText: 'Listen on Spotify'
+  },
+  'happiness-lab': {
+    title: 'The Happiness Lab',
+    host: 'Dr. Laurie Santos',
+    category: 'Psychology',
+    description: 'Yale professor Dr. Laurie Santos explores the science of happiness. Based on her record-breaking course, she reveals what really makes us happy.',
+    details: 'Using cutting-edge research, Dr. Santos shows how our minds lie to us about what brings happiness, and shares evidence-based strategies for genuine well-being.',
+    link: 'https://open.spotify.com/show/3i5TCKhc6GY42pOWkpWveG',
+    linkText: 'Listen on Spotify'
+  },
+  'ten-percent': {
+    title: 'Ten Percent Happier',
+    host: 'Dan Harris',
+    category: 'Meditation',
+    description: 'ABC News anchor Dan Harris talks with meditation teachers, neuroscientists, and wise people about how to be happier without being annoying about it.',
+    details: 'A practical, skeptic-friendly approach to meditation and mindfulness. Dan makes the case that meditation can make you 10% happier — and that\'s a meaningful improvement.',
+    link: 'https://open.spotify.com/show/1CfW319UkBMVhQRe0yJ7Xl',
+    linkText: 'Listen on Spotify'
+  },
+  'passion-city': {
+    title: 'Passion City Church',
+    host: 'Louie Giglio',
+    category: 'Worship',
+    description: 'Sermons from Passion City Church with pastor Louie Giglio. Messages about worship, purpose, and the greatness of God.',
+    details: 'Louie Giglio is known for his powerful teaching that connects the wonder of the universe with the God who created it. Each message inspires worship and awe.',
+    link: 'https://open.spotify.com/show/5x9P7FLBkTj0gPkICRJbaQ',
+    linkText: 'Listen on Spotify'
+  },
+  'rzim': {
+    title: 'RZIM: Let My People Think',
+    host: 'RZIM Team',
+    category: 'Apologetics',
+    description: 'Thoughtful exploration of life\'s deepest questions through the lens of Christian apologetics. Engaging discussions on faith, culture, and meaning.',
+    details: 'This podcast tackles tough questions about God, suffering, truth, and meaning with intellectual rigor and pastoral sensitivity.',
+    link: 'https://open.spotify.com/show/3MfYJGlEYP4brR5pdkiRQa',
+    linkText: 'Listen on Spotify'
+  },
+  'hillsong': {
+    title: 'Hillsong Church',
+    host: 'Hillsong Team',
+    category: 'Worship',
+    description: 'Messages and worship from Hillsong Church. Inspiring teachings about faith, community, and living a Christ-centered life.',
+    details: 'Hillsong Church brings contemporary worship and biblical teaching that has inspired millions worldwide. Each episode offers practical faith for everyday life.',
+    link: 'https://open.spotify.com/show/2uB1KXDP9PdjGAqCTzP7Og',
+    linkText: 'Listen on Spotify'
   }
 };
 
@@ -175,6 +307,45 @@ function openResourceModal(resourceId) {
   `;
   
   resourceModal.setAttribute('aria-hidden', 'false');
+  window.bbAnalytics?.('resource_viewed', { resource_id: resourceId, title: resource.title });
+}
+
+// Podcast Button Handlers
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.podcast-btn')) {
+    const btn = e.target.closest('.podcast-btn');
+    const podcastId = btn.getAttribute('data-podcast');
+    openPodcastModal(podcastId);
+  }
+});
+
+function openPodcastModal(podcastId) {
+  const podcast = podcastData[podcastId];
+  if (!podcast || !podcastModal) return;
+  
+  getEl('podcastModalTitle').textContent = podcast.title;
+  getEl('podcastModalContent').innerHTML = `
+    <div class="modal-content-item">
+      <h4>About</h4>
+      <p>${podcast.description}</p>
+    </div>
+    <div class="modal-content-item">
+      <h4>Details</h4>
+      <p>${podcast.details}</p>
+    </div>
+    <div class="modal-content-item">
+      <h4>Host</h4>
+      <p>${podcast.host}</p>
+    </div>
+    <div class="modal-content-item">
+      <h4>Category</h4>
+      <p>${podcast.category}</p>
+    </div>
+    <a href="${podcast.link}" class="modal-link" target="_blank">${podcast.linkText}</a>
+  `;
+  
+  podcastModal.setAttribute('aria-hidden', 'false');
+  window.bbAnalytics?.('podcast_viewed', { podcast_id: podcastId, title: podcast.title });
 }
 
 // Close modals

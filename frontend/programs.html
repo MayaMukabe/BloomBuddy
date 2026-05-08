@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BloomBuddy Programs — Guided multi-day spiritual journeys for growth, gratitude, and peace.">
+  <title>Programs - BloomBuddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="programs.css" />
+  <link rel="icon" type="image/png" href="Images/favicon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#a78bfa" />
+
+  <script type="module" src="firebase-config.js"></script>
+  <script src="programs.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-text">BB</div>
+      <span class="brand-name">BloomBuddy</span>
+    </div>
+
+    <nav class="desktop-nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="journal.html">Journal</a>
+      <a href="prayer-wall.html">Prayer Wall</a>
+      <a href="resources.html">Resources</a>
+      <a href="programs.html" class="active">Programs</a>
+    </nav>
+
+    <div class="user-menu">
+      <div class="profile-avatar" id="profileAvatar">
+        <span id="userInitial">B</span>
+      </div>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <span id="dropdownUserEmail">user@email.com</span>
+        </div>
+        <a href="profile.html" class="dropdown-item">
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+          My Profile
+        </a>
+        <a href="#" id="logoutBtn" class="dropdown-item logout">
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+          Logout
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="programs-main">
+    <div class="programs-container">
+      <div class="programs-header">
+        <h1>🌱 Guided Programs</h1>
+        <p class="programs-subtitle">Structured spiritual journeys to help you grow, one day at a time</p>
+      </div>
+
+      <!-- Active Program (shown when enrolled) -->
+      <section class="active-program-section" id="activeProgramSection" style="display: none;">
+        <div class="active-program-card" id="activeProgramCard">
+          <div class="active-program-top">
+            <span class="active-program-badge">Currently Active</span>
+            <button class="leave-program-btn" id="leaveProgramBtn" title="Leave program">✕</button>
+          </div>
+          <h2 class="active-program-title" id="activeProgramTitle"></h2>
+          <div class="active-progress-bar">
+            <div class="active-progress-fill" id="activeProgressFill"></div>
+          </div>
+          <span class="active-progress-text" id="activeProgressText"></span>
+
+          <div class="today-task" id="todayTask">
+            <div class="today-task-header">
+              <span class="today-badge">📖 Today — Day <span id="todayDayNum">1</span></span>
+            </div>
+            <h3 class="today-task-title" id="todayTaskTitle"></h3>
+            <p class="today-task-desc" id="todayTaskDesc"></p>
+            <textarea id="todayReflection" class="today-textarea" placeholder="Write your reflection for today..." rows="4"></textarea>
+            <button id="completeTaskBtn" class="complete-task-btn" disabled>Complete Today's Task</button>
+          </div>
+
+          <div class="today-completed" id="todayCompleted" style="display: none;">
+            <span class="completed-check">✅</span>
+            <span>Today's task completed! Come back tomorrow for Day <span id="nextDayNum">2</span>.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Program Catalog -->
+      <section class="program-catalog" id="programCatalog">
+        <h2 class="catalog-title">Choose a Journey</h2>
+        <div class="program-grid" id="programGrid"></div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

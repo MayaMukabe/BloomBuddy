@@ -1,0 +1,33 @@
+{
+  "name": "BloomBuddy",
+  "short_name": "BloomBuddy",
+  "description": "Your personal sanctuary for spiritual growth and emotional well-being. AI-powered companionship grounded in faith.",
+  "start_url": "/dashboard.html",
+  "display": "standalone",
+  "background_color": "#0f0c29",
+  "theme_color": "#a78bfa",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "Images/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "Images/BB-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "Images/BB-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "health", "education"],
+  "lang": "en",
+  "dir": "ltr"
+}

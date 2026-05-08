@@ -2,49 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BloomBuddy — Your personal companion for spiritual growth and emotional well-being. Get daily encouragement, mood support, and faith-centered guidance.">
   <title>BloomBuddy Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="toast-notifications.css">
   
   <link rel="icon" type="image/png" href="Images/favicon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#a78bfa" />
   
   <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp, getDocs, query, where, orderBy, getDoc, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyAF4xJYedIsOuKXD7JOLuR4gP74f4Tue90",
-      authDomain: "bloombuddy-id.firebaseapp.com",
-      projectId: "bloombuddy-id",
-      storageBucket: "bloombuddy-id.firebasestorage.app",
-      messagingSenderId: "837626738147",
-      appId: "1:837626738147:web:63ad0819361b0281dc9cd6",
-      measurementId: "G-SNEL7GGE3H"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    
-    window.auth = auth;
-    window.db = db;
-    window.signOut = signOut;
-    window.onAuthStateChanged = onAuthStateChanged;
-    window.doc = doc;
-    window.setDoc = setDoc;
-    window.addDoc = addDoc;
-    window.collection = collection;
-    window.serverTimestamp = serverTimestamp;
-    window.getDocs = getDocs;
-    window.query = query;
-    window.where = where;
-    window.orderBy = orderBy;
-    window.getDoc = getDoc;
-    window.limit = limit;
-  </script>
+  <script type="module" src="firebase-config.js"></script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
   <script src="auth-error-handler.js"></script>
@@ -61,9 +32,10 @@
 
     <nav class="desktop-nav">
       <a href="dashboard.html">Dashboard</a>
+      <a href="journal.html">Journal</a>
+      <a href="prayer-wall.html">Prayer Wall</a>
       <a href="resources.html">Resources</a>
-      <a href="podcasts.html">Podcasts</a>
-      <a href="#" id="aboutLink">About</a>
+      <a href="programs.html">Programs</a>
     </nav>
 
     <div class="user-menu">
@@ -80,22 +52,6 @@
             </svg>
             My Profile
           </a>
-          <a href="#" class="dropdown-item">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.532 1.532 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
-            Settings
-          </a>
-          <a href="#" class="dropdown-item">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.89 2.207a2 2 0 00-1.78 0l-7 4.043a2 2 0 00-1.11 1.732V12a2 2 0 001.11 1.732l7 4.043a2 2 0 001.78 0l7-4.043a2 2 0 001.11-1.732V8a2 2 0 00-1.11-1.732l-7-4.043zM9 5a1 1 0 112 0v2.75l.4-.4a1 1 0 111.4 1.42l-2.1 2.1a1 1 0 01-1.4 0l-2.1-2.1a1 1 0 111.4-1.42l.4.4V5z" /></svg>
-            Upgrade Plan
-          </a>
-          <a href="#" class="dropdown-item">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 2.293a1 1 0 011.414 0l-1.06 1.06a1 1 0 010 1.414l-2.122 2.121a1 1 0 01-1.414 0l-1.06-1.06a1 1 0 010-1.414l2.12-2.121a1 1 0 011.414 0zM12.707 6.707a1 1 0 010-1.414l-2.12-2.121a1 1 0 01-1.414 0l-1.06 1.06a1 1 0 01-1.414 0l-2.121 2.121a1 1 0 010 1.414l1.06 1.06a1 1 0 010 1.414l2.121 2.121a1 1 0 011.414 0l1.06-1.06a1 1 0 011.414 0l2.121-2.121a1 1 0 010-1.414l-1.06-1.06zM6.707 12.707a1 1 0 010-1.414l-1.06-1.06a1 1 0 01-1.414 0l-2.121 2.121a1 1 0 010 1.414l1.06 1.06a1 1 0 010 1.414l2.121 2.121a1 1 0 011.414 0l1.06-1.06a1 1 0 011.414 0l2.121-2.121a1 1 0 010-1.414l-1.06-1.06a1 1 0 010-1.414l1.06-1.06a1 1 0 011.414 0l2.121 2.121a1 1 0 010 1.414l-1.06 1.06a1 1 0 01-1.414 0l-2.121-2.121a1 1 0 010-1.414l1.06-1.06z" /></svg>
-            Personalization
-          </a>
-          <a href="#" class="dropdown-item">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.94 6.94a.75.75 0 11-1.06-1.061l2.5-2.5a.75.75 0 011.06 0l2.5 2.5a.75.75 0 01-1.06 1.06L11 5.688V9.75a.75.75 0 01-1.5 0V5.688L8.94 6.94z" clip-rule="evenodd" /><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.25 9.75a.75.75 0 00-1.5 0V12a.75.75 0 00.75.75h2.5a.75.75 0 000-1.5H9.25V9.75z" clip-rule="evenodd" /></svg>
-            Help
-          </a>
           <a href="#" id="logoutBtn" class="dropdown-item logout">
             <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
             Logout
@@ -105,10 +61,76 @@
   </header>
 
   <main>
+    <!-- Mood Tracker Widget -->
+    <section class="mood-tracker" id="moodTracker">
+      <div class="mood-tracker-card">
+        <div class="mood-tracker-header">
+          <h3 class="mood-tracker-title">How are you feeling today?</h3>
+          <div class="mood-streak" id="moodStreak" style="display: none;">
+            <span class="streak-flame">🔥</span>
+            <span class="streak-count" id="streakCount">0</span>
+            <span class="streak-label">day streak</span>
+          </div>
+        </div>
+
+        <!-- Mood Selection (hidden after check-in) -->
+        <div class="mood-options" id="moodOptions">
+          <button class="mood-btn" data-mood="great" title="Great">
+            <span class="mood-emoji">😊</span>
+            <span class="mood-label">Great</span>
+          </button>
+          <button class="mood-btn" data-mood="good" title="Good">
+            <span class="mood-emoji">😌</span>
+            <span class="mood-label">Good</span>
+          </button>
+          <button class="mood-btn" data-mood="okay" title="Okay">
+            <span class="mood-emoji">😐</span>
+            <span class="mood-label">Okay</span>
+          </button>
+          <button class="mood-btn" data-mood="low" title="Low">
+            <span class="mood-emoji">😔</span>
+            <span class="mood-label">Low</span>
+          </button>
+          <button class="mood-btn" data-mood="rough" title="Rough">
+            <span class="mood-emoji">😢</span>
+            <span class="mood-label">Rough</span>
+          </button>
+        </div>
+
+        <!-- Already Checked In State -->
+        <div class="mood-checked-in" id="moodCheckedIn" style="display: none;">
+          <span class="checked-emoji" id="checkedEmoji">😊</span>
+          <span class="checked-text">You're feeling <strong id="checkedMoodText">great</strong> today</span>
+          <span class="checked-badge">✓ Checked in</span>
+        </div>
+
+        <!-- 7-Day Chart -->
+        <div class="mood-chart" id="moodChart">
+          <div class="mood-chart-label">Last 7 days</div>
+          <div class="mood-chart-bars" id="moodChartBars">
+            <!-- Bars rendered by JS -->
+          </div>
+          <div class="mood-chart-empty" id="moodChartEmpty">Start checking in to see your mood history</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verse of the Day Widget -->
+    <section class="verse-widget" id="verseWidget">
+      <div class="verse-widget-card">
+        <div class="verse-widget-header">
+          <span class="verse-icon">✨</span>
+          <span class="verse-label">Verse of the Day</span>
+        </div>
+        <p class="verse-text" id="verseText">Loading today's verse...</p>
+        <span class="verse-ref" id="verseRef"></span>
+      </div>
+    </section>
+
     <div class="dashboard-container">
       <div class="overlay">
         <div class="chatbot-box">
-          <div class="ai-icon">🤖</div>
+          <div class="ai-icon">🌸</div>
           <h2>Hi there! What would you like support with today?</h2>
 
           <div class="button-group">
@@ -167,6 +189,12 @@
             <input type="text" id="chatInput" placeholder="Type your message..." />
             <button id="sendBtn" class="send-btn">Send</button>
           </div>
+          <div class="usage-indicator" id="usageIndicator" style="display: none;">
+            <div class="usage-bar">
+              <div class="usage-bar-fill" id="usageBarFill"></div>
+            </div>
+            <span class="usage-text" id="usageText"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -205,6 +233,18 @@
           <p class="about-mission">Our mission is to help you bloom into the person you were created to be, one conversation at a time.</p>
         </div>
       </div>
+    </div>
+  </div>
+  <!-- PWA Install Prompt -->
+  <div class="install-prompt" id="installPrompt" style="display: none;">
+    <div class="install-prompt-content">
+      <div class="install-prompt-icon">📲</div>
+      <div class="install-prompt-text">
+        <strong>Install BloomBuddy</strong>
+        <span>Add to your home screen for the best experience</span>
+      </div>
+      <button class="install-prompt-btn" id="installBtn">Install</button>
+      <button class="install-prompt-dismiss" id="installDismiss">✕</button>
     </div>
   </div>
 </body>

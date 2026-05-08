@@ -178,7 +178,7 @@ self.addEventListener('message', (event) => {
   console.log('Service Worker received message:', event.data);
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaitting();
+    self.skipWaiting();
   }
   
   if (event.data && event.data.type === 'SCHEDULE_NOTIFICATION') {

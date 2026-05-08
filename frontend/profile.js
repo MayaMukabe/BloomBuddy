@@ -229,6 +229,7 @@ if (profileForm) {
       });
       
       alert('Profile updated successfully!');
+      window.bbAnalytics?.('profile_updated', { has_bio: !!bio, has_verse: !!favoriteVerse });
       
       // Update UI
       userProfile = { ...userProfile, displayName, bio, favoriteVerse };
@@ -280,6 +281,7 @@ if (savePreferencesBtn) {
       });
       
       alert('Preferences saved successfully!');
+      window.bbAnalytics?.('preferences_saved', { daily_reminder: dailyReminder, topics_count: activeTopics.length });
     } catch (error) {
       console.error('Error saving preferences:', error);
       alert('Failed to save preferences. Please try again.');

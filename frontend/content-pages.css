@@ -4,7 +4,7 @@
 .content-main {
   flex-grow: 1;
   padding: 20px;
-  padding-top: 140px; /* Account for sticky header - increased for better spacing */
+  padding-top: 140px;
   min-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -19,46 +19,52 @@
 
 .content-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 36px;
   padding-top: 0;
 }
 
 .content-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #f1f0f7;
+  letter-spacing: -0.02em;
 }
 
 .content-subtitle {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.9);
+  font-size: 1rem;
+  color: #a5a3b5;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
+  font-weight: 400;
 }
 
 .content-grid {
   display: grid;
-  gap: 25px;
+  gap: 24px;
 }
 
 /* Resource/Podcast Sections */
 .resource-section,
 .podcast-section {
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 12px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  padding: 28px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 20px;
 }
 
 .resource-section h2,
 .podcast-section h2 {
-  font-size: 1.5rem;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
   margin-bottom: 20px;
-  color: white;
+  color: #f1f0f7;
   text-align: center;
 }
 
@@ -69,7 +75,7 @@
 .coming-soon-buttons {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 15px;
+  gap: 12px;
 }
 
 /* Resource/Podcast Buttons */
@@ -77,13 +83,13 @@
 .podcast-btn,
 .crisis-btn,
 .coming-soon-btn {
-  background: rgba(255,255,255,0.1);
-  border: 2px solid rgba(255,255,255,0.2);
-  border-radius: 10px;
-  padding: 15px;
-  color: white;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+  color: #f1f0f7;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
   width: 100%;
   display: flex;
@@ -96,80 +102,195 @@
 .podcast-btn:hover,
 .crisis-btn:hover,
 .coming-soon-btn:hover {
-  background: rgba(255,255,255,0.2);
-  border-color: #82d9f8;
+  background: rgba(167, 139, 250, 0.1);
+  border-color: rgba(167, 139, 250, 0.25);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .btn-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #82d9f8;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #a78bfa;
   margin-bottom: 3px;
   line-height: 1.2;
 }
 
 .btn-author,
 .btn-host {
-  font-style: italic;
-  color: rgba(255,255,255,0.8);
+  font-style: normal;
+  color: #a5a3b5;
   font-size: 0.85rem;
   line-height: 1.2;
 }
 
 .btn-category {
-  background: rgba(139, 92, 246, 0.3);
-  color: #c0a8ff;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  background: rgba(167, 139, 250, 0.15);
+  color: #c4b5fd;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
   align-self: flex-start;
-  margin-top: 3px;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
 }
 
 .btn-description {
-  color: rgba(255,255,255,0.9);
+  color: #a5a3b5;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* Modal Styles for Resources/Podcasts */
+.resource-modal,
+.podcast-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1003;
+}
+
+.resource-modal[aria-hidden="false"],
+.podcast-modal[aria-hidden="false"] {
+  display: flex;
+}
+
+.resource-modal-content,
+.podcast-modal-content {
+  background: rgba(26, 22, 64, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.resource-modal-header,
+.podcast-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resource-modal-header h3,
+.podcast-modal-header h3 {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f1f0f7;
+  margin: 0;
+}
+
+.resource-modal-body,
+.podcast-modal-body {
+  padding: 24px;
+}
+
+.modal-content-item {
+  margin-bottom: 20px;
+}
+
+.modal-content-item h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #a78bfa;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.modal-content-item p {
+  color: #a5a3b5;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.modal-link {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: white;
+  text-decoration: none;
+  border-radius: 9999px;
+  font-weight: 600;
   font-size: 0.9rem;
-  line-height: 1.4;
+  transition: all 150ms ease;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.modal-link:hover {
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.06);
+  color: #a5a3b5;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #f1f0f7;
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
   .content-main {
     padding: 20px 15px;
-    padding-top: 120px; /* Account for sticky header on mobile */
+    padding-top: 120px;
     min-height: 100vh;
   }
 
   .content-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .content-subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 480px) {
   .content-main {
     padding: 15px 10px;
-    padding-top: 110px; /* Account for sticky header on small mobile */
+    padding-top: 110px;
     min-height: 100vh;
   }
 
   .content-header h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
   .content-subtitle {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .resource-section,
   .podcast-section {
-    padding: 15px;
+    padding: 18px;
+    border-radius: 16px;
   }
 
   .resource-buttons,
@@ -179,5 +300,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-/*

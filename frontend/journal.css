@@ -1,0 +1,336 @@
+/* Journal Page Styles */
+
+.journal-main {
+  flex-grow: 1;
+  padding: 20px;
+  padding-top: 140px;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.journal-container {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.journal-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.journal-header h1 {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f1f0f7;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.journal-subtitle {
+  font-size: 1rem;
+  color: #a5a3b5;
+  line-height: 1.5;
+}
+
+/* Entry Form */
+.journal-entry-form {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.journal-form-title {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f0f7;
+  margin-bottom: 20px;
+}
+
+/* Mood Select */
+.journal-mood-select {
+  margin-bottom: 20px;
+}
+
+.journal-mood-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a5a3b5;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.journal-mood-options {
+  display: flex;
+  gap: 10px;
+}
+
+.journal-mood-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.journal-mood-btn:hover {
+  background: rgba(167, 139, 250, 0.12);
+  border-color: rgba(167, 139, 250, 0.25);
+  transform: scale(1.1);
+}
+
+.journal-mood-btn.selected {
+  background: rgba(167, 139, 250, 0.2);
+  border-color: #a78bfa;
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.15);
+  transform: scale(1.1);
+}
+
+/* Textarea */
+.journal-textarea {
+  width: 100%;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  color: #f1f0f7;
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+  transition: border-color 150ms ease;
+  margin-bottom: 16px;
+}
+
+.journal-textarea:focus {
+  outline: none;
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+}
+
+.journal-textarea::placeholder {
+  color: #6b6980;
+}
+
+/* Submit Button */
+.journal-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 200ms ease;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.journal-submit-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.journal-submit-btn:disabled {
+  background: rgba(255, 255, 255, 0.06);
+  color: #6b6980;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* AI Reflection */
+.journal-reflection {
+  background: rgba(167, 139, 250, 0.06);
+  border: 1px solid rgba(167, 139, 250, 0.15);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 32px;
+  animation: fadeIn 300ms ease;
+}
+
+.reflection-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.reflection-icon {
+  font-size: 24px;
+}
+
+.reflection-title {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #a78bfa;
+}
+
+.reflection-body {
+  color: #f1f0f7;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.reflection-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #a5a3b5;
+  font-size: 14px;
+}
+
+.reflection-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Timeline */
+.journal-timeline {
+  margin-top: 8px;
+}
+
+.timeline-title {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f0f7;
+  margin-bottom: 20px;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-loading,
+.timeline-empty {
+  text-align: center;
+  color: #6b6980;
+  font-size: 14px;
+  padding: 32px 20px;
+  font-style: italic;
+}
+
+/* Timeline Entry Card */
+.timeline-entry {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 22px;
+  transition: all 200ms ease;
+}
+
+.timeline-entry:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.timeline-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.timeline-entry-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: #a5a3b5;
+}
+
+.timeline-entry-mood {
+  font-size: 22px;
+}
+
+.timeline-entry-text {
+  color: #f1f0f7;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 0;
+  white-space: pre-wrap;
+}
+
+.timeline-entry-reflection {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.timeline-reflection-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a78bfa;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.timeline-reflection-text {
+  color: #a5a3b5;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .journal-main {
+    padding: 20px 15px;
+    padding-top: 120px;
+  }
+
+  .journal-header h1 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .journal-main {
+    padding: 15px 10px;
+    padding-top: 110px;
+  }
+
+  .journal-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .journal-entry-form {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .journal-mood-btn {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+
+  .timeline-entry {
+    padding: 18px 16px;
+  }
+}

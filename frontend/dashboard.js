@@ -110,6 +110,12 @@ window.onAuthStateChanged?.(window.auth, async (user) => {
       window.reminderSystem = reminderSystem; // Make globally accessible
     }
 
+    // Load mood history for the mood tracker widget
+    loadMoodHistory();
+
+    // Load verse of the day
+    loadVerseOfTheDay();
+
   } else {
     console.log('User not authenticated, redirecting to login');
     window.location.href = 'index.html';
@@ -259,6 +265,7 @@ function initializeButtons() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       console.log(`📱 Button clicked: ${topic}`);
+      window.bbAnalytics?.('topic_selected', { topic: topic });
       openChatModal(topic);
     });
   });
@@ -733,6 +740,14 @@ async function sendMessage() {
       return;
     }
     
+    // Fetch user context for personalization
+    let userContext = null;
+    try {
+      userContext = await getUserContext();
+    } catch (e) {
+      console.warn('Context fetch skipped:', e);
+    }
+
     // Make request to backend
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
@@ -742,7 +757,8 @@ async function sendMessage() {
       body: JSON.stringify({
         messages: messages,
         topic: currentTopic,
-        userId: window.currentUserId || 'anonymous'
+        userId: window.currentUserId || 'anonymous',
+        userContext: userContext
       })
     });
 
@@ -757,6 +773,9 @@ async function sendMessage() {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error('Backend error:', response.status, errorData);
+      if (errorData.budgetExceeded) {
+        throw new Error('daily_limit');
+      }
       throw new Error(errorData.message || `Server error: ${response.status}`);
     }
     
@@ -773,6 +792,12 @@ async function sendMessage() {
       loadingMessage.remove();
     }
     addMessageToChat(data.message, 'ai');
+    window.bbAnalytics?.('chat_completed', { topic: currentTopic });
+
+    // Update usage indicator
+    if (data.remaining !== undefined) {
+      updateUsageIndicator(data.remaining, data.usage?.total_tokens || 0);
+    }
 
     //Save converstaion to Firestore
     if (!currentConversationId){
@@ -823,6 +848,15 @@ async function sendMessage() {
     );
 
     saveMessagesToLocalStorage();
+
+    // Update user context with this interaction (non-blocking)
+    updateUserContext(currentTopic, message);
+
+    // Show reminder prompt after first successful chat (non-blocking)
+    if (!hasShownReminderThisSession) {
+      hasShownReminderThisSession = true;
+      setTimeout(() => showReminderPrompt(), 3000);
+    }
     
     // Keep only last 20 messages to prevent context from getting too large
     if (chatHistory.length > 20) {
@@ -846,7 +880,10 @@ async function sendMessage() {
     // Error messages
     let errorMessage = 'Sorry, I encountered an error. ';
     
-    if (error.message.includes('rate limit') || error.message.includes('429')) {
+    if (error.message.includes('daily_limit')) {
+      errorMessage = 'You\'ve reached your daily conversation limit. Your budget resets at midnight. Come back tomorrow! 🌅';
+      updateUsageIndicator(0, 0);
+    } else if (error.message.includes('rate limit') || error.message.includes('429')) {
       errorMessage = 'You\'re sending messages too quickly. Please wait a moment and try again.';
     } else if (error.message.includes('network') || error.message.includes('Failed to fetch')) {
       errorMessage = 'Connection error. Please check your internet and try again.';
@@ -1264,3 +1301,440 @@ if (document.readyState === 'loading') {
 }
 
 setTimeout(initializeMobileMenu, 100);
+
+
+// ========== MOOD TRACKER SYSTEM ==========
+
+const MOOD_CONFIG = {
+  great: { emoji: '😊', label: 'great', value: 5 },
+  good:  { emoji: '😌', label: 'good',  value: 4 },
+  okay:  { emoji: '😐', label: 'okay',  value: 3 },
+  low:   { emoji: '😔', label: 'low',   value: 2 },
+  rough: { emoji: '😢', label: 'rough', value: 1 },
+};
+
+function getTodayKey() {
+  return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+}
+
+function getLast7Days() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().split('T')[0]);
+  }
+  return days;
+}
+
+function getDayLabel(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0).toUpperCase() +
+         d.toLocaleDateString('en-US', { weekday: 'short' }).slice(1, 3);
+}
+
+// Check in mood
+async function checkInMood(mood) {
+  if (!window.currentUserId || !window.db) return;
+
+  const todayKey = getTodayKey();
+  const config = MOOD_CONFIG[mood];
+  if (!config) return;
+
+  try {
+    const moodDocRef = window.doc(window.db, 'users', window.currentUserId, 'moodHistory', todayKey);
+    await window.setDoc(moodDocRef, {
+      mood: mood,
+      value: config.value,
+      timestamp: window.serverTimestamp(),
+    });
+
+    console.log('Mood checked in:', mood);
+    window.bbAnalytics?.('mood_checkin', { mood: mood });
+
+    // Update UI to show checked-in state
+    showCheckedInState(mood);
+    // Reload chart
+    await loadMoodHistory();
+  } catch (error) {
+    console.error('Error saving mood:', error);
+  }
+}
+
+function showCheckedInState(mood) {
+  const config = MOOD_CONFIG[mood];
+  const moodOptions = getEl('moodOptions');
+  const moodCheckedIn = getEl('moodCheckedIn');
+  const checkedEmoji = getEl('checkedEmoji');
+  const checkedMoodText = getEl('checkedMoodText');
+
+  if (moodOptions) moodOptions.style.display = 'none';
+  if (moodCheckedIn) moodCheckedIn.style.display = 'flex';
+  if (checkedEmoji) checkedEmoji.textContent = config.emoji;
+  if (checkedMoodText) checkedMoodText.textContent = config.label;
+}
+
+// Load mood history and render chart
+async function loadMoodHistory() {
+  if (!window.currentUserId || !window.db) return;
+
+  const last7 = getLast7Days();
+  const moodData = {};
+
+  try {
+    for (const day of last7) {
+      const moodDocRef = window.doc(window.db, 'users', window.currentUserId, 'moodHistory', day);
+      const moodDoc = await window.getDoc(moodDocRef);
+      if (moodDoc.exists()) {
+        moodData[day] = moodDoc.data();
+      }
+    }
+
+    // Check if today is already checked in
+    const todayKey = getTodayKey();
+    if (moodData[todayKey]) {
+      showCheckedInState(moodData[todayKey].mood);
+    }
+
+    // Render chart
+    renderMoodChart(last7, moodData);
+
+    // Calculate and show streak
+    calculateStreak(moodData);
+
+  } catch (error) {
+    console.error('Error loading mood history:', error);
+  }
+}
+
+function renderMoodChart(days, moodData) {
+  const chartBars = getEl('moodChartBars');
+  const chartEmpty = getEl('moodChartEmpty');
+  if (!chartBars) return;
+
+  const hasAnyData = Object.keys(moodData).length > 0;
+
+  if (!hasAnyData) {
+    chartBars.style.display = 'none';
+    if (chartEmpty) chartEmpty.style.display = 'block';
+    return;
+  }
+
+  chartBars.style.display = 'flex';
+  if (chartEmpty) chartEmpty.style.display = 'none';
+  chartBars.innerHTML = '';
+
+  days.forEach(day => {
+    const entry = moodData[day];
+    const bar = document.createElement('div');
+    bar.className = 'mood-chart-bar';
+
+    if (entry) {
+      const config = MOOD_CONFIG[entry.mood];
+      const heightPercent = (entry.value / 5) * 100;
+      bar.innerHTML = `
+        <div class="mood-bar-emoji">${config.emoji}</div>
+        <div class="mood-bar-fill" data-mood="${entry.mood}" style="height: ${heightPercent}%"></div>
+        <div class="mood-bar-day">${getDayLabel(day)}</div>
+      `;
+    } else {
+      bar.innerHTML = `
+        <div class="mood-bar-fill" style="height: 4px; background: rgba(255,255,255,0.06);"></div>
+        <div class="mood-bar-day">${getDayLabel(day)}</div>
+      `;
+    }
+
+    chartBars.appendChild(bar);
+  });
+}
+
+function calculateStreak(moodData) {
+  const streakEl = getEl('moodStreak');
+  const streakCountEl = getEl('streakCount');
+  if (!streakEl || !streakCountEl) return;
+
+  let streak = 0;
+  const today = new Date();
+
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+
+    if (moodData[key]) {
+      streak++;
+    } else {
+      // If today has no entry, that's ok — streak starts from yesterday
+      if (i === 0) continue;
+      break;
+    }
+  }
+
+  if (streak > 1) {
+    streakCountEl.textContent = streak;
+    streakEl.style.display = 'flex';
+  } else {
+    streakEl.style.display = 'none';
+  }
+}
+
+// Initialize mood tracker buttons
+function initMoodTracker() {
+  const moodBtns = document.querySelectorAll('.mood-btn');
+  moodBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mood = btn.getAttribute('data-mood');
+      checkInMood(mood);
+    });
+  });
+
+  // Load mood history (will be called after auth resolves)
+  if (window.currentUserId) {
+    loadMoodHistory();
+  }
+}
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMoodTracker);
+} else {
+  initMoodTracker();
+}
+
+
+// ========== CONVERSATION CONTEXT SYSTEM ==========
+
+// Fetch user context from Firestore
+async function getUserContext() {
+  if (!window.currentUserId || !window.db) return null;
+
+  try {
+    const contextRef = window.doc(window.db, 'users', window.currentUserId, 'context', 'current');
+    const contextDoc = await window.getDoc(contextRef);
+
+    if (contextDoc.exists()) {
+      return contextDoc.data();
+    }
+    return null;
+  } catch (error) {
+    console.warn('Could not fetch user context:', error);
+    return null;
+  }
+}
+
+// Update user context after a conversation
+async function updateUserContext(topic, userMessage) {
+  if (!window.currentUserId || !window.db) return;
+
+  try {
+    const contextRef = window.doc(window.db, 'users', window.currentUserId, 'context', 'current');
+
+    // Get existing context
+    const existingDoc = await window.getDoc(contextRef);
+    const existing = existingDoc.exists() ? existingDoc.data() : {};
+
+    // Extract mood keywords from the message
+    const moodKeywords = extractMoodKeywords(userMessage);
+
+    // Build updated context
+    const updatedContext = {
+      lastTopic: topic,
+      lastInteraction: window.serverTimestamp(),
+      recentTopics: [...new Set([topic, ...(existing.recentTopics || [])].slice(0, 5))],
+      recentMoodKeywords: [...new Set([...moodKeywords, ...(existing.recentMoodKeywords || [])].slice(0, 8))],
+      conversationCount: (existing.conversationCount || 0) + 1,
+    };
+
+    // Try to get user's display name
+    if (window.auth?.currentUser?.displayName) {
+      updatedContext.userName = window.auth.currentUser.displayName;
+    }
+
+    await window.setDoc(contextRef, updatedContext, { merge: true });
+    console.log('User context updated');
+  } catch (error) {
+    console.warn('Could not update user context:', error);
+  }
+}
+
+function extractMoodKeywords(text) {
+  const keywords = [];
+  const lowerText = text.toLowerCase();
+  const moodWords = [
+    'anxious', 'anxiety', 'worried', 'stressed', 'overwhelmed',
+    'sad', 'depressed', 'down', 'lonely', 'hopeless',
+    'angry', 'frustrated', 'scared', 'afraid', 'fearful',
+    'happy', 'grateful', 'thankful', 'peaceful', 'hopeful',
+    'confused', 'lost', 'doubtful', 'tired', 'exhausted',
+    'grief', 'mourning', 'heartbroken', 'guilty', 'ashamed'
+  ];
+
+  moodWords.forEach(word => {
+    if (lowerText.includes(word)) {
+      keywords.push(word);
+    }
+  });
+
+  return keywords;
+}
+
+
+// ========== REMINDER DISCOVERY PROMPT ==========
+
+function showReminderPrompt() {
+  // Only show once
+  if (localStorage.getItem('bloombuddy_reminder_prompt_shown')) return;
+  // Don't show if reminders are already enabled
+  if (window.reminderSystem && window.reminderSystem.isEnabled) return;
+
+  const prompt = document.createElement('div');
+  prompt.className = 'reminder-prompt';
+  prompt.id = 'reminderPrompt';
+  prompt.innerHTML = `
+    <div class="reminder-prompt-text">
+      <span class="prompt-bell">🔔</span>
+      Would you like daily check-in reminders to keep your streak going?
+    </div>
+    <div class="reminder-prompt-actions">
+      <button class="reminder-enable-btn" id="reminderEnableBtn">Enable</button>
+      <button class="reminder-dismiss-btn" id="reminderDismissBtn">Later</button>
+    </div>
+  `;
+
+  document.body.appendChild(prompt);
+
+  document.getElementById('reminderEnableBtn').addEventListener('click', () => {
+    // Navigate to profile page where reminders can be configured
+    localStorage.setItem('bloombuddy_reminder_prompt_shown', 'true');
+    window.location.href = 'profile.html';
+  });
+
+  document.getElementById('reminderDismissBtn').addEventListener('click', () => {
+    localStorage.setItem('bloombuddy_reminder_prompt_shown', 'true');
+    prompt.style.animation = 'fadeIn 300ms ease reverse forwards';
+    setTimeout(() => prompt.remove(), 300);
+  });
+}
+
+// Hook: show reminder prompt after first successful chat
+let hasShownReminderThisSession = false;
+const originalSendMessage = sendMessage;
+
+// We'll inject context + reminder trigger by patching the sendMessage flow
+// This is done non-destructively to preserve existing behavior
+
+
+// ========== USAGE INDICATOR ==========
+function updateUsageIndicator(remaining, tokensUsed) {
+  const indicator = getEl('usageIndicator');
+  const barFill = getEl('usageBarFill');
+  const usageText = getEl('usageText');
+  if (!indicator || !barFill || !usageText) return;
+
+  indicator.style.display = 'flex';
+
+  // Calculate percentage used (remaining / 25000 default budget)
+  const budget = 25000;
+  const used = budget - remaining;
+  const percentUsed = Math.round((used / budget) * 100);
+
+  barFill.style.width = `${percentUsed}%`;
+  barFill.className = 'usage-bar-fill';
+  if (percentUsed >= 80) {
+    barFill.classList.add('high');
+  } else if (percentUsed >= 50) {
+    barFill.classList.add('medium');
+  }
+
+  if (remaining <= 0) {
+    usageText.textContent = 'Daily limit reached';
+  } else {
+    usageText.textContent = `${percentUsed}% used today`;
+  }
+}
+
+
+// ========== VERSE OF THE DAY ==========
+async function loadVerseOfTheDay() {
+  const verseText = getEl('verseText');
+  const verseRef = getEl('verseRef');
+  if (!verseText || !verseRef) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/verse-of-the-day`);
+    if (!response.ok) throw new Error('API error');
+    const data = await response.json();
+
+    verseText.textContent = `"${data.verse}"`;
+    verseRef.textContent = `— ${data.reference}`;
+  } catch (error) {
+    console.warn('Verse fetch failed, using fallback:', error);
+    verseText.textContent = '"Be still, and know that I am God."';
+    verseRef.textContent = '— Psalm 46:10';
+  }
+}
+
+// ========== PWA INSTALL PROMPT ==========
+let deferredInstallPrompt = null;
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      console.log('Service Worker registered:', registration.scope);
+    } catch (error) {
+      console.warn('Service Worker registration failed:', error);
+    }
+  });
+}
+
+// Capture the beforeinstallprompt event
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  console.log('PWA install prompt captured');
+
+  // Only show if user hasn't dismissed before
+  if (!localStorage.getItem('bb_install_dismissed')) {
+    setTimeout(() => {
+      const prompt = getEl('installPrompt');
+      if (prompt) prompt.style.display = 'block';
+    }, 5000);
+  }
+});
+
+// Install button click
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'installBtn' || e.target.closest('#installBtn')) {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then((result) => {
+        console.log('PWA install result:', result.outcome);
+        window.bbAnalytics?.('pwa_install', { outcome: result.outcome });
+        deferredInstallPrompt = null;
+        const prompt = getEl('installPrompt');
+        if (prompt) prompt.style.display = 'none';
+      });
+    }
+  }
+});
+
+// Dismiss button click
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'installDismiss' || e.target.closest('#installDismiss')) {
+    const prompt = getEl('installPrompt');
+    if (prompt) prompt.style.display = 'none';
+    localStorage.setItem('bb_install_dismissed', 'true');
+    window.bbAnalytics?.('pwa_install_dismissed', {});
+  }
+});
+
+// Hide prompt if app is already installed
+window.addEventListener('appinstalled', () => {
+  console.log('BloomBuddy installed as PWA');
+  const prompt = getEl('installPrompt');
+  if (prompt) prompt.style.display = 'none';
+  deferredInstallPrompt = null;
+  window.bbAnalytics?.('pwa_installed', {});
+});
