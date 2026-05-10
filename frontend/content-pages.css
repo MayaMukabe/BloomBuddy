@@ -24,17 +24,17 @@
 }
 
 .content-header h1 {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 12px;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   letter-spacing: -0.02em;
 }
 
 .content-subtitle {
   font-size: 1rem;
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
@@ -49,22 +49,21 @@
 /* Resource/Podcast Sections */
 .resource-section,
 .podcast-section {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bb-bg-white);
   border-radius: 20px;
   padding: 28px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
 }
 
 .resource-section h2,
 .podcast-section h2 {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   text-align: center;
 }
 
@@ -83,11 +82,11 @@
 .podcast-btn,
 .crisis-btn,
 .coming-soon-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 14px;
   padding: 18px;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   cursor: pointer;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
@@ -102,16 +101,16 @@
 .podcast-btn:hover,
 .crisis-btn:hover,
 .coming-soon-btn:hover {
-  background: rgba(167, 139, 250, 0.1);
-  border-color: rgba(167, 139, 250, 0.25);
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-title {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #a78bfa;
+  color: var(--bb-royal-purple);
   margin-bottom: 3px;
   line-height: 1.2;
 }
@@ -119,14 +118,14 @@
 .btn-author,
 .btn-host {
   font-style: normal;
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   font-size: 0.85rem;
   line-height: 1.2;
 }
 
 .btn-category {
-  background: rgba(167, 139, 250, 0.15);
-  color: #c4b5fd;
+  background: rgba(90, 82, 122, 0.1);
+  color: var(--bb-royal-purple);
   padding: 4px 12px;
   border-radius: 9999px;
   font-size: 0.72rem;
@@ -137,7 +136,7 @@
 }
 
 .btn-description {
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   font-size: 0.88rem;
   line-height: 1.5;
 }
@@ -162,16 +161,14 @@
 
 .resource-modal-content,
 .podcast-modal-content {
-  background: rgba(26, 22, 64, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bb-bg-white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 20px;
   max-width: 500px;
   width: 100%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-lg);
 }
 
 .resource-modal-header,
@@ -180,15 +177,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .resource-modal-header h3,
 .podcast-modal-header h3 {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 700;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   margin: 0;
 }
 
@@ -204,14 +201,14 @@
 .modal-content-item h4 {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #a78bfa;
+  color: var(--bb-royal-purple);
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .modal-content-item p {
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
 }
@@ -219,26 +216,26 @@
 .modal-link {
   display: inline-block;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  background: var(--bb-royal-purple);
   color: white;
   text-decoration: none;
   border-radius: 9999px;
   font-weight: 600;
   font-size: 0.9rem;
   transition: all 150ms ease;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(90, 82, 122, 0.2);
 }
 
 .modal-link:hover {
-  background: linear-gradient(135deg, #7C3AED, #6D28D9);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+  background: var(--bb-plum);
+  box-shadow: 0 6px 20px rgba(90, 82, 122, 0.3);
   transform: translateY(-1px);
 }
 
 .modal-close {
-  background: rgba(255, 255, 255, 0.06);
-  color: #a5a3b5;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--bb-text-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -251,8 +248,8 @@
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.10);
-  color: #f1f0f7;
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--bb-text-primary);
 }
 
 /* Responsive Styles */

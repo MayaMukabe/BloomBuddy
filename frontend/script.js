@@ -1,4 +1,50 @@
 
+// ===== Homepage Enhancements =====
+
+// Scroll Reveal Observer
+document.addEventListener('DOMContentLoaded', () => {
+  const revealEls = document.querySelectorAll('.reveal-on-scroll');
+  if (revealEls.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+    revealEls.forEach(el => observer.observe(el));
+    // Fallback: reveal everything after 3s in case observer fails
+    setTimeout(() => {
+      revealEls.forEach(el => el.classList.add('revealed'));
+    }, 3000);
+  }
+
+  // Nav scroll effect
+  const header = document.getElementById('siteHeader');
+  if (header) {
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  }
+
+  // Hero/CTA buttons open signup modal
+  const heroBtn = document.getElementById('heroGetStarted');
+  const ctaBtn = document.getElementById('ctaGetStarted');
+  const signupModal = document.getElementById('signupModal');
+  if (heroBtn && signupModal) {
+    heroBtn.addEventListener('click', () => {
+      if (typeof openModal === 'function') openModal(signupModal);
+      else signupModal.setAttribute('aria-hidden', 'false');
+    });
+  }
+  if (ctaBtn && signupModal) {
+    ctaBtn.addEventListener('click', () => {
+      if (typeof openModal === 'function') openModal(signupModal);
+      else signupModal.setAttribute('aria-hidden', 'false');
+    });
+  }
+});
 
 function getEl(id) { return document.getElementById(id); }
 

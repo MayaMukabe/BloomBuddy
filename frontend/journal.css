@@ -21,36 +21,35 @@
 }
 
 .journal-header h1 {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 700;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   margin-bottom: 8px;
   letter-spacing: -0.02em;
 }
 
 .journal-subtitle {
   font-size: 1rem;
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   line-height: 1.5;
 }
 
 /* Entry Form */
 .journal-entry-form {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bb-bg-white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 20px;
   padding: 28px;
   margin-bottom: 24px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-sm);
 }
 
 .journal-form-title {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   margin-bottom: 20px;
 }
 
@@ -63,7 +62,7 @@
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -78,39 +77,41 @@
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
   font-size: 24px;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--bb-text-secondary);
 }
 
 .journal-mood-btn:hover {
-  background: rgba(167, 139, 250, 0.12);
-  border-color: rgba(167, 139, 250, 0.25);
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.15);
   transform: scale(1.1);
 }
 
 .journal-mood-btn.selected {
-  background: rgba(167, 139, 250, 0.2);
-  border-color: #a78bfa;
-  box-shadow: 0 0 16px rgba(167, 139, 250, 0.15);
+  background: rgba(90, 82, 122, 0.1);
+  border-color: var(--bb-royal-purple);
+  box-shadow: 0 0 16px rgba(90, 82, 122, 0.15);
   transform: scale(1.1);
+  color: var(--bb-royal-purple);
 }
 
 /* Textarea */
 .journal-textarea {
   width: 100%;
   padding: 16px 18px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bb-bg-white);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 16px;
   font-size: 15px;
-  font-family: 'Inter', sans-serif;
-  color: #f1f0f7;
+  font-family: var(--font-body);
+  color: var(--bb-text-primary);
   resize: vertical;
   min-height: 140px;
   line-height: 1.6;
@@ -120,19 +121,19 @@
 
 .journal-textarea:focus {
   outline: none;
-  border-color: #a78bfa;
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+  border-color: var(--bb-royal-purple);
+  box-shadow: 0 0 0 3px rgba(90, 82, 122, 0.1);
 }
 
 .journal-textarea::placeholder {
-  color: #6b6980;
+  color: var(--bb-text-muted);
 }
 
 /* Submit Button */
 .journal-submit-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  background: var(--bb-royal-purple);
   color: white;
   border: none;
   border-radius: 14px;
@@ -150,16 +151,16 @@
 }
 
 .journal-submit-btn:disabled {
-  background: rgba(255, 255, 255, 0.06);
-  color: #6b6980;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--bb-text-muted);
   box-shadow: none;
   cursor: not-allowed;
 }
 
 /* AI Reflection */
 .journal-reflection {
-  background: rgba(167, 139, 250, 0.06);
-  border: 1px solid rgba(167, 139, 250, 0.15);
+  background: rgba(90, 82, 122, 0.04);
+  border: 1px solid rgba(90, 82, 122, 0.15);
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 32px;
@@ -178,14 +179,14 @@
 }
 
 .reflection-title {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
-  color: #a78bfa;
+  color: var(--bb-royal-purple);
 }
 
 .reflection-body {
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   font-size: 15px;
   line-height: 1.7;
 }
@@ -209,10 +210,10 @@
 }
 
 .timeline-title {
-  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   margin-bottom: 20px;
 }
 
@@ -233,15 +234,16 @@
 
 /* Timeline Entry Card */
 .timeline-entry {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bb-bg-white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
   padding: 22px;
   transition: all 200ms ease;
 }
 
 .timeline-entry:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 }
 
 .timeline-entry-header {
@@ -254,15 +256,18 @@
 .timeline-entry-date {
   font-size: 13px;
   font-weight: 500;
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
 }
 
-.timeline-entry-mood {
-  font-size: 22px;
+.timeline-entry-mood-icon {
+  display: flex;
+  align-items: center;
+  color: var(--bb-royal-purple);
+  opacity: 0.75;
 }
 
 .timeline-entry-text {
-  color: #f1f0f7;
+  color: var(--bb-text-primary);
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 0;
@@ -272,20 +277,20 @@
 .timeline-entry-reflection {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .timeline-reflection-label {
   font-size: 12px;
   font-weight: 600;
-  color: #a78bfa;
+  color: var(--bb-royal-purple);
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .timeline-reflection-text {
-  color: #a5a3b5;
+  color: var(--bb-text-secondary);
   font-size: 13px;
   line-height: 1.6;
   margin: 0;

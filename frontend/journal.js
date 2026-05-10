@@ -12,12 +12,12 @@ function getEl(id) {
   return document.getElementById(id);
 }
 
-const MOOD_EMOJIS = {
-  great: '😊',
-  good: '😌',
-  okay: '😐',
-  low: '😔',
-  rough: '😢',
+const MOOD_ICONS = {
+  great: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+  good:  `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15c2 1 6 1 8 0"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+  okay:  `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+  low:   `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15c2-1 6-1 8 0"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+  rough: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
 };
 
 let selectedMood = null;
@@ -243,22 +243,19 @@ async function loadJournalEntries() {
         year: 'numeric',
       });
 
-      const moodEmoji = MOOD_EMOJIS[entry.mood] || '😐';
-
-      let reflectionHTML = '';
-      if (entry.reflection) {
-        reflectionHTML = `
+      const reflectionHTML = entry.reflection ? `
           <div class="timeline-entry-reflection">
-            <div class="timeline-reflection-label">🌸 BloomBuddy's Reflection</div>
+            <div class="timeline-reflection-label">BloomBuddy's Reflection</div>
             <p class="timeline-reflection-text">${escapeHTML(entry.reflection)}</p>
           </div>
-        `;
-      }
+        ` : '';
+
+      const moodIcon = MOOD_ICONS[entry.mood] || MOOD_ICONS.okay;
 
       card.innerHTML = `
         <div class="timeline-entry-header">
           <span class="timeline-entry-date">${dateFormatted}</span>
-          <span class="timeline-entry-mood">${moodEmoji}</span>
+          <span class="timeline-entry-mood-icon" title="${entry.mood || 'okay'}">${moodIcon}</span>
         </div>
         <p class="timeline-entry-text">${escapeHTML(entry.text)}</p>
         ${reflectionHTML}
