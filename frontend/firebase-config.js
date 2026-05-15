@@ -2,7 +2,7 @@
 // All pages import from this module instead of duplicating the config
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInAnonymously, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInAnonymously, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, getAdditionalUserInfo } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp, getDocs, query, where, orderBy, getDoc, limit, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -38,7 +38,7 @@ window.updatePassword = updatePassword;
 window.reauthenticateWithCredential = reauthenticateWithCredential;
 window.EmailAuthProvider = EmailAuthProvider;
 window.sendPasswordResetEmail = sendPasswordResetEmail;
-
+window.getAdditionalUserInfo = getAdditionalUserInfo;
 // Firestore methods
 window.doc = doc;
 window.setDoc = setDoc;
