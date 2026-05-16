@@ -2,79 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="BloomBuddy Programs — Guided multi-day spiritual journeys for growth, gratitude, and peace.">
-  <title>Programs - BloomBuddy</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="BloomBuddy Programs — Guided multi-day spiritual journeys for growth, gratitude, and peace." />
+  <title>Programs — BloomBuddy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,30..100;1,9..144,400..500,30..100&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="programs.css" />
+
   <link rel="icon" type="image/png" href="Images/favicon.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="theme-color" content="#FFFDF9" />
 
   <script type="module" src="firebase-config.js"></script>
+  <script src="vendor/lucide.min.js" defer></script>
   <script src="programs.js" defer></script>
 </head>
 <body>
-  <header>
-    <a href="dashboard.html" class="logo" style="text-decoration:none;">
-      <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="16" r="6" fill="#5A527A" opacity="0.9"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(0 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(60 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(120 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(180 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(240 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(300 16 16)"/>
-        <circle cx="16" cy="16" r="3" fill="#FFFFFF"/>
+
+  <header class="dash-header" id="dashHeader">
+    <a href="dashboard.html" class="logo-link" aria-label="BloomBuddy home">
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(60 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(180 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(300 16 16)"/>
+        <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
       </svg>
-      <span class="brand-name">BloomBuddy</span>
+      <span class="logo-wordmark">BloomBuddy</span>
     </a>
 
-    <nav class="desktop-nav">
-      <a href="dashboard.html">Dashboard</a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="dashboard.html">Companion</a>
       <a href="journal.html">Journal</a>
       <a href="prayer-wall.html">Prayer Wall</a>
-      <a href="resources.html">Resources</a>
+      <a href="resources.html">Library</a>
       <a href="programs.html" class="active">Programs</a>
     </nav>
 
-    <div class="user-menu">
-      <div class="profile-avatar" id="profileAvatar">
+    <div class="user-menu" id="userMenu">
+      <div class="profile-avatar" id="profileAvatar" role="button" aria-label="Open user menu" tabindex="0">
         <span id="userInitial">B</span>
       </div>
       <div class="profile-dropdown" id="profileDropdown">
         <div class="dropdown-header">
-          <span id="dropdownUserEmail">user@email.com</span>
+          <span id="dropdownUserEmail">user@example.com</span>
         </div>
         <a href="profile.html" class="dropdown-item">
-          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
-          My Profile
+          <i data-lucide="user" class="dropdown-icon" aria-hidden="true"></i>
+          My profile
         </a>
         <a href="#" id="logoutBtn" class="dropdown-item logout">
-          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-          Logout
+          <i data-lucide="log-out" class="dropdown-icon" aria-hidden="true"></i>
+          Sign out
         </a>
       </div>
     </div>
+
+    <button class="dash-mobile-btn mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open navigation menu">
+      <i data-lucide="menu" aria-hidden="true"></i>
+    </button>
   </header>
+
+  <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <span class="logo-wordmark" style="font-size:16px;">BloomBuddy</span>
+        <button class="mobile-nav-close" id="mobileNavClose" type="button" aria-label="Close menu">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="dashboard.html">Companion</a>
+        <a href="journal.html">Journal</a>
+        <a href="prayer-wall.html">Prayer Wall</a>
+        <a href="resources.html">Library</a>
+        <a href="programs.html" class="active">Programs</a>
+      </div>
+    </div>
+  </div>
 
   <main class="programs-main">
     <div class="programs-container">
+
       <div class="programs-header">
-        <h1>🌱 Guided Programs</h1>
-        <p class="programs-subtitle">Structured spiritual journeys to help you grow, one day at a time</p>
+        <span class="eyebrow">Guided journeys</span>
+        <h1>Walk slowly with a <em>practice</em></h1>
+        <p class="programs-subtitle">Multi-day journeys with a small daily reflection. Begin one when you're ready — and gently return whenever you can.</p>
       </div>
 
-      <!-- Active Program (shown when enrolled) -->
+      <!-- Active program -->
       <section class="active-program-section" id="activeProgramSection" style="display: none;">
         <div class="active-program-card" id="activeProgramCard">
           <div class="active-program-top">
-            <span class="active-program-badge">Currently Active</span>
-            <button class="leave-program-btn" id="leaveProgramBtn" title="Leave program">✕</button>
+            <span class="active-program-badge">
+              <span class="active-dot" aria-hidden="true"></span>
+              Currently active
+            </span>
+            <button class="leave-program-btn" id="leaveProgramBtn" type="button" title="Leave program" aria-label="Leave program">
+              <i data-lucide="x" aria-hidden="true"></i>
+            </button>
           </div>
           <h2 class="active-program-title" id="activeProgramTitle"></h2>
           <div class="active-progress-bar">
@@ -84,27 +121,65 @@
 
           <div class="today-task" id="todayTask">
             <div class="today-task-header">
-              <span class="today-badge">📖 Today — Day <span id="todayDayNum">1</span></span>
+              <span class="today-badge">
+                <i data-lucide="book-open" aria-hidden="true"></i>
+                Today — Day <span id="todayDayNum">1</span>
+              </span>
             </div>
             <h3 class="today-task-title" id="todayTaskTitle"></h3>
             <p class="today-task-desc" id="todayTaskDesc"></p>
-            <textarea id="todayReflection" class="today-textarea" placeholder="Write your reflection for today..." rows="4"></textarea>
-            <button id="completeTaskBtn" class="complete-task-btn" disabled>Complete Today's Task</button>
+            <textarea id="todayReflection" class="today-textarea" placeholder="Write your reflection for today…" rows="5"></textarea>
+            <button id="completeTaskBtn" class="complete-task-btn" type="button" disabled>
+              Complete today's practice
+              <i data-lucide="check" aria-hidden="true"></i>
+            </button>
           </div>
 
           <div class="today-completed" id="todayCompleted" style="display: none;">
-            <span class="completed-check">✅</span>
-            <span>Today's task completed! Come back tomorrow for Day <span id="nextDayNum">2</span>.</span>
+            <span class="completed-check"><i data-lucide="check-circle" aria-hidden="true"></i></span>
+            <span>Today is complete. Come back tomorrow for Day <span id="nextDayNum">2</span>.</span>
           </div>
         </div>
       </section>
 
-      <!-- Program Catalog -->
+      <!-- Catalog -->
       <section class="program-catalog" id="programCatalog">
-        <h2 class="catalog-title">Choose a Journey</h2>
+        <h2 class="catalog-title">Choose a journey</h2>
         <div class="program-grid" id="programGrid"></div>
       </section>
     </div>
   </main>
+
+  <script>
+    (function () {
+      window.bbMountIcons = function (root) {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons({ attrs: { 'stroke-width': '1.5' }, root });
+        }
+      };
+      function mount() { window.bbMountIcons(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+      else mount();
+      window.addEventListener('load', mount);
+
+      document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('mobileNavOverlay');
+        var openBtn = document.getElementById('mobileMenuBtn');
+        var closeBtn = document.getElementById('mobileNavClose');
+        if (!overlay || !openBtn || !closeBtn) return;
+        function setNav(open) {
+          overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+          document.body.style.overflow = open ? 'hidden' : '';
+        }
+        openBtn.addEventListener('click', function () { setNav(true); });
+        closeBtn.addEventListener('click', function () { setNav(false); });
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) setNav(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
+        overlay.querySelectorAll('.mobile-nav-links a').forEach(function (a) {
+          a.addEventListener('click', function () { setNav(false); });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes http-server . -p 8080 -c-1 --silent)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} - %{size_download} bytes\\\\n\" http://localhost:8080/index.html)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | index.html %{size_download} bytes\\\\n\" http://localhost:8080/index.html)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | styles.css %{size_download} bytes\\\\n\" http://localhost:8080/styles.css)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | homepage.css %{size_download} bytes\\\\n\" http://localhost:8080/homepage.css)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | styles.css %{size_download}B\\\\n\" http://localhost:8080/styles.css)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | homepage.css %{size_download}B\\\\n\" http://localhost:8080/homepage.css)",
+      "Bash(curl *)"
+    ]
+  }
+}

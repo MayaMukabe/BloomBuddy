@@ -5,12 +5,20 @@ function getEl(id) {
 }
 
 const CATEGORY_LABELS = {
-  healing: '🩹 Healing',
-  guidance: '🧭 Guidance',
-  gratitude: '💛 Gratitude',
-  strength: '💪 Strength',
-  family: '👨‍👩‍👧‍👦 Family',
-  other: '✨ Other',
+  healing:   'Healing',
+  guidance:  'Guidance',
+  gratitude: 'Gratitude',
+  strength:  'Strength',
+  family:    'Family',
+  other:     'Other',
+};
+const CATEGORY_ICONS = {
+  healing:   'heart-pulse',
+  guidance:  'compass',
+  gratitude: 'heart',
+  strength:  'shield',
+  family:    'users',
+  other:     'sparkle',
 };
 
 let selectedCategory = null;
@@ -240,6 +248,7 @@ function createPrayerCard(prayerId, data) {
 
   const authorInitial = (data.authorName || 'A').charAt(0).toUpperCase();
   const categoryLabel = CATEGORY_LABELS[data.category] || data.category;
+  const categoryIcon = CATEGORY_ICONS[data.category] || 'sparkle';
   const prayCount = data.prayCount || 0;
   const hasPrayed = data.prayedBy && data.prayedBy.includes(window.currentUserId);
 
@@ -256,13 +265,16 @@ function createPrayerCard(prayerId, data) {
         <div class="prayer-author-avatar">${authorInitial}</div>
         <span class="prayer-author-name">${escapeHTML(data.authorName || 'Anonymous')}</span>
       </div>
-      <span class="prayer-card-category">${categoryLabel}</span>
+      <span class="prayer-card-category">
+        <i data-lucide="${categoryIcon}" aria-hidden="true"></i>
+        ${categoryLabel}
+      </span>
     </div>
     <p class="prayer-card-text">${escapeHTML(data.text)}</p>
     <div class="prayer-card-footer">
       <span class="prayer-card-date">${dateStr}</span>
       <button class="pray-btn ${hasPrayed ? 'prayed' : ''}" data-prayer-id="${prayerId}">
-        <span class="pray-icon">🙏</span>
+        <i data-lucide="hand-heart" class="pray-icon" aria-hidden="true"></i>
         <span>Praying</span>
         <span class="pray-count">${prayCount}</span>
       </button>
@@ -272,6 +284,8 @@ function createPrayerCard(prayerId, data) {
   // Pray button handler
   const prayBtn = card.querySelector('.pray-btn');
   prayBtn.addEventListener('click', () => handlePray(prayerId, prayBtn, hasPrayed));
+
+  if (typeof window.bbMountIcons === 'function') window.bbMountIcons(card);
 
   return card;
 }

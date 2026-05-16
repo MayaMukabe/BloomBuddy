@@ -7,7 +7,8 @@ const PROGRAMS = [
   {
     id: 'gratitude-7',
     title: '7 Days of Gratitude',
-    emoji: '💛',
+    emoji: '',
+    icon: 'heart',
     theme: 'gratitude',
     description: 'Cultivate a thankful heart through daily gratitude reflections, Bible passages, and intentional awareness of God\'s blessings.',
     days: 7,
@@ -24,7 +25,8 @@ const PROGRAMS = [
   {
     id: 'peace-7',
     title: '7 Days of Overcoming Anxiety',
-    emoji: '🕊️',
+    emoji: '',
+    icon: 'feather',
     theme: 'anxiety',
     description: 'Learn to release worry and find peace through Scripture, breathing exercises, and surrendering your anxieties to God.',
     days: 7,
@@ -41,7 +43,8 @@ const PROGRAMS = [
   {
     id: 'prayer-7',
     title: '7 Days of Deeper Prayer',
-    emoji: '🙏',
+    emoji: '',
+    icon: 'sparkle',
     theme: 'prayer',
     description: 'Deepen your prayer life with different prayer styles each day — from silent contemplation to intercessory prayer for others.',
     days: 7,
@@ -147,7 +150,8 @@ function renderActiveProgram() {
 
     // If all days completed, show completion message
     if (completed.length >= program.days) {
-      todayCompleted.innerHTML = '<span class="completed-check">🎉</span><span>Congratulations! You\'ve completed this program!</span>';
+      todayCompleted.innerHTML = '<span class="completed-check"><i data-lucide="party-popper" aria-hidden="true"></i></span><span>Congratulations — you\'ve completed this program.</span>';
+      if (typeof window.bbMountIcons === 'function') window.bbMountIcons(todayCompleted);
     }
   } else {
     // Show today's task
@@ -174,20 +178,22 @@ function renderCatalog() {
     card.setAttribute('data-theme', program.theme);
 
     card.innerHTML = `
-      <div class="program-card-emoji">${program.emoji}</div>
+      <div class="program-card-icon"><i data-lucide="${program.icon || 'sparkle'}" aria-hidden="true"></i></div>
       <h3 class="program-card-title">${program.title}</h3>
       <p class="program-card-desc">${program.description}</p>
       <div class="program-card-meta">
         <span class="program-duration">${program.days} days</span>
         ${isActive
-          ? '<span class="program-completed-badge">✅ Active</span>'
-          : `<button class="program-start-btn" data-program-id="${program.id}">Start Journey</button>`
+          ? '<span class="program-completed-badge"><i data-lucide="check" aria-hidden="true"></i> Active</span>'
+          : `<button class="program-start-btn" data-program-id="${program.id}">Begin <i data-lucide="arrow-right" aria-hidden="true"></i></button>`
         }
       </div>
     `;
 
     grid.appendChild(card);
   });
+
+  if (typeof window.bbMountIcons === 'function') window.bbMountIcons(grid);
 }
 
 // ========== START PROGRAM ==========

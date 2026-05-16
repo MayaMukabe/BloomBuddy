@@ -2,52 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Profile - BloomBuddy</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Profile — BloomBuddy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,30..100;1,9..144,400..500,30..100&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="profile.css" />
-  <link rel="stylesheet" href="toast-notifications.css">
+  <link rel="stylesheet" href="toast-notifications.css" />
+
   <link rel="icon" type="image/png" href="Images/favicon.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#FFFFFF" />
-  
-  <!-- Firebase SDK -->
+  <meta name="theme-color" content="#FFFDF9" />
+
   <script type="module" src="firebase-config.js"></script>
-  
   <script src="auth-error-handler.js"></script>
+  <script src="vendor/lucide.min.js" defer></script>
   <script src="profile.js" defer></script>
   <script src="reminder-system.js" defer></script>
 </head>
 <body>
-  <header>
-    <a href="dashboard.html" class="logo" style="text-decoration:none;">
-      <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="16" r="6" fill="#5A527A" opacity="0.9"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(0 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(60 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(120 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(180 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(240 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(300 16 16)"/>
-        <circle cx="16" cy="16" r="3" fill="#FFFFFF"/>
+
+  <header class="dash-header" id="dashHeader">
+    <a href="dashboard.html" class="logo-link" aria-label="BloomBuddy home">
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(60 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(180 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(300 16 16)"/>
+        <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
       </svg>
-      <span class="brand-name">BloomBuddy</span>
+      <span class="logo-wordmark">BloomBuddy</span>
     </a>
 
-    <nav class="desktop-nav">
-      <a href="dashboard.html">Dashboard</a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="dashboard.html">Companion</a>
       <a href="journal.html">Journal</a>
       <a href="prayer-wall.html">Prayer Wall</a>
-      <a href="resources.html">Resources</a>
+      <a href="resources.html">Library</a>
       <a href="programs.html">Programs</a>
     </nav>
 
-    <div class="user-menu">
-      <div class="profile-avatar" id="profileAvatar">
+    <div class="user-menu" id="userMenu">
+      <div class="profile-avatar" id="profileAvatar" role="button" aria-label="Open user menu" tabindex="0">
         <span id="userInitial">B</span>
       </div>
       <div class="profile-dropdown" id="profileDropdown">
@@ -55,85 +61,122 @@
           <span id="dropdownUserEmail">user@example.com</span>
         </div>
         <a href="profile.html" class="dropdown-item">
-          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-          </svg>
-          My Profile
+          <i data-lucide="user" class="dropdown-icon" aria-hidden="true"></i>
+          My profile
         </a>
         <a href="#" id="logoutBtn" class="dropdown-item logout">
-          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-          Logout
+          <i data-lucide="log-out" class="dropdown-icon" aria-hidden="true"></i>
+          Sign out
         </a>
       </div>
     </div>
+
+    <button class="dash-mobile-btn mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open navigation menu">
+      <i data-lucide="menu" aria-hidden="true"></i>
+    </button>
   </header>
+
+  <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <span class="logo-wordmark" style="font-size:16px;">BloomBuddy</span>
+        <button class="mobile-nav-close" id="mobileNavClose" type="button" aria-label="Close menu">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="dashboard.html">Companion</a>
+        <a href="journal.html">Journal</a>
+        <a href="prayer-wall.html">Prayer Wall</a>
+        <a href="resources.html">Library</a>
+        <a href="programs.html">Programs</a>
+      </div>
+    </div>
+  </div>
 
   <main class="profile-main">
     <div class="profile-container">
-      <div class="profile-header">
-        <h1>My Profile</h1>
-        <p class="profile-subtitle">Manage your account settings and preferences</p>
+
+      <div class="profile-page-header">
+        <span class="eyebrow">Settings</span>
+        <h1>Your <em>space</em></h1>
+        <p class="profile-subtitle">Adjust your account, preferences, and reminders.</p>
       </div>
 
-      <!-- Profile Tabs -->
-      <div class="profile-tabs">
-        <button class="tab-btn active" data-tab="profile">Profile</button>
-        <button class="tab-btn" data-tab="preferences">Preferences</button>
-        <button class="tab-btn" data-tab="security">Security</button>
-        <button class="tab-btn" data-tab="data">My Data</button>
+      <!-- Tabs -->
+      <div class="profile-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="profile" role="tab" type="button">
+          <i data-lucide="user" aria-hidden="true"></i>
+          <span>Profile</span>
+        </button>
+        <button class="tab-btn" data-tab="preferences" role="tab" type="button">
+          <i data-lucide="sliders-horizontal" aria-hidden="true"></i>
+          <span>Preferences</span>
+        </button>
+        <button class="tab-btn" data-tab="security" role="tab" type="button">
+          <i data-lucide="shield-check" aria-hidden="true"></i>
+          <span>Security</span>
+        </button>
+        <button class="tab-btn" data-tab="data" role="tab" type="button">
+          <i data-lucide="database" aria-hidden="true"></i>
+          <span>My data</span>
+        </button>
       </div>
 
-      <!-- Profile Tab Content -->
-      <div class="tab-content active" id="profileTab">
-        <div class="profile-section">
+      <!-- Profile tab -->
+      <div class="tab-content active" id="profileTab" role="tabpanel">
+        <section class="profile-section">
           <div class="profile-avatar-large">
             <div class="avatar-circle" id="profileAvatarLarge">
               <span id="profileInitialLarge">B</span>
             </div>
-            <button class="change-avatar-btn" id="changeAvatarBtn">Change Avatar</button>
+            <button class="change-avatar-btn" id="changeAvatarBtn" type="button">
+              <i data-lucide="pencil" aria-hidden="true"></i>
+              Change colour
+            </button>
           </div>
 
           <form class="profile-form" id="profileForm">
             <div class="form-group">
-              <label for="displayName">Display Name</label>
-              <input type="text" id="displayName" placeholder="Your name" />
-              <span class="form-help">This is how you'll appear in the app</span>
+              <label for="displayName">Display name</label>
+              <input type="text" id="displayName" placeholder="What should we call you?" />
+              <span class="form-help">This is how you'll appear in the app.</span>
             </div>
 
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" placeholder="your@email.com" />
-              <span class="form-help">Your email address for login and notifications</span>
+              <input type="email" id="email" placeholder="you@example.com" />
+              <span class="form-help">Used for sign-in and notifications.</span>
             </div>
 
             <div class="form-group">
-              <label for="bio">About Me</label>
-              <textarea id="bio" rows="4" placeholder="Share a bit about yourself and your spiritual journey..."></textarea>
+              <label for="bio">About you</label>
+              <textarea id="bio" rows="4" placeholder="A line or two — where you are in your journey…"></textarea>
             </div>
 
             <div class="form-group">
-              <label for="favoriteVerse">Favorite Bible Verse</label>
+              <label for="favoriteVerse">A verse you carry</label>
               <input type="text" id="favoriteVerse" placeholder="e.g., Philippians 4:13" />
             </div>
 
             <div class="form-actions">
-              <button type="submit" class="btn-primary">Save Changes</button>
+              <button type="submit" class="btn-primary">Save changes</button>
               <button type="button" class="btn-secondary" id="cancelProfileBtn">Cancel</button>
             </div>
           </form>
-        </div>
+        </section>
       </div>
 
-      <!-- Preferences Tab Content -->
-      <div class="tab-content" id="preferencesTab">
-        <div class="profile-section">
-          <h2>App Preferences</h2>
-          
+      <!-- Preferences tab -->
+      <div class="tab-content" id="preferencesTab" role="tabpanel">
+        <section class="profile-section">
+          <h2 class="section-h2">Notifications</h2>
+
           <div class="preference-group">
             <div class="preference-item">
               <div class="preference-info">
-                <h3>Daily Reminder</h3>
-                <p>Receive a daily reminder to check in with BloomBuddy</p>
+                <h3>Daily reminder</h3>
+                <p>A gentle nudge to check in with yourself each day.</p>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="dailyReminder" />
@@ -143,8 +186,8 @@
 
             <div class="preference-item">
               <div class="preference-info">
-                <h3>Verse of the Day</h3>
-                <p>Get a daily Bible verse delivered to you</p>
+                <h3>Verse of the day</h3>
+                <p>One small light, sent each morning.</p>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="verseOfDay" />
@@ -154,8 +197,8 @@
 
             <div class="preference-item">
               <div class="preference-info">
-                <h3>Prayer Reminders</h3>
-                <p>Reminders for your prayer times</p>
+                <h3>Prayer reminders</h3>
+                <p>Quiet pings for your prayer times.</p>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="prayerReminders" />
@@ -164,264 +207,304 @@
             </div>
           </div>
 
+          <h2 class="section-h2">Preferred topics</h2>
           <div class="preference-group">
-            <h3>Preferred Topics</h3>
+            <p class="section-help">Topics that feel relevant — your companion will lean into these.</p>
             <div class="topic-tags">
-              <button class="topic-tag" data-topic="anxiety">Anxiety</button>
-              <button class="topic-tag" data-topic="faith">Faith</button>
-              <button class="topic-tag" data-topic="gratitude">Gratitude</button>
-              <button class="topic-tag" data-topic="prayer">Prayer</button>
-              <button class="topic-tag" data-topic="peace">Peace</button>
-              <button class="topic-tag" data-topic="hope">Hope</button>
-              <button class="topic-tag" data-topic="forgiveness">Forgiveness</button>
-              <button class="topic-tag" data-topic="strength">Strength</button>
+              <button class="topic-tag" data-topic="anxiety" type="button">Anxiety</button>
+              <button class="topic-tag" data-topic="faith" type="button">Faith</button>
+              <button class="topic-tag" data-topic="gratitude" type="button">Gratitude</button>
+              <button class="topic-tag" data-topic="prayer" type="button">Prayer</button>
+              <button class="topic-tag" data-topic="peace" type="button">Peace</button>
+              <button class="topic-tag" data-topic="hope" type="button">Hope</button>
+              <button class="topic-tag" data-topic="forgiveness" type="button">Forgiveness</button>
+              <button class="topic-tag" data-topic="strength" type="button">Strength</button>
             </div>
           </div>
 
+          <h2 class="section-h2">Daily check-in reminders</h2>
           <div class="preference-group">
-              <h3>📅 Daily Check-in Reminders</h3>
-              <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 15px;">
-                Set reminders to help you maintain a consistent spiritual practice
-              </p>
+            <p class="section-help">Times you'd like to be invited back to BloomBuddy.</p>
 
-              <!-- Enable Reminders Toggle -->
-              <div class="preference-item">
-                <div class="preference-info">
-                  <h3>Enable Reminders</h3>
-                  <p>Receive daily check-in reminders at your chosen times</p>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="enableReminders" />
-                  <span class="toggle-slider"></span>
-                </label>
+            <div class="preference-item">
+              <div class="preference-info">
+                <h3>Enable reminders</h3>
+                <p>Receive check-in reminders at your chosen times.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="enableReminders" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="preference-item" id="notificationToggle" style="display: none;">
+              <div class="preference-info">
+                <h3>Push notifications</h3>
+                <p>Receive browser notifications even when BloomBuddy isn't open.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="enableNotifications" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div id="reminderTimesSection" style="display: none;" class="reminder-times-wrap">
+              <div class="reminder-times-head">
+                <h4>Reminder times</h4>
+                <button class="btn-secondary btn-small" id="addReminderBtn" type="button">
+                  <i data-lucide="plus" aria-hidden="true"></i>
+                  Add time
+                </button>
               </div>
 
-              <!-- Enable Notifications Toggle -->
-              <div class="preference-item" id="notificationToggle" style="display: none;">
-                <div class="preference-info">
-                  <h3>Push Notifications</h3>
-                  <p>Receive browser notifications even when BloomBuddy isn't open</p>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="enableNotifications" />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
+              <div id="reminderTimesList" class="reminder-times-list"></div>
 
-              <!-- Reminder Times List -->
-              <div id="reminderTimesSection" style="display: none; margin-top: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                  <h4 style="color: white; margin: 0; font-size: 1.1rem;">Reminder Times</h4>
-                  <button class="btn-secondary" id="addReminderBtn" style="padding: 8px 16px; font-size: 14px;">
-                    + Add Time
-                  </button>
-                </div>
-
-                <div id="reminderTimesList">
-                  <!-- Reminder times will be populated here -->
-                </div>
-
-                <!-- Quiet Hours Section -->
-                <div style="margin-top: 30px;">
-                  <div class="preference-item">
-                    <div class="preference-info">
-                      <h3>🌙 Quiet Hours</h3>
-                      <p>Don't send reminders during these hours</p>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="enableQuietHours" />
-                      <span class="toggle-slider"></span>
-                    </label>
+              <div class="quiet-hours">
+                <div class="preference-item">
+                  <div class="preference-info">
+                    <h3>
+                      <i data-lucide="moon" aria-hidden="true" class="inline-icon"></i>
+                      Quiet hours
+                    </h3>
+                    <p>Don't send reminders during these hours.</p>
                   </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="enableQuietHours" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
 
-                  <div id="quietHoursSettings" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                      <div>
-                        <label style="color: white; font-size: 14px; display: block; margin-bottom: 5px;">Start Time</label>
-                        <input type="time" id="quietHoursStart" value="22:00" style="width: 100%; padding: 8px; border-radius: 5px; border: 2px solid #7a5c86; background: rgba(255,255,255,0.9);" />
-                      </div>
-                      <div>
-                        <label style="color: white; font-size: 14px; display: block; margin-bottom: 5px;">End Time</label>
-                        <input type="time" id="quietHoursEnd" value="07:00" style="width: 100%; padding: 8px; border-radius: 5px; border: 2px solid #7a5c86; background: rgba(255,255,255,0.9);" />
-                      </div>
+                <div id="quietHoursSettings" class="quiet-hours-settings" style="display: none;">
+                  <div class="quiet-hours-grid">
+                    <div class="form-group">
+                      <label for="quietHoursStart">Start time</label>
+                      <input type="time" id="quietHoursStart" value="22:00" />
+                    </div>
+                    <div class="form-group">
+                      <label for="quietHoursEnd">End time</label>
+                      <input type="time" id="quietHoursEnd" value="07:00" />
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Reminder Statistics -->
-                <div style="margin-top: 30px; padding: 20px; background: rgba(130, 217, 248, 0.2); border-radius: 10px; border: 1px solid rgba(130, 217, 248, 0.3);">
-                  <h4 style="color: white; margin: 0 0 15px 0; font-size: 1.1rem;">📊 Reminder Statistics</h4>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div>
-                      <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin: 0;">This Week</p>
-                      <p style="color: white; font-size: 24px; font-weight: bold; margin: 5px 0 0 0;" id="statsThisWeek">0</p>
-                    </div>
-                    <div>
-                      <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin: 0;">All Time</p>
-                      <p style="color: white; font-size: 24px; font-weight: bold; margin: 5px 0 0 0;" id="statsTotal">0</p>
-                    </div>
+              <div class="reminder-stats">
+                <h4>
+                  <i data-lucide="bar-chart-3" aria-hidden="true" class="inline-icon"></i>
+                  Statistics
+                </h4>
+                <div class="stat-grid">
+                  <div class="stat-cell">
+                    <span class="stat-label">This week</span>
+                    <span class="stat-value" id="statsThisWeek">0</span>
+                  </div>
+                  <div class="stat-cell">
+                    <span class="stat-label">All time</span>
+                    <span class="stat-value" id="statsTotal">0</span>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Add Reminder Modal -->
-            <div class="modal" id="addReminderModal" aria-hidden="true">
-              <div class="modal-content">
-                <button class="modal-close" data-close>&times;</button>
-                <h3 class="modal-title">Add Reminder Time</h3>
-                <form id="addReminderForm" class="modal-form">
+          <!-- Add reminder modal -->
+          <div class="modal" id="addReminderModal" aria-hidden="true" role="dialog">
+            <div class="modal-content">
+              <button class="modal-close" data-close aria-label="Close">
+                <i data-lucide="x" aria-hidden="true"></i>
+              </button>
+              <h3 class="modal-title">Add a reminder time</h3>
+              <p class="modal-subtitle">Pick a gentle moment in your day.</p>
+              <form id="addReminderForm" class="modal-form">
+                <div class="form-group">
                   <label for="reminderTime">Time</label>
                   <input type="time" id="reminderTime" required />
-
+                </div>
+                <div class="form-group">
                   <label for="reminderLabel">Label</label>
-                  <input type="text" id="reminderLabel" placeholder="e.g., Morning Check-in" required maxlength="50" />
-
-                  <div class="modal-actions">
-                    <button type="submit" class="btn-primary">Add Reminder</button>
-                    <button type="button" class="btn-secondary" data-close>Cancel</button>
-                  </div>
-                </form>
-              </div>
+                  <input type="text" id="reminderLabel" placeholder="e.g., Morning check-in" required maxlength="50" />
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn-primary">Add reminder</button>
+                  <button type="button" class="btn-secondary" data-close>Cancel</button>
+                </div>
+              </form>
             </div>
-
+          </div>
 
           <div class="form-actions">
-            <button class="btn-primary" id="savePreferencesBtn">Save Preferences</button>
+            <button class="btn-primary" id="savePreferencesBtn" type="button">Save preferences</button>
           </div>
-        </div>
+        </section>
       </div>
 
-      <!-- Security Tab Content -->
-      <div class="tab-content" id="securityTab">
-        <div class="profile-section">
-          <h2>Security Settings</h2>
-          
+      <!-- Security tab -->
+      <div class="tab-content" id="securityTab" role="tabpanel">
+        <section class="profile-section">
+          <h2 class="section-h2">Security</h2>
+
           <div class="security-item">
             <div class="security-info">
-              <h3>Change Password</h3>
-              <p>Update your password to keep your account secure</p>
+              <h3>Change password</h3>
+              <p>Update your password to keep your account secure.</p>
             </div>
-            <button class="btn-secondary" id="changePasswordBtn">Change Password</button>
+            <button class="btn-secondary" id="changePasswordBtn" type="button">Change</button>
           </div>
 
           <div class="security-item">
             <div class="security-info">
-              <h3>Account Status</h3>
-              <p id="accountStatus">Regular Account</p>
-            </div>
-          </div>
-
-          <div class="security-item">
-            <div class="security-info">
-              <h3>Member Since</h3>
-              <p id="memberSince">Loading...</p>
+              <h3>Account status</h3>
+              <p id="accountStatus">Regular account</p>
             </div>
           </div>
 
           <div class="security-item">
             <div class="security-info">
-              <h3>Last Login</h3>
-              <p id="lastLogin">Loading...</p>
+              <h3>Member since</h3>
+              <p id="memberSince">Loading…</p>
             </div>
           </div>
-        </div>
+
+          <div class="security-item">
+            <div class="security-info">
+              <h3>Last sign-in</h3>
+              <p id="lastLogin">Loading…</p>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <!-- My Data Tab Content -->
-      <div class="tab-content" id="dataTab">
-        <div class="profile-section">
-          <h2>My Data & Privacy</h2>
-          
-          <div class="data-item">
-            <div class="data-info">
-              <h3>Conversation History</h3>
-              <p>Download all your chat conversations with BloomBuddy</p>
-            </div>
-            <button class="btn-secondary" id="downloadDataBtn">Download Data</button>
-          </div>
+      <!-- Data tab -->
+      <div class="tab-content" id="dataTab" role="tabpanel">
+        <section class="profile-section">
+          <h2 class="section-h2">Your data</h2>
 
           <div class="data-item">
             <div class="data-info">
-              <h3>Clear Chat History</h3>
-              <p>Delete all your conversation history (cannot be undone)</p>
+              <h3>Conversation history</h3>
+              <p>Download all your chat conversations with BloomBuddy.</p>
             </div>
-            <button class="btn-danger" id="clearHistoryBtn">Clear History</button>
+            <button class="btn-secondary" id="downloadDataBtn" type="button">
+              <i data-lucide="download" aria-hidden="true"></i>
+              Download
+            </button>
           </div>
 
           <div class="data-item">
             <div class="data-info">
-              <h3>Delete Account</h3>
-              <p>Permanently delete your account and all associated data</p>
+              <h3>Clear chat history</h3>
+              <p>Delete all your conversation history. This can't be undone.</p>
             </div>
-            <button class="btn-danger" id="deleteAccountBtn">Delete Account</button>
+            <button class="btn-danger" id="clearHistoryBtn" type="button">Clear history</button>
           </div>
-        </div>
+
+          <div class="data-item">
+            <div class="data-info">
+              <h3>Delete account</h3>
+              <p>Permanently remove your account and all associated data.</p>
+            </div>
+            <button class="btn-danger" id="deleteAccountBtn" type="button">Delete account</button>
+          </div>
+        </section>
       </div>
+
     </div>
   </main>
 
-  <!-- Change Password Modal -->
-  <div class="modal" id="passwordModal" aria-hidden="true">
+  <!-- Change password modal -->
+  <div class="modal" id="passwordModal" aria-hidden="true" role="dialog">
     <div class="modal-content">
-      <button class="modal-close" data-close>&times;</button>
-      <h3 class="modal-title">Change Password</h3>
-      <form id="passwordForm" class="modal-form">
-        <label for="currentPassword">Current Password</label>
-        <input type="password" id="currentPassword" required />
-
-        <label for="newPassword">New Password</label>
-        <input type="password" id="newPassword" minlength="6" required />
-
-        <label for="confirmNewPassword">Confirm New Password</label>
-        <input type="password" id="confirmNewPassword" minlength="6" required />
-
+      <button class="modal-close" data-close aria-label="Close">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+      <h3 class="modal-title">Change password</h3>
+      <p class="modal-subtitle">Keep your account secure.</p>
+      <form id="passwordForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="currentPassword">Current password</label>
+          <input type="password" id="currentPassword" required />
+        </div>
+        <div class="form-group">
+          <label for="newPassword">New password</label>
+          <input type="password" id="newPassword" minlength="6" required />
+        </div>
+        <div class="form-group">
+          <label for="confirmNewPassword">Confirm new password</label>
+          <input type="password" id="confirmNewPassword" minlength="6" required />
+        </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Update Password</button>
+          <button type="submit" class="btn-primary">Update password</button>
           <button type="button" class="btn-secondary" data-close>Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Avatar Selection Modal -->
-  <div class="modal" id="avatarModal" aria-hidden="true">
+  <!-- Avatar colour modal -->
+  <div class="modal" id="avatarModal" aria-hidden="true" role="dialog">
     <div class="modal-content">
-      <button class="modal-close" data-close>&times;</button>
-      <h3 class="modal-title">Choose Avatar Color</h3>
+      <button class="modal-close" data-close aria-label="Close">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+      <h3 class="modal-title">Avatar colour</h3>
+      <p class="modal-subtitle">Pick a shade for your initial.</p>
       <div class="avatar-colors">
-        <button class="avatar-color-btn" data-color="#8B5CF6" style="background: #8B5CF6;"></button>
-        <button class="avatar-color-btn" data-color="#EF4444" style="background: #EF4444;"></button>
-        <button class="avatar-color-btn" data-color="#10B981" style="background: #10B981;"></button>
-        <button class="avatar-color-btn" data-color="#F59E0B" style="background: #F59E0B;"></button>
-        <button class="avatar-color-btn" data-color="#3B82F6" style="background: #3B82F6;"></button>
-        <button class="avatar-color-btn" data-color="#EC4899" style="background: #EC4899;"></button>
-        <button class="avatar-color-btn" data-color="#6366F1" style="background: #6366F1;"></button>
-        <button class="avatar-color-btn" data-color="#14B8A6" style="background: #14B8A6;"></button>
+        <button class="avatar-color-btn" data-color="#2C3E50" style="background: #2C3E50;" aria-label="Deep navy"></button>
+        <button class="avatar-color-btn" data-color="#475A6D" style="background: #475A6D;" aria-label="Slate"></button>
+        <button class="avatar-color-btn" data-color="#5A8A6F" style="background: #5A8A6F;" aria-label="Sage"></button>
+        <button class="avatar-color-btn" data-color="#BCAAA4" style="background: #BCAAA4;" aria-label="Warm taupe"></button>
+        <button class="avatar-color-btn" data-color="#A2C2E8" style="background: #A2C2E8;" aria-label="Soft sky"></button>
+        <button class="avatar-color-btn" data-color="#C49447" style="background: #C49447;" aria-label="Amber"></button>
+        <button class="avatar-color-btn" data-color="#C26666" style="background: #C26666;" aria-label="Coral"></button>
+        <button class="avatar-color-btn" data-color="#FFD6D6" style="background: #FFD6D6;" aria-label="Rose"></button>
       </div>
     </div>
   </div>
 
-  <!-- About Modal (reused from dashboard) -->
-  <div class="about-modal" id="aboutModal" aria-hidden="true">
-    <div class="about-modal-content">
-      <div class="about-header">
-        <h3>About BloomBuddy</h3>
-        <button class="about-close" data-close>&times;</button>
-      </div>
-      
-      <div class="about-body">
-        <div class="about-logo">
-          <div class="about-logo-text">BB</div>
-          <span class="about-brand-name">BloomBuddy</span>
-        </div>
-        
-        <div class="about-description">
-          <p>Welcome to <strong>BloomBuddy</strong>, your personal sanctuary for spiritual growth and emotional well-being.</p>
-          <p class="about-mission">Our mission is to help you bloom into the person you were created to be, one conversation at a time.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Lucide bootstrap + mobile drawer + tabs -->
+  <script>
+    (function () {
+      window.bbMountIcons = function (root) {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons({ attrs: { 'stroke-width': '1.5' }, root });
+        }
+      };
+      function mount() { window.bbMountIcons(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+      else mount();
+      window.addEventListener('load', mount);
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // Mobile drawer
+        var overlay = document.getElementById('mobileNavOverlay');
+        var openBtn = document.getElementById('mobileMenuBtn');
+        var closeBtn = document.getElementById('mobileNavClose');
+        if (overlay && openBtn && closeBtn) {
+          function setNav(open) {
+            overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+            document.body.style.overflow = open ? 'hidden' : '';
+          }
+          openBtn.addEventListener('click', function () { setNav(true); });
+          closeBtn.addEventListener('click', function () { setNav(false); });
+          overlay.addEventListener('click', function (e) { if (e.target === overlay) setNav(false); });
+          document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
+          overlay.querySelectorAll('.mobile-nav-links a').forEach(function (a) {
+            a.addEventListener('click', function () { setNav(false); });
+          });
+        }
+
+        // Tab switching (was previously handled in profile.js — keep here as a safety net)
+        var tabs = document.querySelectorAll('.tab-btn');
+        var panels = document.querySelectorAll('.tab-content');
+        tabs.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var target = btn.getAttribute('data-tab');
+            tabs.forEach(function (b) { b.classList.toggle('active', b === btn); });
+            panels.forEach(function (p) { p.classList.toggle('active', p.id === target + 'Tab'); });
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

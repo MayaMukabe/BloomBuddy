@@ -1,299 +1,338 @@
-/* Content Pages Styles - Shared between Resources and Podcasts */
+/* =================================================================
+   BloomBuddy — Resources & Podcasts
+   Shared content-page styling on Luminous Calm tokens.
+   ================================================================= */
 
-/* Main Content Layout */
 .content-main {
-  flex-grow: 1;
-  padding: 20px;
-  padding-top: 140px;
-  min-height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
-
-.content-container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  width: 100%;
+  padding: 56px 32px 96px;
 }
 
-.content-header {
-  text-align: center;
-  margin-bottom: 36px;
-  padding-top: 0;
-}
-
+.content-header { margin-bottom: 40px; }
+.content-header .eyebrow { margin-bottom: 18px; }
 .content-header h1 {
   font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-weight: 500;
+  font-size: clamp(34px, 4.4vw, 52px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--bb-ink);
   margin-bottom: 12px;
-  color: var(--bb-text-primary);
-  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
 }
-
-.content-subtitle {
-  font-size: 1rem;
-  color: var(--bb-text-secondary);
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
+.content-header h1 em {
+  font-style: italic;
   font-weight: 400;
+  color: var(--bb-ink-2);
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+}
+.content-subtitle {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--bb-ink-3);
+  max-width: 60ch;
 }
 
-.content-grid {
-  display: grid;
-  gap: 24px;
-}
-
-/* Resource/Podcast Sections */
+/* =================================================================
+   SECTIONS
+   ================================================================= */
 .resource-section,
-.podcast-section {
-  background: var(--bb-bg-white);
-  border-radius: 20px;
-  padding: 28px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-sm);
-}
+.podcast-section { margin-bottom: 56px; }
+.resource-section:last-child,
+.podcast-section:last-child { margin-bottom: 0; }
 
-.resource-section h2,
-.podcast-section h2 {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: var(--bb-text-primary);
-  text-align: center;
-}
-
-/* Resource/Podcast Button Lists */
-.resource-buttons,
-.podcast-buttons,
-.crisis-buttons,
-.coming-soon-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 12px;
-}
-
-/* Resource/Podcast Buttons */
-.resource-btn,
-.podcast-btn,
-.crisis-btn,
-.coming-soon-btn {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 14px;
-  padding: 18px;
-  color: var(--bb-text-primary);
-  cursor: pointer;
-  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: left;
-  width: 100%;
+.section-head {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-height: 80px;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
 }
-
-.resource-btn:hover,
-.podcast-btn:hover,
-.crisis-btn:hover,
-.coming-soon-btn:hover {
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.15);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-sm);
+.section-head h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--bb-ink);
+  margin: 0 0 2px;
+  font-variation-settings: "opsz" 72;
 }
-
-.btn-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--bb-royal-purple);
-  margin-bottom: 3px;
-  line-height: 1.2;
-}
-
-.btn-author,
-.btn-host {
-  font-style: normal;
-  color: var(--bb-text-secondary);
-  font-size: 0.85rem;
-  line-height: 1.2;
-}
-
-.btn-category {
-  background: rgba(90, 82, 122, 0.1);
-  color: var(--bb-royal-purple);
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  align-self: flex-start;
-  margin-top: 4px;
-  letter-spacing: 0.02em;
-}
-
-.btn-description {
-  color: var(--bb-text-secondary);
-  font-size: 0.88rem;
+.section-head p {
+  font-size: 14px;
+  color: var(--bb-ink-3);
+  margin: 0;
   line-height: 1.5;
 }
+.section-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--bb-sage-soft);
+  color: var(--bb-ink);
+}
+.section-icon svg { width: 18px; height: 18px; stroke-width: 1.5; }
+.section-icon.crisis-icon { background: var(--bb-clay-soft); }
 
-/* Modal Styles for Resources/Podcasts */
+/* =================================================================
+   CARDS — uniform grid
+   ================================================================= */
+.resource-grid,
+.podcast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.resource-card,
+.resource-btn,
+.podcast-btn,
+.crisis-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 22px;
+  background: var(--bb-paper-2);
+  border: 1px solid var(--bb-line);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--t-base), background var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  min-height: 92px;
+}
+.resource-card:hover,
+.resource-btn:hover,
+.podcast-btn:hover,
+.crisis-btn:hover {
+  border-color: var(--bb-line-3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.resource-card:focus-visible { outline: none; box-shadow: var(--shadow-ring); }
+
+.resource-card-title,
+.btn-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -0.015em;
+  color: var(--bb-ink);
+  line-height: 1.3;
+  margin-bottom: 2px;
+  padding-right: 28px;
+  font-variation-settings: "opsz" 48;
+}
+.resource-card-meta,
+.btn-author,
+.btn-host,
+.btn-description {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--bb-ink-3);
+  line-height: 1.45;
+}
+.resource-card-arrow {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bb-paper-3);
+  color: var(--bb-ink-3);
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.resource-card-arrow svg { width: 13px; height: 13px; stroke-width: 1.75; }
+.resource-card:hover .resource-card-arrow {
+  background: var(--bb-ink);
+  color: var(--bb-paper);
+  transform: translate(2px, -2px);
+}
+
+/* =================================================================
+   PODCAST CARDS — small category tag at top
+   ================================================================= */
+.podcast-card { padding-top: 16px; }
+.podcast-card-tag,
+.btn-category {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bb-ink-3);
+  margin-bottom: 8px;
+}
+.coming-tag { color: var(--bb-sage-deep); }
+
+.coming-soon-card { opacity: 0.85; }
+.coming-soon-card:hover { opacity: 1; }
+.coming-soon-card .resource-card-arrow { display: none; }
+
+/* =================================================================
+   CRISIS SECTION — calm but distinguished
+   ================================================================= */
+.crisis-section .section-icon { background: var(--bb-clay-soft); }
+.crisis-card,
+.crisis-btn {
+  background: var(--bb-paper-3);
+  border-color: var(--bb-line-2);
+}
+.crisis-card:hover,
+.crisis-btn:hover {
+  border-color: var(--bb-clay);
+  background: var(--bb-paper-2);
+}
+.crisis-card .resource-card-arrow {
+  background: var(--bb-paper-2);
+}
+.crisis-card:hover .resource-card-arrow {
+  background: var(--bb-ink);
+  color: var(--bb-paper);
+}
+
+/* Legacy crisis-buttons container (kept for the old class JS may still output) */
+.crisis-buttons { display: contents; }
+.crisis-title { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--bb-ink); }
+.crisis-number {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--bb-ink-3);
+}
+
+/* =================================================================
+   CONTENT MODAL (shared by resources + podcasts)
+   ================================================================= */
+.content-modal,
 .resource-modal,
 .podcast-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(26, 35, 51, 0.36);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  z-index: 1003;
+  padding: 24px;
+  z-index: 1000;
+  animation: modalFade 220ms var(--ease-out);
 }
-
+.content-modal[aria-hidden="false"],
 .resource-modal[aria-hidden="false"],
-.podcast-modal[aria-hidden="false"] {
-  display: flex;
-}
+.podcast-modal[aria-hidden="false"] { display: flex; }
+@keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
 
+.content-modal-content,
 .resource-modal-content,
 .podcast-modal-content {
-  background: var(--bb-bg-white);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  max-width: 500px;
   width: 100%;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-lg);
+  max-width: 560px;
+  max-height: 86vh;
+  background: var(--bb-paper-2);
+  border: 1px solid var(--bb-line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalRise 320ms var(--ease-out);
+}
+@keyframes modalRise {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+.content-modal-header,
 .resource-modal-header,
 .podcast-modal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--bb-line);
 }
-
+.content-modal-header h3,
 .resource-modal-header h3,
 .podcast-modal-header h3 {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--bb-text-primary);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--bb-ink);
   margin: 0;
+  font-variation-settings: "opsz" 48;
 }
-
-.resource-modal-body,
-.podcast-modal-body {
-  padding: 24px;
-}
-
-.modal-content-item {
-  margin-bottom: 20px;
-}
-
-.modal-content-item h4 {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--bb-royal-purple);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.modal-content-item p {
-  color: var(--bb-text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.modal-link {
-  display: inline-block;
-  padding: 12px 24px;
-  background: var(--bb-royal-purple);
-  color: white;
-  text-decoration: none;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 150ms ease;
-  box-shadow: 0 4px 12px rgba(90, 82, 122, 0.2);
-}
-
-.modal-link:hover {
-  background: var(--bb-plum);
-  box-shadow: 0 6px 20px rgba(90, 82, 122, 0.3);
-  transform: translateY(-1px);
-}
-
-.modal-close {
-  background: rgba(0, 0, 0, 0.04);
-  color: var(--bb-text-secondary);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.content-modal-close,
+.resource-modal-close,
+.podcast-modal-close {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  color: var(--bb-ink-3);
   cursor: pointer;
-  font-size: 20px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 150ms ease;
+  transition: background var(--t-fast), color var(--t-fast);
 }
+.content-modal-close:hover,
+.resource-modal-close:hover,
+.podcast-modal-close:hover { background: var(--color-surface-hover); color: var(--bb-ink); }
+.content-modal-close svg,
+.resource-modal-close svg,
+.podcast-modal-close svg { width: 16px; height: 16px; stroke-width: 1.75; }
 
-.modal-close:hover {
-  background: rgba(0, 0, 0, 0.08);
-  color: var(--bb-text-primary);
+.content-modal-body,
+.resource-modal-body,
+.podcast-modal-body {
+  overflow-y: auto;
+  padding: 24px 24px 28px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--bb-ink-2);
 }
+.content-modal-body p,
+.resource-modal-body p,
+.podcast-modal-body p { margin: 0 0 12px; }
+.content-modal-body strong,
+.resource-modal-body strong,
+.podcast-modal-body strong { color: var(--bb-ink); font-weight: 600; }
+.content-modal-body a,
+.resource-modal-body a,
+.podcast-modal-body a {
+  color: var(--bb-sage-deep);
+  text-decoration: underline;
+  text-decoration-color: var(--bb-sage);
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+.content-modal-body a:hover,
+.resource-modal-body a:hover,
+.podcast-modal-body a:hover { color: var(--bb-ink); text-decoration-color: var(--bb-ink-3); }
 
-/* Responsive Styles */
+/* =================================================================
+   RESPONSIVE
+   ================================================================= */
 @media (max-width: 768px) {
-  .content-main {
-    padding: 20px 15px;
-    padding-top: 120px;
-    min-height: 100vh;
-  }
-
-  .content-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .content-subtitle {
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .content-main {
-    padding: 15px 10px;
-    padding-top: 110px;
-    min-height: 100vh;
-  }
-
-  .content-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .content-subtitle {
-    font-size: 0.9rem;
-  }
-
+  .content-main { padding: 40px 20px 64px; }
+  .content-header { margin-bottom: 32px; }
+  .content-header h1 { font-size: 30px; }
   .resource-section,
-  .podcast-section {
-    padding: 18px;
-    border-radius: 16px;
-  }
-
-  .resource-buttons,
-  .podcast-buttons,
-  .crisis-buttons,
-  .coming-soon-buttons {
-    grid-template-columns: 1fr;
-  }
+  .podcast-section { margin-bottom: 40px; }
+  .resource-grid,
+  .podcast-grid { grid-template-columns: 1fr; }
+  .content-modal { padding: 0; }
+  .content-modal-content { height: 100vh; max-height: 100vh; max-width: 100vw; border-radius: 0; }
 }

@@ -2,91 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="BloomBuddy — A calm space for reflection, encouragement, and emotional support. Journal, grow, and find peace at your own pace." />
-  <meta property="og:title" content="BloomBuddy — A Calm Space for Your Inner World" />
+  <meta property="og:title" content="BloomBuddy — A calm space for your inner world" />
   <meta property="og:description" content="Your daily companion for reflection, peace, and spiritual growth." />
-  <title>BloomBuddy — A Calm Space for Your Inner World</title>
+  <title>BloomBuddy — A calm space for your inner world</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,30..100;1,9..144,400..500,30..100&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
 
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="homepage.css" />
+  <link rel="stylesheet" href="toast-notifications.css" />
   <link rel="icon" type="image/png" href="Images/favicon.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="theme-color" content="#FFFDF9" />
 
-  <link rel="stylesheet" href="toast-notifications.css" />
   <script type="module" src="firebase-config.js"></script>
   <script src="auth-error-handler.js"></script>
+  <script src="vendor/lucide.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- ====== NAVIGATION ====== -->
+  <!-- ================== HEADER ================== -->
   <header class="site-header" id="siteHeader">
     <div class="header-inner">
       <a href="index.html" class="logo-link" aria-label="BloomBuddy home">
-        <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="16" cy="16" r="6" fill="#5A527A" opacity="0.9"/>
-          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(0 16 16)"/>
-          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(60 16 16)"/>
-          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(120 16 16)"/>
-          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(180 16 16)"/>
-          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(240 16 16)"/>
-          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(300 16 16)"/>
-          <circle cx="16" cy="16" r="3" fill="#FFFFFF"/>
+        <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(60 16 16)"/>
+          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(180 16 16)"/>
+          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+          <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(300 16 16)"/>
+          <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
         </svg>
         <span class="logo-wordmark">BloomBuddy</span>
       </a>
 
       <nav class="desktop-nav" aria-label="Main navigation">
-        <a href="dashboard.html">Journey</a>
+        <a href="dashboard.html">Companion</a>
         <a href="journal.html">Journal</a>
-        <a href="resources.html">Resources</a>
-        <a href="#" id="aboutLink">About</a>
+        <a href="resources.html">Library</a>
+        <a href="programs.html">Programs</a>
       </nav>
 
       <div class="header-actions">
-        <button class="nav-link-btn" id="openLogin">Log in</button>
-        <button class="nav-cta-btn" id="openSignup">Get Started</button>
+        <button class="nav-link-btn" id="openLogin" type="button">Sign in</button>
+        <button class="nav-cta-btn" id="openSignup" type="button">Begin</button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-controls="mobileNav">
+          <i data-lucide="menu" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- ====== HERO ====== -->
+  <!-- ================== MOBILE NAV ================== -->
+  <div class="mobile-nav-overlay" id="mobileNav" aria-hidden="true">
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <a href="index.html" class="logo-link">
+          <svg class="logo-icon" width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(72 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(144 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(216 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(288 16 16)"/>
+            <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
+          </svg>
+          <span class="logo-wordmark">BloomBuddy</span>
+        </a>
+        <button class="mobile-nav-close" id="mobileNavClose" type="button" aria-label="Close menu">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-links" aria-label="Mobile navigation">
+        <a href="dashboard.html">Companion</a>
+        <a href="journal.html">Journal</a>
+        <a href="resources.html">Library</a>
+        <a href="programs.html">Programs</a>
+        <a href="prayer-wall.html">Prayer Wall</a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <button class="btn btn-secondary" id="mobileSignIn" type="button" style="width: 100%; margin-bottom: 8px;">Sign in</button>
+        <button class="btn btn-primary" id="mobileSignUp" type="button" style="width: 100%;">Begin your journey</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== HERO ================== -->
   <section class="hero" id="hero">
-    <div class="hero-bg-glow"></div>
     <div class="hero-inner">
       <div class="hero-content reveal-on-scroll">
-        <span class="eyebrow-pill">✧ Your daily companion</span>
-        <h1 class="hero-title">A calm space for <br class="desktop-break"/> your inner world.</h1>
-        <p class="hero-subtitle">BloomBuddy helps you reflect, journal, and grow — gently, at your own pace. No pressure. No judgment. Just a quiet corner for your thoughts.</p>
+        <span class="eyebrow-pill">Your daily companion</span>
+        <h1 class="hero-title">
+          A calm space<br class="desktop-break"/>
+          for your <em>inner world.</em>
+        </h1>
+        <p class="hero-subtitle">
+          BloomBuddy is a gentle companion for reflection — a private place to journal, breathe, and grow at your own pace. No pressure. No judgment. Just space to listen to yourself.
+        </p>
         <div class="hero-actions">
-          <button class="cta-primary" id="heroGetStarted">Start Reflecting →</button>
-          <a href="dashboard.html" class="cta-ghost">Explore the Journey</a>
+          <button class="cta-primary" id="heroGetStarted" type="button">
+            Begin reflecting
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </button>
+          <a href="dashboard.html" class="cta-ghost">
+            Meet your companion
+            <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="hero-trust">
+          <span class="hero-trust-dot" aria-hidden="true"></span>
+          <span>Private by design · End-to-end encrypted reflections</span>
         </div>
       </div>
 
       <div class="hero-preview reveal-on-scroll" aria-hidden="true">
         <div class="preview-card">
           <div class="preview-header">
-            <div class="preview-dot green"></div>
-            <span class="preview-title">Evening Reflection</span>
+            <span class="preview-dot green"></span>
+            <span class="preview-title">Evening reflection</span>
+            <span class="preview-time">8:14 PM</span>
           </div>
           <div class="preview-messages">
             <div class="preview-msg user-msg">
-              <p>I've been feeling a bit overwhelmed lately. Work has been intense and I haven't had time to breathe.</p>
+              <p>I've been feeling overwhelmed lately. Work has been intense and I haven't really had time to breathe.</p>
             </div>
             <div class="preview-msg ai-msg">
-              <div class="preview-ai-avatar">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <div>
-                <p>That sounds really heavy. It takes courage to pause and name what you're feeling. Let's take a moment together — what's weighing on you most right now?</p>
-              </div>
+              <span class="preview-ai-avatar">
+                <i data-lucide="sparkle" aria-hidden="true"></i>
+              </span>
+              <p>That sounds heavy. It takes courage to name what you're carrying. Let's take a moment together — what feels most pressing right now?</p>
+            </div>
+            <div class="preview-typing" aria-hidden="true">
+              <span></span><span></span><span></span>
             </div>
           </div>
         </div>
@@ -94,95 +153,103 @@
     </div>
   </section>
 
-  <!-- ====== FEATURES ====== -->
+  <!-- ================== FEATURES ================== -->
   <section class="features-section" id="features">
     <div class="section-inner">
       <div class="section-header reveal-on-scroll">
-        <span class="eyebrow-pill">What BloomBuddy offers</span>
-        <h2 class="section-title">Rediscover your balance, <br class="desktop-break"/> at your own pace.</h2>
-        <p class="section-subtitle">A quiet corner of the internet where you can untangle your thoughts and breathe.</p>
+        <span class="eyebrow">What you'll find inside</span>
+        <h2 class="section-title">A quiet corner that <em>holds space</em> for you.</h2>
+        <p class="section-subtitle">Four gentle practices, woven together — to help you slow down, hear yourself, and grow.</p>
       </div>
 
       <div class="features-grid">
-        <div class="feature-card glass-card reveal-on-scroll" id="feature-empathy">
-          <div class="feature-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </div>
-          <h3>Guided by Empathy</h3>
-          <p>A companion that listens without judgment, helping you process complex emotions safely.</p>
-        </div>
+        <article class="feature-card reveal-on-scroll" id="feature-empathy">
+          <span class="feature-icon-wrap">
+            <i data-lucide="heart-handshake" aria-hidden="true"></i>
+          </span>
+          <h3>Listens without judgment</h3>
+          <p>A companion trained for warmth, not advice — present with you in the messy, in-between moments.</p>
+        </article>
 
-        <div class="feature-card glass-card reveal-on-scroll" id="feature-journal">
-          <div class="feature-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          </div>
-          <h3>Reflective Journaling</h3>
-          <p>AI-assisted prompts that guide you deeper into your thoughts without feeling intrusive.</p>
-        </div>
+        <article class="feature-card reveal-on-scroll" id="feature-journal">
+          <span class="feature-icon-wrap">
+            <i data-lucide="feather" aria-hidden="true"></i>
+          </span>
+          <h3>Reflective journaling</h3>
+          <p>Soft prompts that invite you inward — never intrusive, never demanding. Just enough to begin.</p>
+        </article>
 
-        <div class="feature-card glass-card reveal-on-scroll" id="feature-spiritual">
-          <div class="feature-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
-          </div>
-          <h3>Spiritual Growth</h3>
-          <p>Nurture your inner peace with mindful exercises and tailored meditative practices.</p>
-        </div>
+        <article class="feature-card reveal-on-scroll" id="feature-spiritual">
+          <span class="feature-icon-wrap">
+            <i data-lucide="leaf" aria-hidden="true"></i>
+          </span>
+          <h3>Spiritual rhythm</h3>
+          <p>Daily practices rooted in faith — prayer, gratitude, scripture — paced for your real life.</p>
+        </article>
 
-        <div class="feature-card glass-card reveal-on-scroll" id="feature-safe">
-          <div class="feature-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <h3>Emotionally Safe</h3>
-          <p>Your space remains private, secure, and gently moderated for your well-being.</p>
-        </div>
+        <article class="feature-card reveal-on-scroll" id="feature-safe">
+          <span class="feature-icon-wrap">
+            <i data-lucide="shield-check" aria-hidden="true"></i>
+          </span>
+          <h3>Emotionally safe</h3>
+          <p>Your space stays private. No ads, no algorithms tracking your feelings — only what serves your peace.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- ====== JOURNAL PREVIEW ====== -->
+  <!-- ================== JOURNAL PREVIEW ================== -->
   <section class="journal-section" id="journal-preview">
-    <div class="section-inner">
-      <div class="journal-grid">
-        <div class="journal-image-container reveal-on-scroll">
-          <div class="journal-placeholder-img"></div>
-          <div class="journal-floating-card">
-            <div class="floating-card-header">
-              <div class="floating-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              </div>
-              <div>
-                <div class="floating-title">Evening Reflection</div>
-                <div class="floating-time">Today at 8:00 PM</div>
-              </div>
+    <div class="journal-grid">
+      <div class="journal-image-container reveal-on-scroll">
+        <div class="journal-placeholder-img" aria-hidden="true"></div>
+        <div class="journal-floating-card">
+          <div class="floating-card-header">
+            <div class="floating-icon">
+              <i data-lucide="moon-star" aria-hidden="true"></i>
             </div>
-            <div class="floating-text">
-              "I noticed I felt lighter after my morning walk. The air was crisp, and for a moment, the noise in my head stopped..."
+            <div>
+              <div class="floating-title">Evening reflection</div>
+              <div class="floating-time">Today at 8:00 PM</div>
             </div>
           </div>
+          <p class="floating-text">"I noticed I felt lighter after my morning walk. The air was crisp, and for a moment, the noise in my head stopped..."</p>
+        </div>
+      </div>
+
+      <div class="journal-content reveal-on-scroll">
+        <div class="section-header left" style="margin-bottom: 0;">
+          <span class="eyebrow">Reflective journaling</span>
+          <h2 class="section-title">A journal that <em>listens back.</em></h2>
+          <p class="section-subtitle">As you write, BloomBuddy gently surfaces patterns, offers thoughtful perspective, and celebrates the small shifts you might otherwise miss.</p>
         </div>
 
-        <div class="journal-content reveal-on-scroll">
-          <h2 class="section-title">A journal that <br class="desktop-break"/> listens back.</h2>
-          <p class="section-subtitle">As you write, BloomBuddy gently highlights patterns, offers thoughtful perspectives, and celebrates your emotional milestones.</p>
-
-          <div class="journal-features">
-            <div class="journal-feature">
-              <span class="journal-feature-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </span>
-              <div>
-                <h4>Emotional Insights</h4>
-                <p>Identify underlying themes in your entries and learn what brings you peace or tension.</p>
-              </div>
+        <div class="journal-features">
+          <div class="journal-feature">
+            <span class="journal-feature-icon">
+              <i data-lucide="line-chart" aria-hidden="true"></i>
+            </span>
+            <div>
+              <h4>Emotional patterns</h4>
+              <p>See the themes that recur across your entries — what brings peace, what brings tension.</p>
             </div>
-            <div class="journal-feature">
-              <span class="journal-feature-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              </span>
-              <div>
-                <h4>Evening Wind Down</h4>
-                <p>Gentle prompts to help you close the chapter on your day and prepare for restful sleep.</p>
-              </div>
+          </div>
+          <div class="journal-feature">
+            <span class="journal-feature-icon">
+              <i data-lucide="sunset" aria-hidden="true"></i>
+            </span>
+            <div>
+              <h4>Evening wind-down</h4>
+              <p>Soft, optional prompts to help you close the day with intention — and sleep with a quieter mind.</p>
+            </div>
+          </div>
+          <div class="journal-feature">
+            <span class="journal-feature-icon">
+              <i data-lucide="lock" aria-hidden="true"></i>
+            </span>
+            <div>
+              <h4>Yours alone</h4>
+              <p>Your reflections never train anyone's model. They stay in your space, on your terms.</p>
             </div>
           </div>
         </div>
@@ -190,77 +257,92 @@
     </div>
   </section>
 
-  <!-- ====== CTA ====== -->
+  <!-- ================== QUOTE BAND ================== -->
+  <section class="quote-section" aria-label="Reflection">
+    <div class="quote-inner reveal-on-scroll">
+      <div class="quote-mark" aria-hidden="true">"</div>
+      <p class="quote-text">There is a healing kind of silence that doesn't ask anything of you — only that you arrive, exactly as you are.</p>
+      <span class="quote-attribution">A note from BloomBuddy</span>
+    </div>
+  </section>
+
+  <!-- ================== CTA ================== -->
   <section class="cta-section" id="cta">
     <div class="cta-inner reveal-on-scroll">
-      <h2 class="cta-title">Ready to bloom?</h2>
-      <p class="cta-subtitle">Join thousands who have found their peaceful corner on the internet. Start your journey toward better emotional well-being today.</p>
-      <button class="cta-large" id="ctaGetStarted">Create Your Space →</button>
-      <!-- <span class="cta-note">Free for 14 days. No credit card required.</span> -->
+      <span class="eyebrow">Begin</span>
+      <h2 class="cta-title">Make space for <em>yourself</em>, today.</h2>
+      <p class="cta-subtitle">Take five quiet minutes. Open a page. Let your shoulders drop. BloomBuddy will be here whenever you arrive.</p>
+      <button class="cta-large" id="ctaGetStarted" type="button">
+        Create your space
+        <i data-lucide="arrow-right" aria-hidden="true"></i>
+      </button>
     </div>
   </section>
 
-  <!-- ====== FOOTER ====== -->
+  <!-- ================== FOOTER ================== -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-grid">
         <div class="footer-brand">
           <div class="footer-logo">
-            <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="16" cy="16" r="6" fill="url(#bloom-grad-f)" opacity="0.9"/>
-              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="url(#bloom-grad-f)" opacity="0.7"/>
-              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="url(#bloom-grad-f)" opacity="0.6" transform="rotate(60 16 16)"/>
-              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="url(#bloom-grad-f)" opacity="0.5" transform="rotate(120 16 16)"/>
-              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="url(#bloom-grad-f)" opacity="0.6" transform="rotate(180 16 16)"/>
-              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="url(#bloom-grad-f)" opacity="0.7" transform="rotate(240 16 16)"/>
-              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="url(#bloom-grad-f)" opacity="0.5" transform="rotate(300 16 16)"/>
-              <circle cx="16" cy="16" r="3" fill="#F0E4F0"/>
-              <defs><linearGradient id="bloom-grad-f" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" stop-color="#C478A2"/><stop offset="100%" stop-color="#5B4B8A"/></linearGradient></defs>
+            <svg class="logo-icon" width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--bb-sage-deep);">
+              <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5"/>
+              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(72 16 16)"/>
+              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(144 16 16)"/>
+              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(216 16 16)"/>
+              <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.5" transform="rotate(288 16 16)"/>
+              <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
             </svg>
             <span class="logo-wordmark">BloomBuddy</span>
           </div>
-          <p class="footer-tagline">A calm space for your mind. Emotionally intelligent companionship to help you navigate your thoughts.</p>
+          <p class="footer-tagline">A calm space for your inner world. Reflect, breathe, and grow — gently, at your own pace.</p>
         </div>
 
         <div class="footer-col">
-          <h4>Platform</h4>
-          <a href="dashboard.html">Daily Journal</a>
-          <a href="resources.html">Guided Meditations</a>
+          <h4>Practice</h4>
+          <a href="dashboard.html">Companion</a>
+          <a href="journal.html">Journal</a>
           <a href="programs.html">Programs</a>
           <a href="prayer-wall.html">Prayer Wall</a>
         </div>
 
         <div class="footer-col">
-          <h4>Company</h4>
-          <a href="#">About Us</a>
-          <a href="#">Our Mission</a>
-          <a href="#">Contact</a>
+          <h4>Discover</h4>
+          <a href="resources.html">Library</a>
+          <a href="podcasts.html">Podcasts</a>
+          <a href="#" id="aboutLink">About</a>
         </div>
 
         <div class="footer-col">
-          <h4>Legal</h4>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
+          <h4>Care</h4>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Contact</a>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <span>© 2025 BloomBuddy. All rights reserved.</span>
-        <span>Crafted with ♡ for inner peace</span>
+        <span>© 2026 BloomBuddy · All rights reserved</span>
+        <span>Made gently, for quieter days.</span>
       </div>
     </div>
   </footer>
 
-  <!-- ====== AUTH MODALS ====== -->
-  <div class="modal" id="loginModal" aria-hidden="true" role="dialog" aria-labelledby="loginTitle">
+  <!-- ================== AUTH MODALS ================== -->
+
+  <!-- Sign In -->
+  <div class="modal" id="loginModal" aria-hidden="true" role="dialog" aria-labelledby="loginTitle" aria-modal="true">
     <div class="modal-content">
-      <button class="modal-close" data-close aria-label="Close">&times;</button>
+      <button class="modal-close" data-close aria-label="Close">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
       <h3 id="loginTitle" class="modal-title">Welcome back</h3>
-      <p class="modal-subtitle">Sign in to continue your journey</p>
+      <p class="modal-subtitle">Sign in to continue your reflection.</p>
+
       <form id="loginForm" class="modal-form" novalidate>
         <div class="form-group">
-          <label for="loginEmail">Email address</label>
+          <label for="loginEmail">Email</label>
           <input type="email" id="loginEmail" name="email" placeholder="you@example.com" autocomplete="email" required />
           <span class="error-message"></span>
         </div>
@@ -270,8 +352,8 @@
           <span class="error-message"></span>
         </div>
         <div class="secondary-actions">
-          <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #6b7280;">
-            <input type="checkbox" name="remember" style="width: auto; margin: 0;"> Remember me
+          <label>
+            <input type="checkbox" name="remember"> Remember me
           </label>
           <button type="button" class="btn-text" id="forgotPasswordLink">Forgot password?</button>
         </div>
@@ -279,32 +361,38 @@
           <button type="submit" class="btn-primary">Sign in</button>
         </div>
       </form>
+
       <div class="divider">or continue with</div>
       <div class="social-login">
         <button type="button" class="btn-google google-signin-btn">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/>
-          Sign in with Google
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt=""/>
+          Continue with Google
         </button>
       </div>
+
       <div class="switch-form">
-        Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
+        New here? <button type="button" id="switchToSignup">Create an account</button>
       </div>
     </div>
   </div>
 
-  <div class="modal" id="signupModal" aria-hidden="true" role="dialog" aria-labelledby="signupTitle">
+  <!-- Sign Up -->
+  <div class="modal" id="signupModal" aria-hidden="true" role="dialog" aria-labelledby="signupTitle" aria-modal="true">
     <div class="modal-content">
-      <button class="modal-close" data-close aria-label="Close">&times;</button>
-      <h3 id="signupTitle" class="modal-title">Create account</h3>
-      <p class="modal-subtitle">Start your spiritual growth journey</p>
+      <button class="modal-close" data-close aria-label="Close">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+      <h3 id="signupTitle" class="modal-title">Create your space</h3>
+      <p class="modal-subtitle">A quiet corner of the internet, just for you.</p>
+
       <form id="signupForm" class="modal-form" novalidate>
         <div class="form-group">
-          <label for="signupName">Full name</label>
-          <input type="text" id="signupName" name="name" placeholder="John Doe" autocomplete="name" required />
+          <label for="signupName">Your name</label>
+          <input type="text" id="signupName" name="name" placeholder="What should we call you?" autocomplete="name" required />
           <span class="error-message"></span>
         </div>
         <div class="form-group">
-          <label for="signupEmail">Email address</label>
+          <label for="signupEmail">Email</label>
           <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" required />
           <span class="error-message"></span>
         </div>
@@ -319,32 +407,40 @@
           <span class="error-message"></span>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Create account</button>
+          <button type="submit" class="btn-primary">Begin your journey</button>
         </div>
       </form>
+
       <div class="divider">or sign up with</div>
       <div class="social-login">
         <button type="button" class="btn-google google-signin-btn">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"/>
-          Sign up with Google
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt=""/>
+          Continue with Google
         </button>
       </div>
+
       <div class="switch-form">
         Already have an account? <button type="button" id="switchToLogin">Sign in</button>
       </div>
     </div>
   </div>
 
-  <div class="modal" id="forgotPasswordModal" aria-hidden="true" role="dialog" aria-labelledby="forgotPasswordTitle">
+  <!-- Forgot Password -->
+  <div class="modal" id="forgotPasswordModal" aria-hidden="true" role="dialog" aria-labelledby="forgotPasswordTitle" aria-modal="true">
     <div class="modal-content forgot-password-content">
-      <button class="modal-close" data-close aria-label="Close">&times;</button>
+      <button class="modal-close" data-close aria-label="Close">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+
       <div id="forgotPasswordInitial">
-        <div class="forgot-password-icon">🔑</div>
+        <div class="forgot-password-icon">
+          <i data-lucide="key-round" aria-hidden="true"></i>
+        </div>
         <h3 id="forgotPasswordTitle" class="modal-title">Reset password</h3>
-        <p class="forgot-password-text">Enter your email address and we'll send you a link to reset your password.</p>
+        <p class="forgot-password-text">Enter the email tied to your account — we'll send a gentle link to set a new password.</p>
         <form id="forgotPasswordForm" class="modal-form" novalidate>
           <div class="form-group">
-            <label for="resetEmail">Email address</label>
+            <label for="resetEmail">Email</label>
             <input type="email" id="resetEmail" name="email" placeholder="you@example.com" autocomplete="email" required />
             <span class="error-message"></span>
           </div>
@@ -354,8 +450,11 @@
           </div>
         </form>
       </div>
+
       <div id="forgotPasswordSuccess" class="success-state" style="display: none;">
-        <div class="success-icon">✓</div>
+        <div class="success-icon">
+          <i data-lucide="check" aria-hidden="true"></i>
+        </div>
         <h3 class="success-title">Check your email</h3>
         <p class="success-text">We've sent a password reset link to <strong id="resetEmailSuccess"></strong>.</p>
         <div class="modal-actions">
@@ -365,5 +464,42 @@
     </div>
   </div>
 
+  <!-- ================== Lucide init + mobile nav ================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mount Lucide icons (script is deferred — wait for load)
+      const mountIcons = () => { if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': '1.5' } }); };
+      mountIcons();
+      window.addEventListener('load', mountIcons);
+
+      // Mobile nav drawer
+      const mobileNav = document.getElementById('mobileNav');
+      const openBtn = document.getElementById('mobileMenuBtn');
+      const closeBtn = document.getElementById('mobileNavClose');
+      const setNav = (open) => {
+        if (!mobileNav) return;
+        mobileNav.setAttribute('aria-hidden', open ? 'false' : 'true');
+        document.body.style.overflow = open ? 'hidden' : '';
+      };
+      openBtn?.addEventListener('click', () => setNav(true));
+      closeBtn?.addEventListener('click', () => setNav(false));
+      mobileNav?.addEventListener('click', (e) => { if (e.target === mobileNav) setNav(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setNav(false); });
+
+      // Wire mobile auth buttons to existing modal flow
+      const signupModal = document.getElementById('signupModal');
+      const loginModal = document.getElementById('loginModal');
+      document.getElementById('mobileSignUp')?.addEventListener('click', () => {
+        setNav(false);
+        if (typeof openModal === 'function') openModal(signupModal);
+        else signupModal?.setAttribute('aria-hidden', 'false');
+      });
+      document.getElementById('mobileSignIn')?.addEventListener('click', () => {
+        setNav(false);
+        if (typeof openModal === 'function') openModal(loginModal);
+        else loginModal?.setAttribute('aria-hidden', 'false');
+      });
+    });
+  </script>
 </body>
 </html>

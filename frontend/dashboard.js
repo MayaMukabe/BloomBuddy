@@ -1306,11 +1306,11 @@ setTimeout(initializeMobileMenu, 100);
 // ========== MOOD TRACKER SYSTEM ==========
 
 const MOOD_CONFIG = {
-  great: { emoji: '😊', label: 'great', value: 5 },
-  good:  { emoji: '😌', label: 'good',  value: 4 },
-  okay:  { emoji: '😐', label: 'okay',  value: 3 },
-  low:   { emoji: '😔', label: 'low',   value: 2 },
-  rough: { emoji: '😢', label: 'rough', value: 1 },
+  great: { icon: 'sun-medium',   label: 'great', value: 5 },
+  good:  { icon: 'cloud-sun',    label: 'good',  value: 4 },
+  okay:  { icon: 'cloud',        label: 'okay',  value: 3 },
+  low:   { icon: 'cloud-drizzle', label: 'low',   value: 2 },
+  rough: { icon: 'cloud-rain',   label: 'rough', value: 1 },
 };
 
 function getTodayKey() {
@@ -1370,7 +1370,10 @@ function showCheckedInState(mood) {
 
   if (moodOptions) moodOptions.style.display = 'none';
   if (moodCheckedIn) moodCheckedIn.style.display = 'flex';
-  if (checkedEmoji) checkedEmoji.textContent = config.emoji;
+  if (checkedEmoji) {
+    checkedEmoji.innerHTML = `<i data-lucide="${config.icon}" aria-hidden="true"></i>`;
+    if (typeof window.bbMountIcons === 'function') window.bbMountIcons(checkedEmoji);
+  }
   if (checkedMoodText) checkedMoodText.textContent = config.label;
 }
 
@@ -1433,19 +1436,21 @@ function renderMoodChart(days, moodData) {
       const config = MOOD_CONFIG[entry.mood];
       const heightPercent = (entry.value / 5) * 100;
       bar.innerHTML = `
-        <div class="mood-bar-emoji">${config.emoji}</div>
+        <div class="mood-bar-emoji"><i data-lucide="${config.icon}" aria-hidden="true"></i></div>
         <div class="mood-bar-fill" data-mood="${entry.mood}" style="height: ${heightPercent}%"></div>
         <div class="mood-bar-day">${getDayLabel(day)}</div>
       `;
     } else {
       bar.innerHTML = `
-        <div class="mood-bar-fill" style="height: 4px; background: rgba(255,255,255,0.06);"></div>
+        <div class="mood-bar-fill" style="height: 4px;"></div>
         <div class="mood-bar-day">${getDayLabel(day)}</div>
       `;
     }
 
     chartBars.appendChild(bar);
   });
+
+  if (typeof window.bbMountIcons === 'function') window.bbMountIcons(chartBars);
 }
 
 function calculateStreak(moodData) {

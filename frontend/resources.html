@@ -2,214 +2,295 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resources - BloomBuddy</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Library — BloomBuddy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,30..100;1,9..144,400..500,30..100&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="content-pages.css" />
-  <link rel="stylesheet" href="dashboard.css" /> 
+
   <link rel="icon" type="image/png" href="Images/favicon.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#FFFFFF" />
-  
-  <!-- Firebase SDK -->
+  <meta name="theme-color" content="#FFFDF9" />
+
   <script type="module" src="firebase-config.js"></script>
-  
+  <script src="vendor/lucide.min.js" defer></script>
   <script src="content-pages.js" defer></script>
 </head>
 <body>
-  <header>
-    <a href="dashboard.html" class="logo" style="text-decoration:none;">
-      <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="16" r="6" fill="#5A527A" opacity="0.9"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(0 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(60 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(120 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(180 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(240 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(300 16 16)"/>
-        <circle cx="16" cy="16" r="3" fill="#FFFFFF"/>
+
+  <header class="dash-header" id="dashHeader">
+    <a href="dashboard.html" class="logo-link" aria-label="BloomBuddy home">
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(60 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(180 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(300 16 16)"/>
+        <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
       </svg>
-      <span class="brand-name">BloomBuddy</span>
+      <span class="logo-wordmark">BloomBuddy</span>
     </a>
 
-    <nav class="desktop-nav">
-      <a href="dashboard.html">Dashboard</a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="dashboard.html">Companion</a>
       <a href="journal.html">Journal</a>
       <a href="prayer-wall.html">Prayer Wall</a>
-      <a href="resources.html" class="active">Resources</a>
+      <a href="resources.html" class="active">Library</a>
       <a href="programs.html">Programs</a>
     </nav>
 
-    <div class="user-menu">
-        <div class="profile-avatar" id="profileAvatar">
-          <span id="userInitial">B</span>
-        </div>
-        <div class="profile-dropdown" id="profileDropdown">
-          <div class="dropdown-header">
-            <span id="dropdownUserEmail">user@example.com</span>
-          </div>
-          <a href="profile.html" class="dropdown-item">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-            </svg>
-            My Profile
-          </a>
-          <a href="#" id="logoutBtn" class="dropdown-item logout">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Logout
-          </a>
-        </div>
+    <div class="user-menu" id="userMenu">
+      <div class="profile-avatar" id="profileAvatar" role="button" aria-label="Open user menu" tabindex="0">
+        <span id="userInitial">B</span>
       </div>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <span id="dropdownUserEmail">user@example.com</span>
+        </div>
+        <a href="profile.html" class="dropdown-item">
+          <i data-lucide="user" class="dropdown-icon" aria-hidden="true"></i>
+          My profile
+        </a>
+        <a href="#" id="logoutBtn" class="dropdown-item logout">
+          <i data-lucide="log-out" class="dropdown-icon" aria-hidden="true"></i>
+          Sign out
+        </a>
+      </div>
+    </div>
+
+    <button class="dash-mobile-btn mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open navigation menu">
+      <i data-lucide="menu" aria-hidden="true"></i>
+    </button>
   </header>
+
+  <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <span class="logo-wordmark" style="font-size:16px;">BloomBuddy</span>
+        <button class="mobile-nav-close" id="mobileNavClose" type="button" aria-label="Close menu">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="dashboard.html">Companion</a>
+        <a href="journal.html">Journal</a>
+        <a href="prayer-wall.html">Prayer Wall</a>
+        <a href="resources.html" class="active">Library</a>
+        <a href="programs.html">Programs</a>
+      </div>
+    </div>
+  </div>
 
   <main class="content-main">
     <div class="content-container">
+
       <div class="content-header">
-        <h1>Spiritual Resources</h1>
-        <p class="content-subtitle">Curated resources to support your spiritual journey and emotional well-being</p>
+        <span class="eyebrow">Library</span>
+        <h1>Resources for the <em>journey</em></h1>
+        <p class="content-subtitle">A small, intentional shelf — books, apps, and websites we'd hand you in person.</p>
       </div>
 
-      <div class="content-grid">
-        <!-- Books Section -->
-        <section class="resource-section">
-          <h2>📚 Recommended Books</h2>
-          <div class="resource-buttons">
-            <button class="resource-btn" data-resource="purpose-driven">
-              <span class="btn-title">The Purpose Driven Life</span>
-              <span class="btn-author">by Rick Warren</span>
-            </button>
-            
-            <button class="resource-btn" data-resource="jesus-calling">
-              <span class="btn-title">Jesus Calling</span>
-              <span class="btn-author">by Sarah Young</span>
-            </button>
-            
-            <button class="resource-btn" data-resource="boundaries">
-              <span class="btn-title">Boundaries</span>
-              <span class="btn-author">by Dr. Henry Cloud & Dr. John Townsend</span>
-            </button>
+      <!-- Books -->
+      <section class="resource-section">
+        <div class="section-head">
+          <span class="section-icon"><i data-lucide="book-open" aria-hidden="true"></i></span>
+          <div>
+            <h2>Books worth holding</h2>
+            <p>Quiet companions for long walks of the soul.</p>
           </div>
-        </section>
+        </div>
+        <div class="resource-grid">
+          <button class="resource-card resource-btn" data-resource="purpose-driven" type="button">
+            <span class="resource-card-title">The Purpose Driven Life</span>
+            <span class="resource-card-meta">Rick Warren</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card resource-btn" data-resource="jesus-calling" type="button">
+            <span class="resource-card-title">Jesus Calling</span>
+            <span class="resource-card-meta">Sarah Young</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card resource-btn" data-resource="boundaries" type="button">
+            <span class="resource-card-title">Boundaries</span>
+            <span class="resource-card-meta">Henry Cloud &amp; John Townsend</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+        </div>
+      </section>
 
-        <!-- Apps & Tools Section -->
-        <section class="resource-section">
-          <h2>📱 Apps & Digital Tools</h2>
-          <div class="resource-buttons">
-            <button class="resource-btn" data-resource="youversion">
-              <span class="btn-title">YouVersion Bible App</span>
-              <span class="btn-author">Free Bible Study App</span>
-            </button>
-            
-            <button class="resource-btn" data-resource="headspace">
-              <span class="btn-title">Headspace</span>
-              <span class="btn-author">Meditation & Mindfulness</span>
-            </button>
-            
-            <button class="resource-btn" data-resource="pray">
-              <span class="btn-title">Pray.com</span>
-              <span class="btn-author">Prayer & Faith Community</span>
-            </button>
+      <!-- Apps & tools -->
+      <section class="resource-section">
+        <div class="section-head">
+          <span class="section-icon"><i data-lucide="smartphone" aria-hidden="true"></i></span>
+          <div>
+            <h2>Apps &amp; tools</h2>
+            <p>Tiny rituals you can carry in your pocket.</p>
           </div>
-        </section>
+        </div>
+        <div class="resource-grid">
+          <button class="resource-card resource-btn" data-resource="youversion" type="button">
+            <span class="resource-card-title">YouVersion Bible</span>
+            <span class="resource-card-meta">Free Bible study</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card resource-btn" data-resource="headspace" type="button">
+            <span class="resource-card-title">Headspace</span>
+            <span class="resource-card-meta">Meditation &amp; mindfulness</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card resource-btn" data-resource="pray" type="button">
+            <span class="resource-card-title">Pray.com</span>
+            <span class="resource-card-meta">Prayer &amp; faith community</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+        </div>
+      </section>
 
-        <!-- Websites Section -->
-        <section class="resource-section">
-          <h2>🌐 Helpful Websites</h2>
-          <div class="resource-buttons">
-            <button class="resource-btn" data-resource="bible-gateway">
-              <span class="btn-title">Bible Gateway</span>
-              <span class="btn-author">Online Bible Study</span>
-            </button>
-            
-            <button class="resource-btn" data-resource="focus-family">
-              <span class="btn-title">Focus on the Family</span>
-              <span class="btn-author">Family & Marriage Resources</span>
-            </button>
-            
-            <button class="resource-btn" data-resource="psychology-today">
-              <span class="btn-title">Psychology Today</span>
-              <span class="btn-author">Mental Health Resources</span>
-            </button>
+      <!-- Websites -->
+      <section class="resource-section">
+        <div class="section-head">
+          <span class="section-icon"><i data-lucide="globe" aria-hidden="true"></i></span>
+          <div>
+            <h2>Around the web</h2>
+            <p>Trusted places to keep returning to.</p>
           </div>
-        </section>
+        </div>
+        <div class="resource-grid">
+          <button class="resource-card resource-btn" data-resource="bible-gateway" type="button">
+            <span class="resource-card-title">Bible Gateway</span>
+            <span class="resource-card-meta">Online Bible study</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card resource-btn" data-resource="focus-family" type="button">
+            <span class="resource-card-title">Focus on the Family</span>
+            <span class="resource-card-meta">Family &amp; marriage resources</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card resource-btn" data-resource="psychology-today" type="button">
+            <span class="resource-card-title">Psychology Today</span>
+            <span class="resource-card-meta">Mental health resources</span>
+            <span class="resource-card-arrow"><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+          </button>
+        </div>
+      </section>
 
-        <!-- Crisis Support Section -->
-        <section class="resource-section crisis-section">
-          <h2>🆘 Crisis Support</h2>
-          <div class="crisis-buttons">
-            <button class="crisis-btn" data-crisis="lifeline">
-              <span class="crisis-title">National Suicide Prevention Lifeline</span>
-              <span class="crisis-number">988</span>
-            </button>
-            
-            <button class="crisis-btn" data-crisis="text-line">
-              <span class="crisis-title">Crisis Text Line</span>
-              <span class="crisis-number">Text HOME to 741741</span>
-            </button>
-            
-            <button class="crisis-btn" data-crisis="emergency">
-              <span class="crisis-title">Emergency Services</span>
-              <span class="crisis-number">911</span>
-            </button>
+      <!-- Crisis support -->
+      <section class="resource-section crisis-section">
+        <div class="section-head">
+          <span class="section-icon crisis-icon"><i data-lucide="life-buoy" aria-hidden="true"></i></span>
+          <div>
+            <h2>If you need help right now</h2>
+            <p>You don't have to carry it alone. Reach out — they're trained to listen.</p>
           </div>
-        </section>
-      </div>
+        </div>
+        <div class="resource-grid">
+          <button class="resource-card crisis-card crisis-btn" data-crisis="lifeline" type="button">
+            <span class="resource-card-title">988 Suicide &amp; Crisis Lifeline</span>
+            <span class="resource-card-meta">Call or text 988</span>
+            <span class="resource-card-arrow"><i data-lucide="phone" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card crisis-card crisis-btn" data-crisis="text-line" type="button">
+            <span class="resource-card-title">Crisis Text Line</span>
+            <span class="resource-card-meta">Text HOME to 741741</span>
+            <span class="resource-card-arrow"><i data-lucide="message-square" aria-hidden="true"></i></span>
+          </button>
+          <button class="resource-card crisis-card crisis-btn" data-crisis="emergency" type="button">
+            <span class="resource-card-title">Emergency services</span>
+            <span class="resource-card-meta">Call 911</span>
+            <span class="resource-card-arrow"><i data-lucide="phone" aria-hidden="true"></i></span>
+          </button>
+        </div>
+      </section>
+
     </div>
   </main>
 
-  <!-- Resource Details Modal -->
-  <div class="resource-modal" id="resourceModal" aria-hidden="true">
-    <div class="resource-modal-content">
-      <div class="resource-modal-header">
-        <h3 id="resourceModalTitle">Resource Details</h3>
-        <button class="resource-modal-close" data-close>&times;</button>
+  <!-- Resource details modal -->
+  <div class="content-modal resource-modal" id="resourceModal" aria-hidden="true" role="dialog">
+    <div class="content-modal-content resource-modal-content">
+      <div class="content-modal-header resource-modal-header">
+        <h3 id="resourceModalTitle">Resource details</h3>
+        <button class="content-modal-close resource-modal-close" data-close type="button" aria-label="Close">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
       </div>
-      
-      <div class="resource-modal-body">
-        <div id="resourceModalContent">
-          <!-- Content will be populated by JavaScript -->
+      <div class="content-modal-body resource-modal-body">
+        <div id="resourceModalContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About modal -->
+  <div class="about-modal" id="aboutModal" aria-hidden="true" role="dialog">
+    <div class="about-modal-content">
+      <div class="about-header">
+        <h3>About BloomBuddy</h3>
+        <button class="about-close" data-close type="button" aria-label="Close">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="about-body">
+        <div class="about-logo">
+          <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--bb-ink);">
+            <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(60 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(180 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(300 16 16)"/>
+            <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
+          </svg>
+          <span class="about-brand-name">BloomBuddy</span>
+        </div>
+        <div class="about-description">
+          <p>Welcome to <strong>BloomBuddy</strong> — a quiet sanctuary for spiritual growth and emotional well-being.</p>
+          <p class="about-mission">Our mission: to help you bloom into the person you were created to be, one conversation at a time.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- About Modal (reused from dashboard) -->
-  <div class="about-modal" id="aboutModal" aria-hidden="true">
-    <div class="about-modal-content">
-      <div class="about-header">
-        <h3>About BloomBuddy</h3>
-        <button class="about-close" data-close>&times;</button>
-      </div>
-      
-      <div class="about-body">
-        <div class="about-logo">
-          <div class="about-logo-text">BB</div>
-          <span class="about-brand-name">BloomBuddy</span>
-        </div>
-        
-        <div class="about-description">
-          <p>Welcome to <strong>BloomBuddy</strong>, your personal sanctuary for spiritual growth and emotional well-being. We believe that everyone deserves a safe space to explore their inner world, find peace, and grow in their faith journey.</p>
-          
-          <p>Our platform combines the wisdom of spiritual practices with the power of artificial intelligence to provide you with personalized support whenever you need it. Whether you're seeking encouragement, guidance for daily spiritual practices, or simply someone to talk to about your mood and emotions, BloomBuddy is here for you.</p>
-          
-          <p>Through our four specialized AI assistants, you can:</p>
-          
-          <ul class="about-features">
-            <li><strong>Mood Check:</strong> Get compassionate support for your emotional well-being and mental health</li>
-            <li><strong>Verse + Encouragement:</strong> Receive spiritual guidance and biblical encouragement tailored to your needs</li>
-            <li><strong>Daily Practice:</strong> Develop meaningful spiritual disciplines like prayer, meditation, and gratitude</li>
-            <li><strong>Spiritual Growth:</strong> Explore deeper aspects of your faith and relationship with God</li>
-          </ul>
-          
-          <p>BloomBuddy is more than just an app – it's your companion on the journey toward inner peace, spiritual maturity, and emotional healing. We're committed to providing a judgment-free environment where you can be authentic, vulnerable, and hopeful about your growth.</p>
-          
-          <p class="about-mission">Our mission is to help you bloom into the person you were created to be, one conversation at a time.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <script>
+    (function () {
+      window.bbMountIcons = function (root) {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons({ attrs: { 'stroke-width': '1.5' }, root });
+        }
+      };
+      function mount() { window.bbMountIcons(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+      else mount();
+      window.addEventListener('load', mount);
+
+      document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('mobileNavOverlay');
+        var openBtn = document.getElementById('mobileMenuBtn');
+        var closeBtn = document.getElementById('mobileNavClose');
+        if (!overlay || !openBtn || !closeBtn) return;
+        function setNav(open) {
+          overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+          document.body.style.overflow = open ? 'hidden' : '';
+        }
+        openBtn.addEventListener('click', function () { setNav(true); });
+        closeBtn.addEventListener('click', function () { setNav(false); });
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) setNav(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
+        overlay.querySelectorAll('.mobile-nav-links a').forEach(function (a) {
+          a.addEventListener('click', function () { setNav(false); });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

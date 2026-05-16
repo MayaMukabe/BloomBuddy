@@ -2,202 +2,314 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="description" content="BloomBuddy — Your personal companion for spiritual growth and emotional well-being. Get daily encouragement, mood support, and faith-centered guidance.">
-  <title>BloomBuddy Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="BloomBuddy — Your personal companion for spiritual growth and emotional well-being. Get daily encouragement, mood support, and faith-centered guidance." />
+  <title>BloomBuddy — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,30..100;1,9..144,400..500,30..100&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="dashboard.css" />
-  <link rel="stylesheet" href="toast-notifications.css">
-  
+  <link rel="stylesheet" href="toast-notifications.css" />
+
   <link rel="icon" type="image/png" href="Images/favicon.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#FFFFFF" />
-  
+  <meta name="theme-color" content="#FFFDF9" />
+
   <!-- Firebase SDK -->
   <script type="module" src="firebase-config.js"></script>
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
   <script src="auth-error-handler.js"></script>
-  
+
+  <!-- Lucide icons (self-hosted to be CSP-safe) -->
+  <script src="vendor/lucide.min.js" defer></script>
+
   <script src="debug-conversations.js"></script>
   <script src="dashboard.js" defer></script>
 </head>
 <body>
-  <header>
-    <a href="dashboard.html" class="logo" style="text-decoration:none;">
-      <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="16" r="6" fill="#5A527A" opacity="0.9"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(0 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(60 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(120 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.6" transform="rotate(180 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.7" transform="rotate(240 16 16)"/>
-        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="#5A527A" opacity="0.5" transform="rotate(300 16 16)"/>
-        <circle cx="16" cy="16" r="3" fill="#FFFFFF"/>
+
+  <!-- ====== HEADER ====== -->
+  <header class="dash-header" id="dashHeader">
+    <a href="dashboard.html" class="logo-link" aria-label="BloomBuddy home">
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(60 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(180 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+        <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(300 16 16)"/>
+        <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
       </svg>
-      <span class="brand-name">BloomBuddy</span>
+      <span class="logo-wordmark">BloomBuddy</span>
     </a>
 
-    <nav class="desktop-nav">
-      <a href="dashboard.html">Dashboard</a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="dashboard.html" class="active">Companion</a>
       <a href="journal.html">Journal</a>
       <a href="prayer-wall.html">Prayer Wall</a>
-      <a href="resources.html">Resources</a>
+      <a href="resources.html">Library</a>
       <a href="programs.html">Programs</a>
     </nav>
 
-    <div class="user-menu">
-        <div class="profile-avatar" id="profileAvatar">
-          <span id="userInitial">B</span>
-        </div>
-        <div class="profile-dropdown" id="profileDropdown">
-          <div class="dropdown-header">
-            <span id="dropdownUserEmail">user@example.com</span>
-          </div>
-          <a href="profile.html" class="dropdown-item">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-            </svg>
-            My Profile
-          </a>
-          <a href="#" id="logoutBtn" class="dropdown-item logout">
-            <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Logout
-          </a>
-        </div>
+    <div class="user-menu" id="userMenu">
+      <div class="profile-avatar" id="profileAvatar" role="button" aria-label="Open user menu" tabindex="0">
+        <span id="userInitial">B</span>
       </div>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <span id="dropdownUserEmail">user@example.com</span>
+        </div>
+        <a href="profile.html" class="dropdown-item">
+          <i data-lucide="user" class="dropdown-icon" aria-hidden="true"></i>
+          My profile
+        </a>
+        <a href="#" id="logoutBtn" class="dropdown-item logout">
+          <i data-lucide="log-out" class="dropdown-icon" aria-hidden="true"></i>
+          Sign out
+        </a>
+      </div>
+    </div>
+
+    <!-- Guest menu (shown to anonymous users) -->
+    <div class="guest-menu" id="guestMenu" style="display:none;">
+      <button class="dash-cta-btn" id="upgradeGuestBtn" type="button">Create account</button>
+    </div>
+
+    <!-- Mobile menu button -->
+    <button class="dash-mobile-btn mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open navigation menu">
+      <i data-lucide="menu" aria-hidden="true"></i>
+    </button>
   </header>
 
-  <main>
-    <!-- Mood Tracker Widget -->
-    <section class="mood-tracker" id="moodTracker">
-      <div class="mood-tracker-card">
-        <div class="mood-tracker-header">
-          <h3 class="mood-tracker-title">How are you feeling today?</h3>
+  <!-- ====== Mobile Navigation Drawer ====== -->
+  <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <span class="logo-wordmark" style="font-size:16px;">BloomBuddy</span>
+        <button class="mobile-nav-close" id="mobileNavClose" type="button" aria-label="Close menu">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="dashboard.html" class="active">Companion</a>
+        <a href="journal.html">Journal</a>
+        <a href="prayer-wall.html">Prayer Wall</a>
+        <a href="resources.html">Library</a>
+        <a href="programs.html">Programs</a>
+      </div>
+      <div class="mobile-nav-footer">
+        <div class="mobile-user-info" id="mobileUserInfo">
+          <div class="mobile-user-avatar" id="mobileUserAvatar">B</div>
+          <span class="mobile-user-email" id="mobileUserEmail">Loading…</span>
+        </div>
+        <button class="mobile-logout-btn" id="mobileLogoutBtn" type="button">
+          <i data-lucide="log-out" class="dropdown-icon" aria-hidden="true"></i>
+          Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== MAIN ====== -->
+  <main class="dash-main">
+
+    <!-- Greeting -->
+    <div class="dash-greeting" id="dashGreeting">
+      <div class="greeting-content">
+        <h1 class="greeting-title" id="greetingTitle">Good morning</h1>
+        <p class="greeting-sub">Take a quiet moment to check in with yourself today.</p>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+
+      <!-- Mood tracker -->
+      <section class="dash-card mood-tracker-card" id="moodTracker">
+        <div class="dash-card-header">
+          <div class="dash-card-icon mood-icon">
+            <i data-lucide="heart-pulse" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h2 class="dash-card-title">How are you feeling?</h2>
+            <p class="dash-card-sub">Check in to track your inner weather</p>
+          </div>
           <div class="mood-streak" id="moodStreak" style="display: none;">
-            <span class="streak-flame">🔥</span>
+            <i data-lucide="flame" aria-hidden="true"></i>
             <span class="streak-count" id="streakCount">0</span>
             <span class="streak-label">day streak</span>
           </div>
         </div>
 
-        <!-- Mood Selection (hidden after check-in) -->
+        <!-- Mood buttons — weather metaphors (Lucide) -->
         <div class="mood-options" id="moodOptions">
-          <button class="mood-btn" data-mood="great" title="Great">
-            <span class="mood-emoji">😊</span>
+          <button class="mood-btn" data-mood="great" type="button" title="Great">
+            <span class="mood-emoji"><i data-lucide="sun-medium" aria-hidden="true"></i></span>
             <span class="mood-label">Great</span>
           </button>
-          <button class="mood-btn" data-mood="good" title="Good">
-            <span class="mood-emoji">😌</span>
+          <button class="mood-btn" data-mood="good" type="button" title="Good">
+            <span class="mood-emoji"><i data-lucide="cloud-sun" aria-hidden="true"></i></span>
             <span class="mood-label">Good</span>
           </button>
-          <button class="mood-btn" data-mood="okay" title="Okay">
-            <span class="mood-emoji">😐</span>
+          <button class="mood-btn" data-mood="okay" type="button" title="Okay">
+            <span class="mood-emoji"><i data-lucide="cloud" aria-hidden="true"></i></span>
             <span class="mood-label">Okay</span>
           </button>
-          <button class="mood-btn" data-mood="low" title="Low">
-            <span class="mood-emoji">😔</span>
+          <button class="mood-btn" data-mood="low" type="button" title="Low">
+            <span class="mood-emoji"><i data-lucide="cloud-drizzle" aria-hidden="true"></i></span>
             <span class="mood-label">Low</span>
           </button>
-          <button class="mood-btn" data-mood="rough" title="Rough">
-            <span class="mood-emoji">😢</span>
+          <button class="mood-btn" data-mood="rough" type="button" title="Rough">
+            <span class="mood-emoji"><i data-lucide="cloud-rain" aria-hidden="true"></i></span>
             <span class="mood-label">Rough</span>
           </button>
         </div>
 
-        <!-- Already Checked In State -->
+        <!-- Already checked-in state -->
         <div class="mood-checked-in" id="moodCheckedIn" style="display: none;">
-          <span class="checked-emoji" id="checkedEmoji">😊</span>
-          <span class="checked-text">You're feeling <strong id="checkedMoodText">great</strong> today</span>
-          <span class="checked-badge">✓ Checked in</span>
+          <span class="checked-emoji" id="checkedEmoji">
+            <i data-lucide="sun-medium" aria-hidden="true"></i>
+          </span>
+          <span class="checked-text">Feeling <strong id="checkedMoodText">great</strong> today</span>
+          <span class="checked-badge">
+            <i data-lucide="check" aria-hidden="true"></i>
+            Checked in
+          </span>
         </div>
 
-        <!-- 7-Day Chart -->
+        <!-- 7-day chart -->
         <div class="mood-chart" id="moodChart">
           <div class="mood-chart-label">Last 7 days</div>
           <div class="mood-chart-bars" id="moodChartBars">
             <!-- Bars rendered by JS -->
           </div>
-          <div class="mood-chart-empty" id="moodChartEmpty">Start checking in to see your mood history</div>
+          <div class="mood-chart-empty" id="moodChartEmpty">Start checking in to see your inner weather over time.</div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Verse of the Day Widget -->
-    <section class="verse-widget" id="verseWidget">
-      <div class="verse-widget-card">
-        <div class="verse-widget-header">
-          <span class="verse-icon">✨</span>
-          <span class="verse-label">Verse of the Day</span>
-        </div>
-        <p class="verse-text" id="verseText">Loading today's verse...</p>
-        <span class="verse-ref" id="verseRef"></span>
-      </div>
-    </section>
-
-    <div class="dashboard-container">
-      <div class="overlay">
-        <div class="chatbot-box">
-          <div class="ai-icon">🌸</div>
-          <h2>Hi there! What would you like support with today?</h2>
-
-          <div class="button-group">
-            <button class="dashboard-btn" data-topic="mood">Mood Check</button>
-            <button class="dashboard-btn" data-topic="verse">Verse + Encouragement</button>
-            <button class="dashboard-btn" data-topic="practice">✨ Daily Practice</button>
-            <button class="dashboard-btn" data-topic="growth">🌱 Spiritual Growth</button>
+      <!-- Verse of the day -->
+      <section class="dash-card verse-card" id="verseWidget">
+        <div class="verse-glow-bg" aria-hidden="true"></div>
+        <div class="dash-card-header">
+          <div class="dash-card-icon verse-icon-wrap">
+            <i data-lucide="book-open" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h2 class="dash-card-title">Verse for today</h2>
+            <p class="dash-card-sub">A small light to carry with you</p>
           </div>
         </div>
-      </div>
-    </div>
+        <div class="verse-content">
+          <p class="verse-text" id="verseText">Loading today's verse…</p>
+          <span class="verse-ref" id="verseRef"></span>
+        </div>
+      </section>
+
+      <!-- Chat launcher -->
+      <section class="dash-card chat-launcher-card">
+        <div class="chat-launcher-inner">
+          <h2 class="chat-launcher-title">What would you like <em>to explore</em> today?</h2>
+          <p class="chat-launcher-sub">Choose a direction and your companion will hold the space.</p>
+
+          <div class="button-group">
+            <button class="dashboard-btn" data-topic="mood" id="btn-mood" type="button">
+              <span class="btn-icon"><i data-lucide="heart-handshake" aria-hidden="true"></i></span>
+              <span class="btn-text">
+                <strong>Mood check</strong>
+                <small>How are you feeling?</small>
+              </span>
+            </button>
+            <button class="dashboard-btn" data-topic="verse" id="btn-verse" type="button">
+              <span class="btn-icon"><i data-lucide="book-open" aria-hidden="true"></i></span>
+              <span class="btn-text">
+                <strong>Verse + encouragement</strong>
+                <small>Scripture for your moment</small>
+              </span>
+            </button>
+            <button class="dashboard-btn" data-topic="practice" id="btn-practice" type="button">
+              <span class="btn-icon"><i data-lucide="leaf" aria-hidden="true"></i></span>
+              <span class="btn-text">
+                <strong>Daily practice</strong>
+                <small>Prayer, gratitude, meditation</small>
+              </span>
+            </button>
+            <button class="dashboard-btn" data-topic="growth" id="btn-growth" type="button">
+              <span class="btn-icon"><i data-lucide="sprout" aria-hidden="true"></i></span>
+              <span class="btn-text">
+                <strong>Spiritual growth</strong>
+                <small>Go deeper, gently</small>
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.dash-grid -->
   </main>
 
-  <!-- AI Chat Modal -->
-  <div class="chat-modal" id="chatModal" aria-hidden="true">
+  <!-- ====== CHAT MODAL ====== -->
+  <div class="chat-modal" id="chatModal" aria-hidden="true" role="dialog" aria-labelledby="chatTitle" aria-modal="true">
     <div class="chat-modal-content">
       <div class="chat-header">
-        <button id="historyBtn" class="history-btn" title="View conversation history">📜</button>
-        <h3 id="chatTitle">AI Assistant</h3>
-        <button id="exportChatBtn" class="export-btn">Export</button>
-        <button class="chat-close" data-close>&times;</button>
+        <button id="historyBtn" class="history-btn" type="button" title="View conversation history">
+          <i data-lucide="history" aria-hidden="true"></i>
+          History
+        </button>
+        <h3 id="chatTitle">Your companion</h3>
+        <button id="exportChatBtn" class="export-btn" type="button">
+          <i data-lucide="download" aria-hidden="true"></i>
+          Export
+        </button>
+        <button class="chat-close" data-close type="button" aria-label="Close chat">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
       </div>
-      
+
       <div class="chat-content-wrapper">
         <!-- Conversation History Sidebar -->
         <div class="conversation-history-sidebar" id="conversationHistorySidebar" aria-hidden="true">
           <div class="history-header">
-            <h4>Conversation History</h4>
-            <button class="history-close" id="historyCloseBtn">&times;</button>
+            <h4>Past conversations</h4>
+            <button class="history-close" id="historyCloseBtn" type="button" aria-label="Close history">
+              <i data-lucide="x" aria-hidden="true"></i>
+            </button>
           </div>
           <div class="history-filters">
             <select id="historyTopicFilter" class="history-filter">
-              <option value="">All Topics</option>
-              <option value="mood">Mood Check</option>
-              <option value="verse">Verse + Encouragement</option>
-              <option value="practice">Daily Practice</option>
-              <option value="growth">Spiritual Growth</option>
+              <option value="">All topics</option>
+              <option value="mood">Mood check</option>
+              <option value="verse">Verse + encouragement</option>
+              <option value="practice">Daily practice</option>
+              <option value="growth">Spiritual growth</option>
             </select>
           </div>
           <div class="history-list" id="historyList">
-            <div class="history-loading">Loading conversations...</div>
+            <div class="history-loading">Loading conversations…</div>
           </div>
         </div>
-        
-        <!-- Main Chat Area -->
+
+        <!-- Main chat -->
         <div class="chat-main-area">
           <div class="chat-messages" id="chatMessages">
             <div class="message ai-message">
               <div class="message-content">
-                <p id="initialMessage">Hello! I'm here to help you with your spiritual and emotional well-being. How can I assist you today?</p>
+                <p id="initialMessage">Hello — I'm here whenever you want to slow down. What would you like to explore?</p>
               </div>
             </div>
           </div>
-          
+
           <div class="chat-input-container">
-            <input type="text" id="chatInput" placeholder="Type your message..." />
-            <button id="sendBtn" class="send-btn">Send</button>
+            <input type="text" id="chatInput" placeholder="Type a message…" autocomplete="off" />
+            <button id="sendBtn" class="send-btn" type="button" aria-label="Send message">
+              <i data-lucide="arrow-up" aria-hidden="true"></i>
+            </button>
           </div>
           <div class="usage-indicator" id="usageIndicator" style="display: none;">
             <div class="usage-bar">
@@ -210,52 +322,104 @@
     </div>
   </div>
 
-  <!-- About Modal -->
-  <div class="about-modal" id="aboutModal" aria-hidden="true">
+  <!-- ====== ABOUT MODAL ====== -->
+  <div class="about-modal" id="aboutModal" aria-hidden="true" role="dialog" aria-labelledby="aboutModalTitle" aria-modal="true">
     <div class="about-modal-content">
       <div class="about-header">
-        <h3>About BloomBuddy</h3>
-        <button class="about-close" data-close>&times;</button>
+        <h3 id="aboutModalTitle">About BloomBuddy</h3>
+        <button class="about-close" data-close type="button" aria-label="Close">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
       </div>
-      
+
       <div class="about-body">
         <div class="about-logo">
-          <div class="about-logo-text">BB</div>
+          <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--bb-ink);">
+            <circle cx="16" cy="16" r="6" fill="currentColor" opacity="0.95"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(60 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.45" transform="rotate(120 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(180 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.55" transform="rotate(240 16 16)"/>
+            <ellipse cx="16" cy="8" rx="4.5" ry="6" fill="currentColor" opacity="0.50" transform="rotate(300 16 16)"/>
+            <circle cx="16" cy="16" r="3" fill="#FFFDF9"/>
+          </svg>
           <span class="about-brand-name">BloomBuddy</span>
         </div>
-        
+
         <div class="about-description">
-          <p>Welcome to <strong>BloomBuddy</strong>, your personal sanctuary for spiritual growth and emotional well-being. We believe that everyone deserves a safe space to explore their inner world, find peace, and grow in their faith journey.</p>
-          
-          <p>Our platform combines the wisdom of spiritual practices with the power of artificial intelligence to provide you with personalized support whenever you need it. Whether you're seeking encouragement, guidance for daily spiritual practices, or simply someone to talk to about your mood and emotions, BloomBuddy is here for you.</p>
-          
-          <p>Through our four specialized AI assistants, you can:</p>
-          
+          <p>Welcome to <strong>BloomBuddy</strong> — a quiet sanctuary for spiritual growth and emotional well-being. We believe everyone deserves a safe space to explore their inner world, find peace, and grow at their own pace.</p>
+          <p>The platform pairs the wisdom of long-held spiritual practices with thoughtful AI support, whenever you need it.</p>
+
           <ul class="about-features">
-            <li><strong>Mood Check:</strong> Get compassionate support for your emotional well-being and mental health</li>
-            <li><strong>Verse + Encouragement:</strong> Receive spiritual guidance and biblical encouragement tailored to your needs</li>
-            <li><strong>Daily Practice:</strong> Develop meaningful spiritual disciplines like prayer, meditation, and gratitude</li>
-            <li><strong>Spiritual Growth:</strong> Explore deeper aspects of your faith and relationship with God</li>
+            <li><strong>Mood check</strong> — compassionate support for what you're carrying</li>
+            <li><strong>Verse + encouragement</strong> — scripture for your moment</li>
+            <li><strong>Daily practice</strong> — prayer, meditation, and gratitude</li>
+            <li><strong>Spiritual growth</strong> — go deeper, gently</li>
           </ul>
-          
-          <p>BloomBuddy is more than just an app – it's your companion on the journey toward inner peace, spiritual maturity, and emotional healing. We're committed to providing a judgment-free environment where you can be authentic, vulnerable, and hopeful about your growth.</p>
-          
-          <p class="about-mission">Our mission is to help you bloom into the person you were created to be, one conversation at a time.</p>
+
+          <p class="about-mission">Our mission: to help you bloom into the person you were created to be — one quiet conversation at a time.</p>
         </div>
       </div>
     </div>
   </div>
-  <!-- PWA Install Prompt -->
+
+  <!-- ====== PWA INSTALL PROMPT ====== -->
   <div class="install-prompt" id="installPrompt" style="display: none;">
     <div class="install-prompt-content">
-      <div class="install-prompt-icon">📲</div>
+      <div class="install-prompt-icon">
+        <i data-lucide="smartphone" aria-hidden="true"></i>
+      </div>
       <div class="install-prompt-text">
         <strong>Install BloomBuddy</strong>
-        <span>Add to your home screen for the best experience</span>
+        <span>Add to your home screen</span>
       </div>
-      <button class="install-prompt-btn" id="installBtn">Install</button>
-      <button class="install-prompt-dismiss" id="installDismiss">✕</button>
+      <button class="install-prompt-btn" id="installBtn" type="button">Install</button>
+      <button class="install-prompt-dismiss" id="installDismiss" type="button" aria-label="Dismiss install prompt">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
+
+  <!-- ====== Lucide bootstrap + mobile drawer wiring ====== -->
+  <script>
+    (function () {
+      // Helper exposed so dashboard.js can re-mount after dynamic renders
+      window.bbMountIcons = function (root) {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons({ attrs: { 'stroke-width': '1.5' }, root });
+        }
+      };
+
+      function mountOnReady() { window.bbMountIcons(); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mountOnReady);
+      } else {
+        mountOnReady();
+      }
+      window.addEventListener('load', mountOnReady);
+
+      // Wire the static mobile drawer (dashboard.js only wires its dynamic copy)
+      document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('mobileNavOverlay');
+        var openBtn = document.getElementById('mobileMenuBtn');
+        var closeBtn = document.getElementById('mobileNavClose');
+        if (!overlay || !openBtn || !closeBtn) return;
+
+        function setNav(open) {
+          overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+          document.body.style.overflow = open ? 'hidden' : '';
+        }
+        openBtn.addEventListener('click', function () { setNav(true); });
+        closeBtn.addEventListener('click', function () { setNav(false); });
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) setNav(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
+        overlay.querySelectorAll('.mobile-nav-links a').forEach(function (a) {
+          a.addEventListener('click', function () { setNav(false); });
+        });
+      });
+    })();
+  </script>
+
 </body>
 </html>
