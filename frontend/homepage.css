@@ -47,8 +47,16 @@
   padding: calc(var(--header-h) + 80px) 24px 96px;
   display: flex;
   align-items: center;
-  background: var(--bb-paper);
+  background: var(--bb-paper) url("Images/peaceful-purple-sunset.jpg") center/cover no-repeat;
   overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.14);
+  pointer-events: none;
+  z-index: 0;
 }
 .hero::before {
   content: "";
@@ -117,14 +125,14 @@
 .hero-title em {
   font-style: italic;
   font-weight: 400;
-  color: var(--bb-ink-2);
+  color: #FFFFFF;
   font-variation-settings: "opsz" 144, "SOFT" 100;
 }
 
 .hero-subtitle {
   font-size: clamp(16px, 1.25vw, 19px);
   line-height: 1.65;
-  color: var(--bb-ink-3);
+  color: #FFFFFF;
   max-width: 480px;
   margin-bottom: 40px;
 }
@@ -162,7 +170,7 @@
   align-items: center;
   gap: 6px;
   padding: 13px 18px;
-  color: var(--bb-ink-2);
+  color: #FFFFFF;
   background: transparent;
   border-radius: var(--radius-full);
   font-family: var(--font-ui);
@@ -170,7 +178,7 @@
   font-weight: 600;
   transition: color var(--t-fast), background var(--t-fast);
 }
-.cta-ghost:hover { color: var(--bb-ink); background: var(--color-surface-hover); }
+.cta-ghost:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.12); }
 .cta-ghost svg { width: 16px; height: 16px; stroke-width: 1.75; transition: transform var(--t-fast); }
 .cta-ghost:hover svg { transform: translateX(2px); }
 
@@ -180,7 +188,7 @@
   gap: 16px;
   margin-top: 32px;
   font-size: 13px;
-  color: var(--bb-ink-3);
+  color: #FFFFFF;
 }
 .hero-trust-dot { width: 6px; height: 6px; background: var(--bb-sage); border-radius: 50%; flex-shrink: 0; }
 

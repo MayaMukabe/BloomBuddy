@@ -6,43 +6,41 @@
 
 :root {
   /* ----- Surfaces (Luminous Calm — bright alabaster + cool neutrals) ----- */
-  --bb-paper:        #FFFDF9;   /* page background — bright alabaster */
-  --bb-paper-2:      #FFFFFF;   /* elevated card */
-  --bb-paper-3:      #F4F1E9;   /* muted card surface (warm neutral) */
-  --bb-paper-4:      #E8EAEF;   /* deeper surface (cool neutral) */
-  --bb-paper-inv:    #1A2333;   /* deep navy (dark sections) */
-  --bb-paper-inv-2:  #243046;   /* elevated dark */
+  --bb-paper:        #F6E7F7;   /* page background — soft pink */
+  --bb-paper-2:      #F2E0F5;   /* elevated card */
+  --bb-paper-3:      #E7D0F0;   /* muted card surface */
+  --bb-paper-4:      #D6B9E8;   /* deeper surface */
+  --bb-paper-inv:    #112A74;   /* deep blue (dark sections) */
+  --bb-paper-inv-2:  #243D8E;   /* elevated dark */
 
-  /* ----- Ink (Deep Navy scale) ----- */
-  --bb-ink:          #2C3E50;   /* primary text — deep navy */
-  --bb-ink-2:        #475A6D;   /* secondary text */
-  --bb-ink-3:        #6E7E8E;   /* muted text */
-  --bb-ink-4:        #9CA8B5;   /* placeholder */
-  --bb-ink-5:        #C5CDD6;   /* disabled */
+  /* ----- Ink (Palette blue / violet) ----- */
+  --bb-ink:          #162D72;   /* primary text — deep blue */
+  --bb-ink-2:        #453B92;   /* secondary text */
+  --bb-ink-3:        #6E5BC5;   /* muted text */
+  --bb-ink-4:        #A68FDB;   /* placeholder */
+  --bb-ink-5:        #C7B8E7;   /* disabled */
 
-  /* ----- Lines (navy at low opacity) ----- */
-  --bb-line:         rgba(44, 62, 80, 0.06);    /* hairline */
-  --bb-line-2:       rgba(44, 62, 80, 0.10);    /* border */
-  --bb-line-3:       rgba(44, 62, 80, 0.18);    /* strong border */
+  /* ----- Lines (blue at low opacity) ----- */
+  --bb-line:         rgba(22, 45, 114, 0.06);    /* hairline */
+  --bb-line-2:       rgba(22, 45, 114, 0.10);    /* border */
+  --bb-line-3:       rgba(22, 45, 114, 0.18);    /* strong border */
   --bb-line-inv:     rgba(255, 255, 255, 0.10);
 
-  /* ----- Accent — Rose Quartz (primary soft accent) -----
-     The token names (--bb-sage, --bb-sage-deep) are now abstract
-     "action" roles, not literal color names:
-       --bb-sage      : soft accent surface  (rose quartz #FFD6D6)
-       --bb-sage-deep : primary action color (= --bb-ink / deep navy)
-     Rose is used sparingly: hover hints, focus dots, small indicators.
+  /* ----- Accent — Pink / Violet palette -----
+     The token names remain abstract action roles:
+       --bb-sage      : primary accent (bright pink)
+       --bb-sage-deep : strong accent (deep blue)
   */
-  --bb-sage:         #FFD6D6;
-  --bb-sage-deep:    #2C3E50;
-  --bb-sage-soft:    rgba(255, 214, 214, 0.55);   /* soft rose backdrop */
-  --bb-sage-tint:    rgba(44, 62, 80, 0.05);      /* very subtle navy tint */
-  --bb-sage-ring:    rgba(44, 62, 80, 0.18);      /* focus ring */
+  --bb-sage:         #D83AC6;
+  --bb-sage-deep:    #1F3DAA;
+  --bb-sage-soft:    rgba(216, 58, 198, 0.32);   /* soft pink backdrop */
+  --bb-sage-tint:    rgba(31, 61, 170, 0.08);    /* subtle blue tint */
+  --bb-sage-ring:    rgba(31, 61, 170, 0.22);    /* focus ring */
 
-  /* ----- Secondary — Soft Sky Blue (rare, intentional highlights) ----- */
-  --bb-clay:         #A2C2E8;
-  --bb-clay-soft:    rgba(162, 194, 232, 0.22);
-  --bb-clay-tint:    rgba(162, 194, 232, 0.10);
+  /* ----- Secondary — Violet highlights ----- */
+  --bb-clay:         #7F57E1;
+  --bb-clay-soft:    rgba(127, 87, 225, 0.22);
+  --bb-clay-tint:    rgba(127, 87, 225, 0.10);
 
   /* ----- Status (calm, professional) ----- */
   --bb-success:      #5A8A6F;
@@ -282,9 +280,15 @@ ul, ol { list-style: none; }
   align-items: center;
   gap: 10px;
 }
+.logo-image {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: inline-block;
+}
 .logo-icon { color: var(--bb-sage-deep); flex-shrink: 0; }
 .logo-wordmark {
-  font-family: var(--font-display);
+  font-family: 'Dancing Script', cursive;
   font-weight: 600;
   font-size: 19px;
   letter-spacing: -0.02em;
